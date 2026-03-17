@@ -17,9 +17,9 @@ export default function Izbornik() {
                     <Nav className="me-auto">
                         <Nav.Link
                         onClick={()=>navigate(RouteNames.HOME)}
-                        >Početna</Nav.Link>
+                        >Home</Nav.Link>
                         
-                        <NavDropdown title="Programi" id="basic-nav-dropdown">
+                        <NavDropdown title="Izbornik" id="basic-nav-dropdown">
                             <NavDropdown.Item
                             onClick={()=>navigate(RouteNames.KATEGORIJE)}
                             >Kategorije</NavDropdown.Item>
