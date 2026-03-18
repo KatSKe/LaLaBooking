@@ -9,10 +9,6 @@ export const destinacije = [
     },
     {
         sifra: 2,
-        naziv: 'MyProfile',
-        rokZaBooking: 0,        // Dodaj defaultne vrijednosti
-        cijena: 0,
-        datumPokretanja: null,
-        aktivan: false
-    }
-];
+        naziv: 'MyProfile', // mora biti isti broj atributa kod svakog objekta
+            }
+]

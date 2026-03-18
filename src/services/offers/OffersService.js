@@ -1,12 +1,9 @@
-import { destinacije } from "./OffersPodaci";
+import { HttpService } from "../HttpService"; // Tvoj axios klijent
 
-
-// 1/4 Read od CRUD
-async function get(){
-    return {data: destinacije}
+async function get() {
+  return await HttpService.get('/Smjer');
 }
 
-
-export default{
-    get
-}
+export default {
+  get
+};
