@@ -1,4 +1,4 @@
-import { destinacije } from "./OffersPodaci";
+import { kategorija } from "./KategorijaPodaci";
 
 
 // 1/4 Read od CRUD
