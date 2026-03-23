@@ -5,7 +5,7 @@ import Izbornik from './components/Izbornik'
 import { Route, Routes } from 'react-router-dom'
 import { RouteNames } from './constants'
 import Home from './pages/Home'
-import KategorijaPregled from './pages/kategorije/KategorijaPregled'
+import OfferPregled from './pages/offers/OfferPregled'
 
 function App() {
 
@@ -15,7 +15,7 @@ function App() {
       <Izbornik />
       <Routes>
         <Route path={RouteNames.HOME} element={<Home />} />
-        <Route path={RouteNames.KATEGORIJE} element={<KategorijaPregled />} />
+        <Route path={RouteNames.OFFERS} element={<OfferPregled />} />
       </Routes>
       <hr />
       &copy; XXXXX

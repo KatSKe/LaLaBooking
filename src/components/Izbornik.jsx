@@ -25,8 +25,8 @@ export default function Izbornik() {
                         </Nav.Link>
                         
                         <NavDropdown title="Izbornik" id="basic-nav-dropdown">
-                            <NavDropdown.Item onClick={() => navigate(RouteNames.KATEGORIJE)}>
-                                Kategorije
+                            <NavDropdown.Item onClick={() => navigate(RouteNames.OFFERS)}>
+                                Offers
                             </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
