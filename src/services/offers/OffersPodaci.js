@@ -1,18 +1,12 @@
 export const destinacije = [
     {
         sifra: 1,
-        naziv: 'Destinacije u ponudi',
-        rokZaBooking: 30,
-        cijena: 1000,
-        datumPokretanja: '2026-03-21T17:00:00',
-        aktivan: true
+        naziv: 'Split',
+        opis: 'Lipo nam je'
     },
     {
         sifra: 2,
-        naziv: 'MyProfile',
-        rokZaBooking: 0,        // Dodaj defaultne vrijednosti
-        cijena: 0,
-        datumPokretanja: null,
-        aktivan: false
+        naziv: 'Zadar',
+        opis: '7 manje 5'
     }
 ];
