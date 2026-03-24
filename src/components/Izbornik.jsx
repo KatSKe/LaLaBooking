@@ -3,7 +3,7 @@ import {IME_APLIKACIJE, RouteNames} from "../constants.js";
 import { useNavigate } from "react-router-dom";
 
 
-export default function Izbornik() {
+export default function Menu() {
 
 
     const navigate = useNavigate()
@@ -21,7 +21,7 @@ export default function Izbornik() {
                             Home
                         </Nav.Link>
                         
-                        <NavDropdown title="Izbornik" id="basic-nav-dropdown">
+                        <NavDropdown title="Menu" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => navigate(RouteNames.OFFERS)}>
                                 Offers
                             </NavDropdown.Item>

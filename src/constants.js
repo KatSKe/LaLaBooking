@@ -1,6 +1,7 @@
-export const IME_APLIKACIJE='La La Booking'
+export const IME_APLIKACIJE = 'LaLa Booking';
 
 export const RouteNames = {
     HOME: '/',
-    OFFERS: '/offers' // ovo je ruta
-}
+    OFFERS: '/offers',
+    OFFERS_NOVI: '/offers/novi'
+};

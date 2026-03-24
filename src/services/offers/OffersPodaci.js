@@ -1,12 +1,12 @@
 export const destinacije = [
     {
         sifra: 1,
-        naziv: 'Split',
-        opis: 'Lipo nam je'
+        naziv: 'Greek expirience',
+        opis: 'Rich history, culture and Mediterranean lifestyle'
     },
     {
         sifra: 2,
-        naziv: 'Zadar',
-        opis: '7 manje 5'
+        naziv: 'a Thai experience',
+        opis: 'Adventure through Bangkok, Khao Sok, Koh Phangan, and the Phi Phi Islands'
     }
 ];

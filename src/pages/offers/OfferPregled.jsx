@@ -1,45 +1,51 @@
-import { useEffect, useState } from 'react'; // Dodani navodnici
-import OffersService from '../../services/offers/OffersService'; // Maknuti tagovi i dodani navodnici
+import { useEffect, useState } from 'react';
+import OffersService from '../../services/offers/OffersService';
 import { Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { RouteNames } from '../../constants';
 
 export default function OfferPregled() {
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    ucitajDestinacije();
+    ucitajOffers();
   }, []);
 
-  async function ucitajDestinacije() {
+  async function ucitajOffers() {
     try {
       const odgovor = await OffersService.get();
-      // Provjeri jesu li podaci stigli u očekivanom formatu
       setOffers(odgovor.data);
     } catch (e) {
-      console.error("Greška prilikom dohvaćanja podataka:", e);
+      console.error("Greška:", e);
     }
   }
 
   return (
     <>
-      <h3>Kategorije</h3>
+      <h3>Offers</h3>
+
+      <Link to={RouteNames.OFFERS_NOVI} className="btn btn-success mb-3">
+        Add new offer
+      </Link>
+
       <Table>
-                <thead>
-                    <tr>
-                        <th>Naziv</th>
-                        <th>Opis</th>
-                        <th>Akcija</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {offers && offers.map((offer) => (
-                        <tr>
-                            <td>{offer.naziv}</td>
-                            <td>{offer.opis}</td>
-                            <td></td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+        <thead>
+          <tr>
+            <th>Naziv</th>
+            <th>Opis</th>
+            <th>Akcija</th>
+          </tr>
+        </thead>
+        <tbody>
+          {offers && offers.map((offer) => (
+            <tr key={offer.sifra}>
+              <td>{offer.naziv}</td>
+              <td>{offer.opis}</td>
+              <td></td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </>
   );
 }

@@ -6,9 +6,9 @@ import { Route, Routes } from 'react-router-dom'
 import { RouteNames } from './constants'
 import Home from './pages/Home'
 import OfferPregled from './pages/offers/OfferPregled'
+import OfferNovi from './pages/offers/OfferNovi'
 
 function App() {
-
 
   return (
     <Container>
@@ -16,9 +16,10 @@ function App() {
       <Routes>
         <Route path={RouteNames.HOME} element={<Home />} />
         <Route path={RouteNames.OFFERS} element={<OfferPregled />} />
+        <Route path={RouteNames.OFFERS_NOVI} element={<OfferNovi />} />
       </Routes>
       <hr />
-      &copy; XXXXX
+      &copy; LaLa Booking
     </Container>
   )
 }
