@@ -7,15 +7,17 @@ export default function Home() {
         <div className="hero">
             <div className="overlay" />
 
-            <div className="hero-content">
+            <div >
 
                 <h1 className="hero-title">
-                    Welcome to {IME_APLIKACIJE}
-                </h1>
-
-                <div className="lottie-wrapper">
-                    <Lottie animationData={animationData} />
-                </div>
+Welcome to {IME_APLIKACIJE}  
+                </h1> 
+           
+<Lottie className="lottie-wrapper"
+                    
+                    animationData={animationData} />
+           
+           
 
             </div>
         </div>
