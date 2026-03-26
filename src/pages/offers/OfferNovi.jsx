@@ -3,40 +3,51 @@ import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 import OffersService from "../../services/offers/OffersService";
 
+
 export default function OfferNovi(){
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     async function dodaj(offer){
-        await OffersService.dodaj(offer);
-        navigate(RouteNames.OFFERS);
+        await OffersService.dodaj(offer).then(() => {
+            navigate(RouteNames.OFFERS);
+        });
     }
 
     function odradiSubmit(e){
         e.preventDefault();
-
-        const podaci = new FormData(e.target);
-
+        const podaci = new FormData(e.target)
         dodaj({
             naziv: podaci.get('naziv'),
-            opis: podaci.get('opis')
-        });
+            opis: parseInt(podaci.get('opis')),
+            cijena: parseFloat(podaci.get('cijena')),
+            aktivan: podaci.get('aktivan') === 'on'
+        })
     }
 
     return (
         <>
-            <h3>Enter a new offer</h3>
+            <h3>Unos nove ponude</h3>
 
             <Form onSubmit={odradiSubmit}>
 
-                <Form.Group>
+                <Form.Group controlId="naziv">
                     <Form.Label>Naziv</Form.Label>
-                    <Form.Control name="naziv" required />
+                    <Form.Control type="text" name="naziv" required />
                 </Form.Group>
 
-                <Form.Group>
+                <Form.Group controlId="opis">
                     <Form.Label>Opis</Form.Label>
-                    <Form.Control name="opis" />
+                    <Form.Control type="text" name="opis" />
+                </Form.Group>
+
+                <Form.Group controlId="cijena">
+                    <Form.Label>Cijena</Form.Label>
+                    <Form.Control type="number" name="cijena" step={0.01} />
+                </Form.Group>
+
+                <Form.Group controlId="aktivan">
+                    <Form.Check label="Aktivan" name="aktivan" />
                 </Form.Group>
 
                 <Row className="mt-3">
@@ -45,9 +56,14 @@ export default function OfferNovi(){
                             Odustani
                         </Link>
                     </Col>
-                    <Col>
-                        <Button type="submit" className="btn btn-success">
-                            Dodaj
+
+                    <Col className="text-center">
+                        Dodaj novu ponudu
+                    </Col>
+
+                    <Col className="text-end">
+                        <Button type="submit" variant="success">
+                            Dodaj novu ponudu
                         </Button>
                     </Col>
                 </Row>

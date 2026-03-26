@@ -7,6 +7,7 @@ import { RouteNames } from './constants'
 import Home from './pages/Home'
 import OfferPregled from './pages/offers/OfferPregled'
 import OfferNovi from './pages/offers/OfferNovi'
+import OfferPromjena from './pages/offers/OfferPromjena'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path={RouteNames.HOME} element={<Home />} />
         <Route path={RouteNames.OFFERS} element={<OfferPregled />} />
         <Route path={RouteNames.OFFERS_NOVI} element={<OfferNovi />} />
+        <Route path={RouteNames.OFFERS_PROMJENA} element={<OfferPromjena />} />
       </Routes>
       <hr />
       &copy; LaLa Booking
