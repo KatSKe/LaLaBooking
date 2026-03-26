@@ -5,6 +5,7 @@ import { GrValidate } from "react-icons/gr";
 import FormatDatuma from "../../components/FormatDatuma";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
+import { NumericFormat } from "react-number-format";
 
 export default function OfferPregled() {
 
@@ -36,7 +37,6 @@ export default function OfferPregled() {
             <th>Naziv</th>
             <th>Opis</th>
             <th>Cijena</th>
-            <th>Datum pokretanja</th>
             <th>Aktivan</th>
             <th>Akcija</th>
           </tr>
@@ -46,10 +46,10 @@ export default function OfferPregled() {
           {offers && offers.map((offer) => (
             <tr key={offer.sifra}>
                 <td>{offer.naziv}</td>
-            <td className='text-end'>{smjer.trajanje} h</td>
+                <td>{offer.opis}</td>
             <td className='desno'>
                 <NumericFormat
-                value={smjer.cijena}
+                value={offer.cijena}
                 displayType={'text'}
                 thousandSeparator='.'
                 decimalSeparator=','
@@ -59,17 +59,14 @@ export default function OfferPregled() {
                 fixedDecimalScale
                 />
                </td>
-               <td>
-                   <FormatDatuma datum={smjer.datumPokretanja} />
-               </td>
                <td style={{textAlign: 'center'}}>
                     <GrValidate
                      size={25}
-                     color={smjer.aktivan ? 'green' : 'red'}
+                     color={offer.aktivan ? 'green' : 'red'}
                      />
                </td>
                <td>
-                   <Button onClick={()=>{navigate(`/smjerovi/${smjer.sifra}`)}}>
+                   <Button onClick={()=>{navigate(`/offes/${offer.sifra}`)}}>
                        Promijeni
                    </Button>
                 </td>
