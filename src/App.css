@@ -1,0 +1,64 @@
+.hero {
+    min-height: 85vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    background-image: url("/images/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+}
+
+/* overlay blur */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255,255,255,0.05);
+    backdrop-filter: blur(4px);
+}
+
+/* CONTENT WRAPPER */
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* TITLE */
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+    margin: 0;
+}
+
+/* LOTTIE DESKTOP (desno od teksta) */
+.lottie-wrapper {
+    width: 180px;
+}
+
+/* 📱 MOBILE VIEW */
+@media (max-width: 768px) {
+
+    .hero-content {
+        flex-direction: column;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    /* 🔥 “ispod G” efekt */
+    .lottie-wrapper {
+        width: 140px;
+        margin-top: -10px; /* fin tuning da bude bliže slovu G */
+    }
+}
