@@ -1,4 +1,6 @@
 import { IME_APLIKACIJE } from "../constants";
+import Lottie from "lottie-react";
+import animationData from "../assets/AISpark_InteractiveAssistant.lottie";
 
 export default function Home(){
     return(
@@ -37,6 +39,8 @@ export default function Home(){
                 textShadow: "2px 2px 15px rgba(0,0,0,0.6)"
             }}>
                 Welcome to {IME_APLIKACIJE}
+
+                <Lottie animationData={animationData} style={{ height: 250 }} />
             </h1>
 
         </div>
