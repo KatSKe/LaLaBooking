@@ -66,7 +66,7 @@ export default function OfferPregled() {
                      />
                </td>
                <td>
-                   <Button onClick={()=>{navigate(`/offes/${offer.sifra}`)}}>
+                   <Button onClick={()=>{navigate(`/offers/${offer.sifra}`)}}>
                        Promijeni
                    </Button>
                 </td>
