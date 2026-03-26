@@ -19,31 +19,38 @@ export default function Home(){
             backgroundPosition: "center"
         }}>
 
-                <div style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "rgba(255,255,255,0.05)",
-                backdropFilter: "blur(4px)"
-            }} />
+            <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255,255,255,0.05)",
+            backdropFilter: "blur(4px)"
+        }} />
 
-                <h1 style={{
-                position: "relative",
-                zIndex: 1,
-                fontSize: "3.5rem",
-                fontWeight: "800",
-                letterSpacing: "2px",
-                color: "#ffffff",
-                textShadow: "2px 2px 15px rgba(0,0,0,0.6)"
-            }}>
-                Welcome to {IME_APLIKACIJE}
+        <h1 style={{
+            position: "relative",
+            zIndex: 1,
+            fontSize: "3.5rem",
+            fontWeight: "800",
+            letterSpacing: "2px",
+            color: "#ffffff",
+            textShadow: "2px 2px 15px rgba(0,0,0,0.6)"
+        }}>
+            Welcome to {IME_APLIKACIJE}
 
-                <Lottie animationData={animationData} style={{ height: 250 }} />
-            </h1>
+            <Lottie 
+                animationData={animationData}
+                style={{
+                    height: 90,
+                    marginTop: "-10px",
+                    marginLeft: "708px"
+                }} 
+            />
+        </h1>
 
-        </div>
+    </div>
     
     </>
     )
