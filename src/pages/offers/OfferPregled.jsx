@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import OffersService from "../../services/offers/OffersService";
 import { Button, Table } from "react-bootstrap";
 import { GrValidate } from "react-icons/gr";
-import FormatDatuma from "../../components/FormatDatuma";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import { NumericFormat } from "react-number-format";
 
 export default function OfferPregled() {
 
@@ -17,9 +15,24 @@ export default function OfferPregled() {
   }, []);
 
   async function ucitajOffers() {
-    await OffersService.get().then((odgovor) => {
-      setOffers(odgovor.data);
-    });
+    const odgovor = await OffersService.get();
+    setOffers(odgovor.data);
+  }
+
+  async function obrisi(sifra) {
+    if (!window.confirm("Sigurno obrisati?")) {
+      return;
+    }
+
+    await OffersService.obrisi(sifra);
+    ucitajOffers();
+  }
+
+  function formatCijena(cijena) {
+    return new Intl.NumberFormat('hr-HR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(cijena);
   }
 
   return (
@@ -45,35 +58,38 @@ export default function OfferPregled() {
         <tbody>
           {offers && offers.map((offer) => (
             <tr key={offer.sifra}>
-                <td>{offer.naziv}</td>
-                <td>{offer.opis}</td>
-            <td className='desno'>
-                <NumericFormat
-                value={offer.cijena}
-                displayType={'text'}
-                thousandSeparator='.'
-                decimalSeparator=','
-                suffix=' €'
-                prefix='='
-                decimalScale={2}
-                fixedDecimalScale
+              <td>{offer.naziv}</td>
+              <td>{offer.opis}</td>
+
+              <td className="text-end">
+                {formatCijena(offer.cijena)}
+              </td>
+
+              <td style={{ textAlign: "center" }}>
+                <GrValidate
+                  size={25}
+                  color={offer.aktivan ? "green" : "red"}
                 />
-               </td>
-               <td style={{textAlign: 'center'}}>
-                    <GrValidate
-                     size={25}
-                     color={offer.aktivan ? 'green' : 'red'}
-                     />
-               </td>
-               <td>
-                   <Button onClick={()=>{navigate(`/offers/${offer.sifra}`)}}>
-                       Promijeni
-                   </Button>
-                </td>
+              </td>
+
+              <td>
+                <Button onClick={() => navigate(`/offer/${offer.sifra}`)}>
+                  Promijeni
+                </Button>
+
+                &nbsp;&nbsp;
+
+                <Button
+                  variant="danger"
+                  onClick={() => obrisi(offer.sifra)}
+                >
+                  Obriši
+                </Button>
+              </td>
             </tr>
-                              ))}
-          </tbody>
+          ))}
+        </tbody>
       </Table>
-      </>
-   )
+    </>
+  );
 }

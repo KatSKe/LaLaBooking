@@ -1,40 +1,41 @@
 import { offers } from "./OffersPodaci";
 
-
-// 1/4 READ
-async function get(){
-    return { data: [...offers] };
+async function get() {
+  return { data: [...offers] };
 }
 
 async function getBySifra(sifra) {
-    return {data: offers.find(d => d.sifra === parseInt(sifra))}
+  return { data: offers.find(d => d.sifra === parseInt(sifra)) };
 }
 
-// 2/4 CREATE
-async function dodaj(offer){
-    if(offers.length===0){
-        offer.sifra=1;
-    }else{
-        offer.sifra = offers[offers.length - 1].sifra + 1;
-    }
+async function dodaj(offer) {
+  if (offers.length === 0) {
+    offer.sifra = 1;
+  } else {
+    offer.sifra = offers[offers.length - 1].sifra + 1;
+  }
 
-    offers.push(offer);
+  offers.push(offer);
 }
 
-// 3/4 UPDATE
-
-async function promjeni(sifra, offer){
-    const index = nadiIndex(sifra);
-    offers[index] = { ...offers[index], ...offer };
+async function promjeni(sifra, offer) {
+  const index = nadiIndex(sifra);
+  offers[index] = { ...offers[index], ...offer };
 }
 
-function nadiIndex(sifra){
-    return offers.findIndex(d => d.sifra === parseInt(sifra));
+function nadiIndex(sifra) {
+  return offers.findIndex(d => d.sifra === parseInt(sifra));
+}
+
+async function obrisi(sifra) {
+  const index = nadiIndex(sifra);
+  offers.splice(index, 1);
 }
 
 export default {
-    get,
-    getBySifra,
-    dodaj,
-    promjeni
-}
+  get,
+  getBySifra,
+  dodaj,
+  promjeni,
+  obrisi
+};

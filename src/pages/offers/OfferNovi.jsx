@@ -57,9 +57,11 @@ export default function OfferNovi(){
                         </Link>
                     </Col>
 
+                    {/*
                     <Col className="text-center">
                         Dodaj novu ponudu
                     </Col>
+                    */}
 
                     <Col className="text-end">
                         <Button type="submit" variant="success">
