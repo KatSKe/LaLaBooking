@@ -19,7 +19,7 @@ export default function OfferNovi(){
         const podaci = new FormData(e.target)
         dodaj({
             naziv: podaci.get('naziv'),
-            opis: parseInt(podaci.get('opis')),
+            opis: podaci.get('opis'),
             cijena: parseFloat(podaci.get('cijena')),
             aktivan: podaci.get('aktivan') === 'on'
         })
