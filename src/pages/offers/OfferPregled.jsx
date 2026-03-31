@@ -4,6 +4,7 @@ import { Button, Table } from "react-bootstrap";
 import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
+import animationData from "../assets/animations/location.json";
 
 export default function OfferPregled() {
 
@@ -20,9 +21,7 @@ export default function OfferPregled() {
   }
 
   async function obrisi(sifra) {
-    if (!window.confirm("Sigurno obrisati?")) {
-      return;
-    }
+    if (!window.confirm("Sigurno obrisati?")) return;
 
     await OffersService.obrisi(sifra);
     ucitajOffers();
@@ -36,60 +35,66 @@ export default function OfferPregled() {
   }
 
   return (
-    <>
+    <div className="bg-overlay">
+      <LottieAnimacija />
+
       <Link 
         to={RouteNames.OFFERS_NOVI} 
-        className="btn btn-success w-100 my-3"
+        className="btn btn-add w-100 my-3"
       >
-        Dodavanje nove ponude
+        Adding a new offer
       </Link>
 
-      <Table striped hover responsive>
-        <thead>
-          <tr>
-            <th>Naziv</th>
-            <th>Opis</th>
-            <th>Cijena</th>
-            <th>Aktivan</th>
-            <th>Akcija</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {offers && offers.map((offer) => (
-            <tr key={offer.sifra}>
-              <td>{offer.naziv}</td>
-              <td>{offer.opis}</td>
-
-              <td className="text-end">
-                {formatCijena(offer.cijena)}
-              </td>
-
-              <td style={{ textAlign: "center" }}>
-                <GrValidate
-                  size={25}
-                  color={offer.aktivan ? "green" : "red"}
-                />
-              </td>
-
-              <td>
-                <Button onClick={() => navigate(`/offers/${offer.sifra}`)}>
-                  Promijeni
-                </Button>
-
-                &nbsp;&nbsp;
-
-                <Button
-                  variant="danger"
-                  onClick={() => obrisi(offer.sifra)}
-                >
-                  Obriši
-                </Button>
-              </td>
+      <div className="table-container">
+        <Table striped hover responsive>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Active</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </>
+          </thead>
+
+          <tbody>
+            {offers && offers.map((offer) => (
+              <tr key={offer.sifra}>
+                <td>{offer.naziv}</td>
+                <td>{offer.opis}</td>
+
+                <td className="text-end">
+                  {formatCijena(offer.cijena)}
+                </td>
+
+                <td style={{ textAlign: "center" }}>
+                  <GrValidate
+                    size={25}
+                    color={offer.aktivan ? "green" : "red"}
+                  />
+                </td>
+
+                <td className="d-flex gap-2">
+                  <Button 
+                    className="btn-edit"
+                    onClick={() => navigate(`/offers/${offer.sifra}`)}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    className="btn-delete"
+                    onClick={() => delete(offer.sifra)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap'
 import Izbornik from './components/Izbornik'
 import { Route, Routes } from 'react-router-dom'
 import { RouteNames } from './constants'
-import Home from './pages/Home'
+import Home from './pages/offers/Home'
 import OfferPregled from './pages/offers/OfferPregled'
 import OfferNovi from './pages/offers/OfferNovi'
 import OfferPromjena from './pages/offers/OfferPromjena'
@@ -27,3 +27,4 @@ function App() {
 }
 
 export default App
+

@@ -1,6 +1,4 @@
-import { IME_APLIKACIJE } from "../constants";
-import Lottie from "lottie-react";
-import animationData from "../assets/AISpark_InteractiveAssistant.lottie";
+import { IME_APLIKACIJE } from "../../constants";
 
 export default function Home() {
     return (
@@ -13,9 +11,7 @@ export default function Home() {
 Welcome to {IME_APLIKACIJE}  
                 </h1> 
            
-<Lottie className="lottie-wrapper"
-                    
-                    animationData={animationData} />
+
            
            
 
@@ -23,3 +19,4 @@ Welcome to {IME_APLIKACIJE}
         </div>
     );
 }
+

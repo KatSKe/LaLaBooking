@@ -1,63 +1,111 @@
-.hero { 
-    min-height: 85vh;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-
-    background-image: url("/images/bg.jpg");
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
+.table-container {
+  background-color: #ffffff3b;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 5px 15px rgba(196, 195, 195, 0.1);
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-/* overlay blur */
-.overlay {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(255,255,255,0.05);
+/* sticky header */
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #374231;
+  color: #e2e0e0;
+  z-index: 2;
 }
 
-/* CONTENT WRAPPER */
-.hero-content {
-    position: relative;
-    z-index: 2;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+/* hover efekt */
+.table tbody tr:hover {
+  background: linear-gradient(90deg, #1e293b, #334155);
 }
 
-/* TITLE */
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: white;
-    text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
-    margin: 0;
+body {
+  background-image: url("/images/bg-offers.jpg");
+  background-size: cover; /* vrati cover */
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* LOTTIE */
-.lottie-wrapper {
-    width: 200px;
-    margin: auto;
+.bg-overlay {
+  height: 100vh; /* umjesto min-height */
+  overflow: hidden; /* dodatna sigurnost */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 15px;
 }
 
-/* 📱 MOBILE VIEW */
+.bg-overlay {
+  min-height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  padding: 20px;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* 🔒 nema scrolla */
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
 
-    .hero-content {
-        flex-direction: column;
-    }
+  .table thead {
+    display: none;
+  }
 
-    .hero-title {
-        font-size: 2.2rem;
-    }
+  .table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+  }
 
-    /* “ispod G” efekt */
-    .lottie-wrapper {
-        width: 140px;
-    }
+  .table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+  }
+
+  .table tbody td::before {
+    font-weight: bold;
+  }
+
+  .table tbody td:nth-of-type(1)::before { content: "Naziv"; }
+  .table tbody td:nth-of-type(2)::before { content: "Opis"; }
+  .table tbody td:nth-of-type(3)::before { content: "Cijena"; }
+  .table tbody td:nth-of-type(4)::before { content: "Aktivan"; }
+  .table tbody td:nth-of-type(5)::before { content: "Akcija"; }
+
+  /* gumbi na mobitelu jedan ispod drugog */
+  td.d-flex {
+    flex-direction: column;
+  }
+}
+
+.table-container {
+  max-height: 70vh;
+  overflow-y: auto; /* scroll samo unutar tablice */
+}
+
+.btn-add {
+  background-color: #a05005;
+  border: none;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #a05005;
+}
+
+.btn-delete {
+  background-color: #ef4444; /* crvena */
+  border: none;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626; /* tamnija crvena */
 }
