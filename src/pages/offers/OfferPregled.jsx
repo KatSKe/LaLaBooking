@@ -4,7 +4,7 @@ import { Button, Table } from "react-bootstrap";
 import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import animationData from "../assets/animations/location.json";
+import LottieAnimacija from "../../components/LottieAnimacija";
 
 export default function OfferPregled() {
 
@@ -36,6 +36,7 @@ export default function OfferPregled() {
 
   return (
     <div className="bg-overlay">
+
       <LottieAnimacija />
 
       <Link 
@@ -84,7 +85,7 @@ export default function OfferPregled() {
 
                   <Button
                     className="btn-delete"
-                    onClick={() => delete(offer.sifra)}
+                    onClick={() => obrisi(offer.sifra)}
                   >
                     Delete
                   </Button>
