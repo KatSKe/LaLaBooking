@@ -6,3 +6,6 @@ export const RouteNames = {
     OFFERS_NOVI: '/offers/novi',
     OFFERS_PROMJENA: '/offers/:sifra'
 }
+
+// memorija, localStorage, firebase
+export const DATA_SOURCE = 'localStorage';

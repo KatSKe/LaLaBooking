@@ -4,10 +4,8 @@ import { Button, Table } from "react-bootstrap";
 import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import LottieAnimacija from "../../components/LottieAnimacija";
 
 export default function OfferPregled() {
-
   const navigate = useNavigate();
   const [offers, setOffers] = useState([]);
 
@@ -28,19 +26,17 @@ export default function OfferPregled() {
   }
 
   function formatCijena(cijena) {
-    return new Intl.NumberFormat('hr-HR', {
-      style: 'currency',
-      currency: 'EUR'
+    return new Intl.NumberFormat("hr-HR", {
+      style: "currency",
+      currency: "EUR",
     }).format(cijena);
   }
 
   return (
     <div className="bg-overlay">
 
-      <LottieAnimacija />
-
-      <Link 
-        to={RouteNames.OFFERS_NOVI} 
+      <Link
+        to={RouteNames.OFFERS_NOVI}
         className="btn btn-add w-100 my-3"
       >
         Adding a new offer
@@ -59,39 +55,40 @@ export default function OfferPregled() {
           </thead>
 
           <tbody>
-            {offers && offers.map((offer) => (
-              <tr key={offer.sifra}>
-                <td>{offer.naziv}</td>
-                <td>{offer.opis}</td>
+            {offers &&
+              offers.map((offer) => (
+                <tr key={offer.sifra}>
+                  <td>{offer.naziv}</td>
+                  <td>{offer.opis}</td>
 
-                <td className="text-end">
-                  {formatCijena(offer.cijena)}
-                </td>
+                  <td className="text-end">
+                    {formatCijena(offer.cijena)}
+                  </td>
 
-                <td style={{ textAlign: "center" }}>
-                  <GrValidate
-                    size={25}
-                    color={offer.aktivan ? "green" : "red"}
-                  />
-                </td>
+                  <td style={{ textAlign: "center" }}>
+                    <GrValidate
+                      size={25}
+                      color={offer.aktivan ? "green" : "red"}
+                    />
+                  </td>
 
-                <td className="d-flex gap-2">
-                  <Button 
-                    className="btn-edit"
-                    onClick={() => navigate(`/offers/${offer.sifra}`)}
-                  >
-                    Edit
-                  </Button>
+                  <td className="d-flex gap-2">
+                    <Button
+                      className="btn-edit"
+                      onClick={() => navigate(`/offers/${offer.sifra}`)}
+                    >
+                      Edit
+                    </Button>
 
-                  <Button
-                    className="btn-delete"
-                    onClick={() => obrisi(offer.sifra)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
+                    <Button
+                      className="btn-delete"
+                      onClick={() => obrisi(offer.sifra)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       </div>

@@ -3,7 +3,7 @@ import {IME_APLIKACIJE, RouteNames} from "../constants.js";
 import { useNavigate } from "react-router-dom";
 
 
-export default function Menu() {
+export default function Izbornik() {
 
 
     const navigate = useNavigate()

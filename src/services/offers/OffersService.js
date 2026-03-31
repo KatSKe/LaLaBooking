@@ -1,41 +1,36 @@
-import { offers } from "./OffersPodaci";
+import OfferServiceLocalStorage from "./OfferServiceLocalStorage";
+import OfferServiceMemorija from "./OfferServiceMemorija";
+import { DATA_SOURCE } from "../../constants";
 
-async function get() {
-  return { data: [...offers] };
+let Servis = null;
+
+switch (DATA_SOURCE) {
+  case "memorija":
+    Servis = OfferServiceMemorija;
+    break;
+
+  case "localStorage":
+    Servis = OfferServiceLocalStorage;
+    break;
+
+  default:
+    Servis = null;
 }
 
-async function getBySifra(sifra) {
-  return { data: offers.find(d => d.sifra === parseInt(sifra)) };
-}
+const PrazanServis = {
+  get: async () => ({ success: false, data: [] }),
+  getBySifra: async () => ({ success: false, data: {} }),
+  dodaj: async () => console.error("OfferService nije učitan"),
+  promjeni: async () => console.error("OfferService nije učitan"),
+  obrisi: async () => console.error("OfferService nije učitan"),
+};
 
-async function dodaj(offer) {
-  if (offers.length === 0) {
-    offer.sifra = 1;
-  } else {
-    offer.sifra = offers[offers.length - 1].sifra + 1;
-  }
-
-  offers.push(offer);
-}
-
-async function promjeni(sifra, offer) {
-  const index = nadiIndex(sifra);
-  offers[index] = { ...offers[index], ...offer };
-}
-
-function nadiIndex(sifra) {
-  return offers.findIndex(d => d.sifra === parseInt(sifra));
-}
-
-async function obrisi(sifra) {
-  const index = nadiIndex(sifra);
-  offers.splice(index, 1);
-}
+const AktivniServis = Servis || PrazanServis;
 
 export default {
-  get,
-  getBySifra,
-  dodaj,
-  promjeni,
-  obrisi
+  get: () => AktivniServis.get(),
+  getBySifra: (sifra) => AktivniServis.getBySifra(sifra),
+  dodaj: (offer) => AktivniServis.dodaj(offer),
+  promjeni: (sifra, offer) => AktivniServis.promjeni(sifra, offer),
+  obrisi: (sifra) => AktivniServis.obrisi(sifra),
 };
