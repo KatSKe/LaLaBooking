@@ -7,7 +7,8 @@ export const destinacije = [
     },
     {
         sifra: 2,
-        ime: 'MyProfile', // mora biti isti broj atributa kod svakog objekta
+        ime: 'Korisnik', // mora biti isti broj atributa kod svakog objekta
         slika: 'jpg'
             }
 ]
+
