@@ -1,0 +1,32 @@
+export const korisnik = [
+    {
+        sifra: 1,
+        ime: 'Ana',
+        prezime: 'Horvat',
+        spol: 'ženski',
+        datumRodenja: '1987-04-01',
+        adresa: {
+            ulica: 'Matije Gupca',
+            kucniBroj: '157',
+            postanskiBroj: '10000',
+            mjesto: 'Zagreb'
+        },
+        email: 'ana.horvat@email.com',
+        kontaktBroj: '+385912345678'
+    },
+    {
+        sifra: 2,
+        ime: 'Ivan',
+        prezime: 'Ivić',
+        spol: 'muški',
+        datumRodenja: '1988-05-23',
+        adresa: {
+            ulica: 'Nikole Tesle',
+            kucniBroj: '130',
+            postanskiBroj: '31000',
+            mjesto: 'Osijek'
+        },
+        email: 'ivan.ivic@email.com',
+        kontaktBroj: '+385981234567'
+    }
+];

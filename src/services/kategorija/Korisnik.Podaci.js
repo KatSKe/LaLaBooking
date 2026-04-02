@@ -1,6 +1,8 @@
 export const korisnik = [
     {
         sifra: 1,
+        ime: 'Ana',
+        prezime: 'Horvat',
         spol: 'ženski',
         datumRodenja: '1987-04-01',
         adresa: {
@@ -14,8 +16,10 @@ export const korisnik = [
     },
     {
         sifra: 2,
+        ime: 'Ivan',
+        prezime: 'Ivić',
         spol: 'muški',
-        datumRodenja: '1988-15-23',
+        datumRodenja: '1988-05-23',
         adresa: {
             ulica: 'Nikole Tesle',
             kucniBroj: '130',

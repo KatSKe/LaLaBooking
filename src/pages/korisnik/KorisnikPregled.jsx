@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import KorisnikService from "../../services/korisnik/KorisnikService";
 import { Button, Table } from "react-bootstrap";
+import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 
@@ -18,26 +19,33 @@ export default function KorisnikPregled() {
   }
 
   async function obrisi(sifra) {
-    if (!window.confirm("Sigurno obrisati korisnika?")) return;
+    if (!window.confirm("Sigurno obrisati?")) return;
 
     await KorisnikService.obrisi(sifra);
     ucitajKorisnike();
   }
 
+  function formatDatum(datum) {
+    if (!datum) return "";
+    return new Date(datum).toLocaleDateString("hr-HR");
+  }
+
   return (
     <div className="bg-overlay">
 
-        <Link
-            to={RouteNames.KORISNIK_NOVI}
-            className="btn btn-add w-100 my-3"
-        >
-            Dodaj novog korisnika
-        </Link>
+      <Link
+        to={RouteNames.KORISNIK_NOVI}
+        className="btn btn-add w-100 my-3"
+      >
+        Dodaj novog korisnika
+      </Link>
 
       <div className="table-container">
         <Table striped hover responsive>
           <thead>
             <tr>
+              <th>Ime</th>
+              <th>Prezime</th>
               <th>Spol</th>
               <th>Datum rođenja</th>
               <th>Email</th>
@@ -49,27 +57,30 @@ export default function KorisnikPregled() {
 
           <tbody>
             {korisnici &&
-              korisnici.map((korisnik) => (
-                <tr key={korisnik.sifra}>
-                  <td>{korisnik.spol}</td>
-                  <td>{korisnik.datumRodenja}</td>
-                  <td>{korisnik.email}</td>
-                  <td>{korisnik.kontaktBroj}</td>
-                  <td>{korisnik.adresa?.mjesto}</td>
+              korisnici.map((k) => (
+                <tr key={k.sifra}>
+                  <td>{k.ime}</td>
+                  <td>{k.prezime}</td>
+                  <td>{k.spol}</td>
+
+                  <td>{formatDatum(k.datumRodenja)}</td>
+
+                  <td>{k.email}</td>
+                  <td>{k.kontaktBroj}</td>
+
+                  <td>{k.adresa?.mjesto}</td>
 
                   <td className="d-flex gap-2">
                     <Button
                       className="btn-edit"
-                      onClick={() =>
-                        navigate(`/korisnik/${korisnik.sifra}`)
-                      }
+                      onClick={() => navigate(`/korisnik/${k.sifra}`)}
                     >
                       Edit
                     </Button>
 
                     <Button
                       className="btn-delete"
-                      onClick={() => obrisi(korisnik.sifra)}
+                      onClick={() => obrisi(k.sifra)}
                     >
                       Delete
                     </Button>
