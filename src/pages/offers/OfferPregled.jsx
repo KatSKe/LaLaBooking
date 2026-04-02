@@ -10,26 +10,26 @@ export default function OfferPregled() {
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    ucitajOffers();
+    loadOffers();
   }, []);
 
-  async function ucitajOffers() {
-    const odgovor = await OffersService.get();
-    setOffers(odgovor.data);
+  async function loadOffers() {
+    const response = await OffersService.get();
+    setOffers(response.data);
   }
 
-  async function obrisi(sifra) {
-    if (!window.confirm("Sigurno obrisati?")) return;
+  async function deleteOffer(id) {
+    if (!window.confirm("Are you sure you want to delete this offer?")) return;
 
-    await OffersService.obrisi(sifra);
-    ucitajOffers();
+    await OffersService.obrisi(id);
+    loadOffers();
   }
 
-  function formatCijena(cijena) {
-    return new Intl.NumberFormat("hr-HR", {
+  function formatPrice(price) {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "EUR",
-    }).format(cijena);
+    }).format(price);
   }
 
   return (
@@ -39,7 +39,7 @@ export default function OfferPregled() {
         to={RouteNames.OFFERS_NOVI}
         className="btn btn-add w-100 my-3"
       >
-        Adding a new offer
+        Add New Offer
       </Link>
 
       <div className="table-container">
@@ -50,7 +50,7 @@ export default function OfferPregled() {
               <th>Description</th>
               <th>Price</th>
               <th>Active</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -62,7 +62,7 @@ export default function OfferPregled() {
                   <td>{offer.opis}</td>
 
                   <td className="text-end">
-                    {formatCijena(offer.cijena)}
+                    {formatPrice(offer.cijena)}
                   </td>
 
                   <td style={{ textAlign: "center" }}>
@@ -82,7 +82,7 @@ export default function OfferPregled() {
 
                     <Button
                       className="btn-delete"
-                      onClick={() => obrisi(offer.sifra)}
+                      onClick={() => deleteOffer(offer.sifra)}
                     >
                       Delete
                     </Button>

@@ -33,7 +33,7 @@ export default function App() {
       </Routes>
 
       <hr />
-      Katarina
+      Katarina Skenderović
     </Container>
   );
 }

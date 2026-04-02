@@ -1,111 +1,92 @@
-.table-container {
-  background-color: #ffffff3b;
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 20px;
-  box-shadow: 0 5px 15px rgba(196, 195, 195, 0.1);
-  max-height: 70vh;
-  overflow-y: auto;
-}
+/* =========================
+   HERO BASE
+========================= */
 
-/* sticky header */
-.table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #374231;
-  color: #e2e0e0;
-  z-index: 2;
-}
-
-/* hover efekt */
-.table tbody tr:hover {
-  background: linear-gradient(90deg, #1e293b, #334155);
-}
-
-body {
-  background-image: url("/images/bg-offers.jpg");
-  background-size: cover; /* vrati cover */
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.bg-overlay {
-  height: 100vh; /* umjesto min-height */
-  overflow: hidden; /* dodatna sigurnost */
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(4px);
-  padding: 15px;
-}
-
-.bg-overlay {
+.hero {
+  position: relative;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* =========================
+   HOME BACKGROUND
+========================= */
+
+.home-background {
+  background-image: url("/images/bg-lala.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+
+.overlay {
+  position: absolute;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  padding: 20px;
+  z-index: 1;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden; /* 🔒 nema scrolla */
+/* =========================
+   CONTENT
+========================= */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-
-  .table thead {
-    display: none;
-  }
-
-  .table tbody tr {
-    display: block;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #ddd;
-  }
-
-  .table tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-  }
-
-  .table tbody td::before {
-    font-weight: bold;
-  }
-
-  .table tbody td:nth-of-type(1)::before { content: "Naziv"; }
-  .table tbody td:nth-of-type(2)::before { content: "Opis"; }
-  .table tbody td:nth-of-type(3)::before { content: "Cijena"; }
-  .table tbody td:nth-of-type(4)::before { content: "Aktivan"; }
-  .table tbody td:nth-of-type(5)::before { content: "Akcija"; }
-
-  /* gumbi na mobitelu jedan ispod drugog */
-  td.d-flex {
-    flex-direction: column;
-  }
+/* DARK OVERLAY */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
 }
 
-.table-container {
-  max-height: 70vh;
-  overflow-y: auto; /* scroll samo unutar tablice */
-}
+/* GLASS CARD */
+.glass-card {
+  position: relative;
+  z-index: 2;
 
-.btn-add {
-  background-color: #a05005;
-  border: none;
+  padding: 40px 50px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  text-align: center;
   color: white;
+
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
-.btn-add:hover {
-  background-color: #a05005;
+/* =========================
+   LOTTIE
+========================= */
+
+.lottie-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.btn-delete {
-  background-color: #ef4444; /* crvena */
-  border: none;
-  color: white;
-}
-
-.btn-delete:hover {
-  background-color: #dc2626; /* tamnija crvena */
+/* LOTTIE SIZE */
+.lottie-center svg,
+.lottie-center canvas {
+  width: 120px !important;
+  height: 120px !important;
 }

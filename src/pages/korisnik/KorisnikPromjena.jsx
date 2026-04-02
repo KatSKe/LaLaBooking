@@ -4,7 +4,7 @@ import KorisnikService from "../../services/korisnik/KorisnikService";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { RouteNames } from "../../constants";
 
-export default function KorisnikPromjena(){
+export default function KorisnikPromjena() {
 
     const navigate = useNavigate();
     const params = useParams();
@@ -32,34 +32,34 @@ export default function KorisnikPromjena(){
         });
     }
 
-    function odradiSubmit(e){
+    function odradiSubmit(e) {
         e.preventDefault();
         const podaci = new FormData(e.target);
 
         promjeni({
-            ime: podaci.get('ime'),
-            prezime: podaci.get('prezime'),
+            ime: podaci.get("ime"),
+            prezime: podaci.get("prezime"),
             spol: spol,
             datumRodenja: datumRodenja,
             adresa: {
-                ulica: podaci.get('ulica'),
-                kucniBroj: podaci.get('kucniBroj'),
-                postanskiBroj: podaci.get('postanskiBroj'),
-                mjesto: podaci.get('mjesto')
+                ulica: podaci.get("ulica"),
+                kucniBroj: podaci.get("kucniBroj"),
+                postanskiBroj: podaci.get("postanskiBroj"),
+                mjesto: podaci.get("mjesto")
             },
-            email: podaci.get('email'),
-            kontaktBroj: podaci.get('kontaktBroj')
+            email: podaci.get("email"),
+            kontaktBroj: podaci.get("kontaktBroj")
         });
     }
 
-    return(
+    return (
         <>
-            <h3>Promjena korisnika</h3>
+            <h3>Edit User</h3>
 
             <Form onSubmit={odradiSubmit}>
 
                 <Form.Group controlId="ime">
-                    <Form.Label>Ime</Form.Label>
+                    <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type="text"
                         name="ime"
@@ -69,7 +69,7 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="prezime">
-                    <Form.Label>Prezime</Form.Label>
+                    <Form.Label>Last Name</Form.Label>
                     <Form.Control
                         type="text"
                         name="prezime"
@@ -79,18 +79,18 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="spol">
-                    <Form.Label>Spol</Form.Label>
+                    <Form.Label>Gender</Form.Label>
                     <Form.Select
                         value={spol}
                         onChange={(e) => setSpol(e.target.value)}
                     >
-                        <option value="ženski">Ženski</option>
-                        <option value="muški">Muški</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
                     </Form.Select>
                 </Form.Group>
 
                 <Form.Group controlId="datumRodenja">
-                    <Form.Label>Datum rođenja</Form.Label>
+                    <Form.Label>Date of Birth</Form.Label>
                     <Form.Control
                         type="date"
                         value={datumRodenja}
@@ -100,10 +100,10 @@ export default function KorisnikPromjena(){
 
                 <hr />
 
-                <h5>Adresa</h5>
+                <h5>Address</h5>
 
                 <Form.Group controlId="ulica">
-                    <Form.Label>Ulica</Form.Label>
+                    <Form.Label>Street</Form.Label>
                     <Form.Control
                         type="text"
                         name="ulica"
@@ -112,7 +112,7 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="kucniBroj">
-                    <Form.Label>Kućni broj</Form.Label>
+                    <Form.Label>House Number</Form.Label>
                     <Form.Control
                         type="text"
                         name="kucniBroj"
@@ -121,7 +121,7 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="postanskiBroj">
-                    <Form.Label>Poštanski broj</Form.Label>
+                    <Form.Label>Postal Code</Form.Label>
                     <Form.Control
                         type="text"
                         name="postanskiBroj"
@@ -130,7 +130,7 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="mjesto">
-                    <Form.Label>Mjesto</Form.Label>
+                    <Form.Label>City</Form.Label>
                     <Form.Control
                         type="text"
                         name="mjesto"
@@ -150,7 +150,7 @@ export default function KorisnikPromjena(){
                 </Form.Group>
 
                 <Form.Group controlId="kontaktBroj">
-                    <Form.Label>Kontakt broj</Form.Label>
+                    <Form.Label>Contact Number</Form.Label>
                     <Form.Control
                         type="text"
                         name="kontaktBroj"
@@ -161,13 +161,13 @@ export default function KorisnikPromjena(){
                 <Row className="mt-3">
                     <Col>
                         <Link to={RouteNames.KORISNIK} className="btn btn-danger">
-                            Odustani
+                            Cancel
                         </Link>
                     </Col>
 
                     <Col className="text-end">
                         <Button type="submit" variant="success">
-                            Promijeni korisnika
+                            Save Changes
                         </Button>
                     </Col>
                 </Row>
