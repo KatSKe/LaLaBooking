@@ -1,17 +1,21 @@
-import { korisnik as defaultKorisnik } from "./KorisnikPodaci";
+import { users as defaultUsers } from "./UserDataUser.js";
 
-const STORAGE_KEY = "korisnik";
+const STORAGE_KEY = "users";
 
 function dohvatiSveIzStorage() {
   const podaci = localStorage.getItem(STORAGE_KEY);
 
-  // 🔥 AKO NEMA PODATAKA → UBACI DEFAULT
   if (!podaci) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultKorisnik));
-    return defaultKorisnik;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
+    return defaultUsers;
   }
 
-  return JSON.parse(podaci);
+  try {
+    return JSON.parse(podaci);
+  } catch (e) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
+    return defaultUsers;
+  }
 }
 
 function spremiUStorage(podaci) {
@@ -28,6 +32,7 @@ async function get() {
 async function getBySifra(sifra) {
   const korisnici = dohvatiSveIzStorage();
   const k = korisnici.find(x => x.sifra === parseInt(sifra));
+
   return { success: true, data: k };
 }
 
@@ -38,8 +43,7 @@ async function dodaj(k) {
   if (korisnici.length === 0) {
     k.sifra = 1;
   } else {
-    const maxSifra = Math.max(...korisnici.map(x => x.sifra));
-    k.sifra = maxSifra + 1;
+    k.sifra = korisnici[korisnici.length - 1].sifra + 1;
   }
 
   korisnici.push(k);
@@ -53,14 +57,14 @@ async function promjeni(sifra, k) {
   const korisnici = dohvatiSveIzStorage();
   const index = korisnici.findIndex(x => x.sifra === parseInt(sifra));
 
-  if (index !== -1) {
+  if (index > -1) {
     korisnici[index] = { ...korisnici[index], ...k };
     spremiUStorage(korisnici);
 
     return { success: true, data: korisnici[index] };
   }
 
-  return { success: false, message: "Korisnik nije pronađen" };
+  return { success: false, message: "User not found" };
 }
 
 // 5/4 DELETE
@@ -69,7 +73,7 @@ async function obrisi(sifra) {
   korisnici = korisnici.filter(x => x.sifra !== parseInt(sifra));
   spremiUStorage(korisnici);
 
-  return { success: true, message: "Obrisano" };
+  return { success: true, message: "Deleted" };
 }
 
 export default {

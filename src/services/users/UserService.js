@@ -1,5 +1,5 @@
-import KorisnikServiceLocalStorage from "./KorisnikServiceLocalStorage";
-import KorisnikServiceMemorija from "./KorisnikServiceMemorija";
+import UserServiceLocalStorage from "./UserServiceLocalStorage";
+import UserServiceMemorija from "./UserServiceMemory";
 import { DATA_SOURCE } from "../../constants";
 
 let Servis = null;
@@ -7,11 +7,11 @@ let Servis = null;
 // Odabir izvora podataka
 switch (DATA_SOURCE) {
   case "memorija":
-    Servis = KorisnikServiceMemorija;
+    Servis = UserServiceMemorija;
     break;
 
   case "localStorage":
-    Servis = KorisnikServiceLocalStorage;
+    Servis = UserServiceLocalStorage;
     break;
 
   default:
@@ -23,9 +23,9 @@ switch (DATA_SOURCE) {
 const PrazanServis = {
   get: async () => ({ success: false, data: [] }),
   getBySifra: async () => ({ success: false, data: {} }),
-  dodaj: async () => ({ success: false, message: "KorisnikService nije učitan" }),
-  promjeni: async () => ({ success: false, message: "KorisnikService nije učitan" }),
-  obrisi: async () => ({ success: false, message: "KorisnikService nije učitan" }),
+  dodaj: async () => ({ success: false, message: "UserService nije učitan" }),
+  promjeni: async () => ({ success: false, message: "UserService nije učitan" }),
+  obrisi: async () => ({ success: false, message: "UserService nije učitan" }),
 };
 
 // Aktivni servis
@@ -38,11 +38,11 @@ export default {
   getBySifra: async (sifra) =>
     await AktivniServis.getBySifra(sifra),
 
-  dodaj: async (korisnik) =>
-    await AktivniServis.dodaj(korisnik),
+  dodaj: async (users) =>
+    await AktivniServis.dodaj(users),
 
-  promjeni: async (sifra, korisnik) =>
-    await AktivniServis.promjeni(sifra, korisnik),
+  promjeni: async (sifra, users) =>
+    await AktivniServis.promjeni(sifra, users),
 
   obrisi: async (sifra) =>
     await AktivniServis.obrisi(sifra),

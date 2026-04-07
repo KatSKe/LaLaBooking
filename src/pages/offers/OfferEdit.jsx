@@ -4,40 +4,40 @@ import OffersService from "../../services/offers/OffersService";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { RouteNames } from "../../constants";
 
-export default function OfferPromjena() {
+export default function OfferEdit() {
 
     const navigate = useNavigate();
-    const params = useParams();
+    const { sifra } = useParams();
+
     const [offer, setOffer] = useState({});
     const [aktivan, setAktivan] = useState(false);
 
     useEffect(() => {
-        ucitajOffer();
+        loadOffer();
     }, []);
 
-    async function ucitajOffer() {
-        await OffersService.getBySifra(params.sifra).then((odgovor) => {
-            const o = odgovor.data;
-            setOffer(o);
-            setAktivan(o.aktivan ?? false);
-        });
+    async function loadOffer() {
+        const odgovor = await OffersService.getBySifra(sifra);
+        const o = odgovor.data;
+
+        setOffer(o);
+        setAktivan(o.aktivan ?? false);
     }
 
-    async function promjeni(offer) {
-        await OffersService.promjeni(params.sifra, offer).then(() => {
-            navigate(RouteNames.OFFERS);
-        });
+    async function save(offer) {
+        await OffersService.promjeni(sifra, offer);
+        navigate(RouteNames.OFFERS);
     }
 
-    function odradiSubmit(e) {
+    function onSubmit(e) {
         e.preventDefault();
-        const podaci = new FormData(e.target);
+        const data = new FormData(e.target);
 
-        promjeni({
-            naziv: podaci.get("naziv"),
-            opis: podaci.get("opis"),
-            cijena: podaci.get("cijena"),
-            aktivan: aktivan
+        save({
+            naziv: data.get("naziv"),
+            opis: data.get("opis"),
+            cijena: parseFloat(data.get("cijena")),
+            aktivan
         });
     }
 
@@ -45,30 +45,30 @@ export default function OfferPromjena() {
         <>
             <h3>Edit Offer</h3>
 
-            <Form onSubmit={odradiSubmit}>
-
-                <Form.Group controlId="naziv">
+            <Form onSubmit={onSubmit}>
+                <Form.Group>
                     <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" name="naziv" required
-                        defaultValue={offer.naziv} />
+                    <Form.Control name="naziv" defaultValue={offer.naziv} />
                 </Form.Group>
 
-                <Form.Group controlId="opis">
+                <Form.Group>
                     <Form.Label>Description</Form.Label>
-                    <Form.Control type="text" name="opis"
-                        defaultValue={offer.opis} />
+                    <Form.Control name="opis" defaultValue={offer.opis} />
                 </Form.Group>
 
-                <Form.Group controlId="cijena">
+                <Form.Group>
                     <Form.Label>Price</Form.Label>
-                    <Form.Control type="number" name="cijena" step={0.01}
-                        defaultValue={offer.cijena} />
+                    <Form.Control
+                        name="cijena"
+                        type="number"
+                        step={0.01}
+                        defaultValue={offer.cijena}
+                    />
                 </Form.Group>
 
-                <Form.Group controlId="aktivan">
+                <Form.Group>
                     <Form.Check
                         label="Active"
-                        name="aktivan"
                         checked={aktivan}
                         onChange={(e) => setAktivan(e.target.checked)}
                     />
@@ -83,11 +83,10 @@ export default function OfferPromjena() {
 
                     <Col className="text-end">
                         <Button type="submit" variant="success">
-                            Save Changes
+                            Save
                         </Button>
                     </Col>
                 </Row>
-
             </Form>
         </>
     );

@@ -1,35 +1,36 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import OfferPregled from "./pages/offers/OfferPregled";
-import OfferNovi from "./pages/offers/OfferNovi";
-import OfferPromjena from "./pages/offers/OfferPromjena";
 
-import KorisnikPregled from './pages/korisnik/KorisnikPregled';
-import KorisnikNovi from './pages/korisnik/KorisnikNovi';
-import KorisnikPromjena from './pages/korisnik/KorisnikPromjena';
+import OfferList from "./pages/offers/OfferList";
+import OfferCreate from "./pages/offers/OfferCreate";
+import OfferEdit from "./pages/offers/OfferEdit";
+
+import UserList from './pages/users/UserList';
+import UserCreate from './pages/users/UserCreate';
+import UserEdit from './pages/users/UserEdit';
 
 import { Container } from "react-bootstrap";
-import Izbornik from "./components/Izbornik";
+import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
 
 export default function App() {
   return (
     <Container>
-      <Izbornik />
+      <Menu />
 
       <Routes>
         <Route path={RouteNames.HOME} element={<Home />} />
 
         {/* OFFERS */}
-        <Route path={RouteNames.OFFERS} element={<OfferPregled />} />
-        <Route path={RouteNames.OFFERS_NOVI} element={<OfferNovi />} />
-        <Route path={RouteNames.OFFERS_PROMJENA} element={<OfferPromjena />} />
+        <Route path={RouteNames.OFFERS} element={<OfferList />} />
+        <Route path={RouteNames.OFFERS_CREATE} element={<OfferCreate />} />
+        <Route path={RouteNames.OFFERS_EDIT} element={<OfferEdit />} />
 
-        {/* KORISNIK */}
-        <Route path={RouteNames.KORISNIK} element={<KorisnikPregled />} />
-        <Route path={RouteNames.KORISNIK_NOVI} element={<KorisnikNovi />} />
-        <Route path={RouteNames.KORISNIK_PROMJENA} element={<KorisnikPromjena />} />
+        {/* USERS */}
+        <Route path={RouteNames.USERS} element={<UserList />} />
+        <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
+        <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
       </Routes>
 
       <hr />

@@ -1,26 +1,26 @@
-import { korisnik } from "./KorisnikPodaci";
+import { users } from "./UserDataUser";
 
 // 1/4 READ (CRUD)
 async function get() {
-  return { success: true, data: [...korisnik] };
+  return { success: true, data: [...users] };
 }
 
 async function getBySifra(sifra) {
   return {
     success: true,
-    data: korisnik.find(k => k.sifra === parseInt(sifra)),
+    data: users.find(k => k.sifra === parseInt(sifra)),
   };
 }
 
 // 2/4 CREATE (CRUD)
 async function dodaj(k) {
-  if (korisnik.length === 0) {
+  if (users.length === 0) {
     k.sifra = 1;
   } else {
-    k.sifra = korisnik[korisnik.length - 1].sifra + 1;
+    k.sifra = users[users.length - 1].sifra + 1;
   }
 
-  korisnik.push(k);
+  users.push(k);
 
   return { success: true, data: k };
 }
@@ -30,15 +30,15 @@ async function promjeni(sifra, k) {
   const index = nadiIndex(sifra);
 
   if (index > -1) {
-    korisnik[index] = { ...korisnik[index], ...k };
-    return { success: true, data: korisnik[index] };
+    users[index] = { ...users[index], ...k };
+    return { success: true, data: users[index] };
   }
 
   return { success: false, message: "Korisnik nije pronađen" };
 }
 
 function nadiIndex(sifra) {
-  return korisnik.findIndex(k => k.sifra === parseInt(sifra));
+  return users.findIndex(k => k.sifra === parseInt(sifra));
 }
 
 // 4/4 DELETE (CRUD)
@@ -46,7 +46,7 @@ async function obrisi(sifra) {
   const index = nadiIndex(sifra);
 
   if (index > -1) {
-    korisnik.splice(index, 1);
+    users.splice(index, 1);
     return { success: true, message: "Obrisano" };
   }
 

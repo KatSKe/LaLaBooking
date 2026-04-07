@@ -1,4 +1,4 @@
-export const korisnik = [
+export const users = [
     {
         sifra: 1,
         ime: 'Ana',

@@ -4,13 +4,13 @@ export const RouteNames = {
     HOME: '/',
 
     OFFERS: '/offers',
-    OFFERS_NOVI: '/offers/novi',
-    OFFERS_PROMJENA: '/offers/:sifra',
+    OFFERS_CREATE: '/offers/new',
+    OFFERS_EDIT: '/offers/:sifra',
 
-    KORISNIK: '/korisnik',
-    KORISNIK_NOVI: '/korisnik/novi',
-    KORISNIK_PROMJENA: '/korisnik/:sifra'
+    USERS: '/users',
+    USERS_NEW: '/users/new',
+    USERS_EDIT: '/users/:id',
 }
 
-// memorija, localStorage, firebase
+// memory, localStorage, firebase
 export const DATA_SOURCE = 'localStorage';
