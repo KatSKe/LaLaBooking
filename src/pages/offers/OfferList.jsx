@@ -4,15 +4,29 @@ import { Button, Table } from "react-bootstrap";
 import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
+import TypeService from "../../services/types/TypeServiceLocalStorage";
 
 export default function OfferList() {
 
   const navigate = useNavigate();
+
+  // ADDED: state for offers
   const [offers, setOffers] = useState([]);
+
+  // ADDED: state for types + filter
+  const [types, setTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState(0);
 
   useEffect(() => {
     loadOffers();
+    loadTypes();
   }, []);
+
+  // ADDED: load types
+  async function loadTypes() {
+    const res = await TypeService.get();
+    setTypes(res.data);
+  }
 
   async function loadOffers() {
     const response = await OffersService.get();
@@ -33,6 +47,12 @@ export default function OfferList() {
     }).format(price);
   }
 
+  // ADDED: filtering logic
+  const filteredOffers =
+    selectedType === 0
+      ? offers
+      : offers.filter(o => o.typeId === selectedType);
+
   return (
     <div className="bg-overlay">
 
@@ -40,49 +60,74 @@ export default function OfferList() {
         Add New Offer
       </Link>
 
-      <Table striped hover responsive>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Active</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+      {/* ADDED: TYPE FILTER */}
+      <select
+        className="form-select my-3"
+        onChange={(e) => setSelectedType(parseInt(e.target.value))}
+      >
+        <option value={0}>All Types</option>
+        {types.map(t => (
+          <option key={t.id} value={t.id}>{t.name}</option>
+        ))}
+      </select>
 
-        <tbody>
-          {offers.map((offer) => (
-            <tr key={offer.sifra}>
-              <td>{offer.naziv}</td>
-              <td>{offer.opis}</td>
-              <td className="text-end">{formatPrice(offer.cijena)}</td>
+      {/* ADDED: responsive wrapper */}
+      <div className="table-responsive">
 
-              <td style={{ textAlign: "center" }}>
-                <GrValidate color={offer.aktivan ? "green" : "red"} />
-              </td>
-
-              <td className="d-flex gap-2">
-                <Button
-                  className="btn-edit"
-                  onClick={() =>
-                    navigate(RouteNames.OFFERS_EDIT.replace(':sifra', offer.sifra))
-                  }
-                >
-                  Edit
-                </Button>
-
-                <Button
-                  className="btn-delete"
-                  onClick={() => deleteOffer(offer.sifra)}
-                >
-                  Delete
-                </Button>
-              </td>
+        <Table striped hover>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Type</th> {/* ADDED */}
+              <th>Price</th>
+              <th>Active</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+
+          <tbody>
+            {filteredOffers.map((offer) => (
+              <tr key={offer.sifra}>
+                <td>{offer.naziv}</td>
+                <td>{offer.opis}</td>
+
+                {/* ADDED: TYPE DISPLAY */}
+                <td>{offer.typeName || "-"}</td>
+
+                <td className="text-end">
+                  {formatPrice(offer.cijena)}
+                </td>
+
+                <td style={{ textAlign: "center" }}>
+                  <GrValidate color={offer.aktivan ? "green" : "red"} />
+                </td>
+
+                <td className="d-flex gap-2">
+                  <Button
+                    className="btn-edit"
+                    onClick={() =>
+                      navigate(
+                        RouteNames.OFFERS_EDIT.replace(':sifra', offer.sifra)
+                      )
+                    }
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    className="btn-delete"
+                    onClick={() => deleteOffer(offer.sifra)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+
+      </div>
 
     </div>
   );

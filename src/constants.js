@@ -10,6 +10,10 @@ export const RouteNames = {
     USERS: '/users',
     USERS_NEW: '/users/new',
     USERS_EDIT: '/users/:id',
+
+    TYPES: '/types',
+    TYPES_NEW: '/types/new',
+    TYPES_EDIT: '/types/:id',
 }
 
 // memory, localStorage, firebase

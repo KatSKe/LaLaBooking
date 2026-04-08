@@ -32,6 +32,10 @@ export default function Menu() {
                                 Users
                             </NavDropdown.Item>
 
+                            <NavDropdown.Item onClick={() => navigate(RouteNames.TYPES)}>
+                                Types
+                            </NavDropdown.Item>
+
                         </NavDropdown>
 
                     </Nav>

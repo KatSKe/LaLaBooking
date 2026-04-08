@@ -1,4 +1,4 @@
-import { offers } from "./OffersPodaci";
+import { offers } from "./OffersData";
 
 // 1/4 READ (CRUD)
 async function get() {

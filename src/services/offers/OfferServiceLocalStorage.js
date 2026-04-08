@@ -1,4 +1,4 @@
-import { offers as defaultOffers } from "./OffersPodaci";
+import { offers as defaultOffers } from "./OffersData";
 
 const STORAGE_KEY = "offers";
 
