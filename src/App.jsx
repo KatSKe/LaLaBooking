@@ -4,15 +4,20 @@ import { Container } from "react-bootstrap";
 
 import Home from "./pages/Home";
 
+/* OFFERS */
 import OfferList from "./pages/offers/OfferList";
 import OfferCreate from "./pages/offers/OfferCreate";
 import OfferEdit from "./pages/offers/OfferEdit";
 
+/* USERS */
 import UserList from './pages/users/UserList';
 import UserCreate from './pages/users/UserCreate';
 import UserEdit from './pages/users/UserEdit';
 
-import TypeList from "./pages/types/TypeList"; // ADDED
+/* TYPES */
+import TypeList from "./pages/types/TypeList";
+import TypeCreate from "./pages/types/TypeCreate";
+import TypeEdit from "./pages/types/TypeEdit";
 
 import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
@@ -39,8 +44,10 @@ export default function App() {
           <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
           <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
 
-          {/* TYPES - ADDED */}
+          {/* TYPES */}
           <Route path={RouteNames.TYPES} element={<TypeList />} />
+          <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
+          <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
         </Routes>
 
         {/* FOOTER */}
