@@ -67,11 +67,19 @@ export default function UserList() {
                 <td>{user.adresa?.mjesto}</td>
 
                 <td className="d-flex gap-2">
-                  <Button onClick={() => navigate(`/users/${user.sifra}`)}>
+                  <Button
+                    size="sm"
+                    className="btn-edit"
+                    onClick={() => navigate(`/users/${user.sifra}`)}
+                  >
                     Edit
                   </Button>
 
-                  <Button onClick={() => deleteUser(user.sifra)}>
+                  <Button
+                    size="sm"
+                    className="btn-delete"
+                    onClick={() => deleteUser(user.sifra)}
+                  >
                     Delete
                   </Button>
                 </td>

@@ -64,6 +64,8 @@ export default function TypeList() {
 
                 <td>
                   <div className="d-flex align-items-center gap-2">
+                    
+                    {/* EDIT - Bootstrap primary (plavi) */}
                     <Button
                       size="sm"
                       className="btn-edit"
@@ -74,11 +76,12 @@ export default function TypeList() {
 
                     <Button
                       size="sm"
-                      variant="danger"
+                      className="btn-delete"
                       onClick={() => deleteType(type.id)}
                     >
                       Delete
                     </Button>
+
                   </div>
                 </td>
               </tr>

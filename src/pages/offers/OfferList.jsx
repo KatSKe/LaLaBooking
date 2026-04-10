@@ -105,17 +105,17 @@ export default function OfferList() {
 
                 <td className="d-flex gap-2">
                   <Button
+                    size="sm"
                     className="btn-edit"
                     onClick={() =>
-                      navigate(
-                        RouteNames.OFFERS_EDIT.replace(':sifra', offer.sifra)
-                      )
+                      navigate(RouteNames.OFFERS_EDIT.replace(':sifra', offer.sifra))
                     }
                   >
                     Edit
                   </Button>
 
                   <Button
+                    size="sm"
                     className="btn-delete"
                     onClick={() => deleteOffer(offer.sifra)}
                   >
