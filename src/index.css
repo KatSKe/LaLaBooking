@@ -1,10 +1,9 @@
 :root {
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --text: #111827;
 }
 
 /* =========================
-   GLOBAL RESET (NO SCROLL)
+   GLOBAL RESET
    ========================= */
 
 * {
@@ -15,9 +14,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: var(--sans);
-
   height: 100%;
-  overflow: hidden; /* 🔥 HARD NO SCROLL */
 }
 
 /* ROOT */
@@ -25,146 +22,193 @@ html, body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+}
+
+/* APP VIEW (SCROLL ENABLED FOR OTHER PAGES) */
+.app-view {
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* =========================
-   HOME PAGE WRAPPER
+   GLOBAL PAGE LAYOUT
+   ========================= */
+
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 30px 20px;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.page-title {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.page-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.btn-add {
+  background-color: #4f46e5;
+  border: none;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #4338ca;
+}
+
+.btn-edit {
+  background-color: #0d6efd;
+  border: none;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  border: none;
+  color: white;
+}
+
+/* =========================
+   TABLE WRAPPER
+   ========================= */
+
+.table-container {
+  overflow-x: auto;
+}
+
+/* =========================
+   HOME PAGE
    ========================= */
 
 .home-page {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 20px; /* space under menu */
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* =========================
-   BACKGROUND PANEL (VISIBLE NOW)
-   ========================= */
-
+/* FULL IMAGE BACKGROUND */
 .home-background {
-  width: 95%;
-  max-width: 1400px;
-
-  height: calc(100vh - 90px); /* menu safe */
   position: relative;
+  height: 100vh;
+  width: 100%;
 
   background-image: url("/images/hero.jpg");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-
-  border-radius: 24px;
-  overflow: hidden;
-
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* DARK OVERLAY */
-.home-background::after {
+/* FULL GLASS LAYER OVER IMAGE */
+.home-background::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+
+  background: rgba(0, 0, 0, 0.35);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-/* =========================
-   CONTENT CENTER
-   ========================= */
-
-.home-content {
+/* CONTENT WRAPPER */
+.home-overlay {
   position: relative;
-  z-index: 2;
-
   height: 100%;
-
   display: flex;
-  align-items: center;
   justify-content: center;
-
-  padding: 40px;
+  align-items: flex-start;
+  padding-top: 70px;
 }
 
-/* =========================
-   BLUR CARD (UNCHANGED)
-   ========================= */
-
-.hero-card {
+/* CENTERED CONTAINER */
+.home-container {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
+  padding: 0 20px;
+}
 
+/* GLASS CARD */
+.home-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 40px;
 
   padding: 40px;
   border-radius: 20px;
 
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.6s ease;
+}
+
+.home-card.fade-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* TEXT */
-.hero-title {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #ffffffcc;
+.home-text {
+  flex: 1;
+  color: white;
 }
 
-.hero-subtitle {
+.home-title {
+  font-size: 42px;
+  margin: 0 0 15px 0;
+}
+
+.home-subtitle {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.75);
+  opacity: 0.9;
 }
 
 /* ANIMATION */
-.hero-animation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+.home-animation {
+  width: 320px;
+  height: 320px;
+  flex-shrink: 0;
 
-/* FADE */
-.fade-in {
-  animation: fadeInUp 0.8s ease forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  filter: grayscale(1) brightness(2) contrast(1.5) invert(1);
+  transform: scale(1.05);
 }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .home-background {
-    width: 92%;
-  }
-
-  .hero-card {
+  .home-card {
     flex-direction: column;
     text-align: center;
     padding: 25px;
   }
 
-  .hero-title {
-    font-size: 28px;
+  .home-animation {
+    width: 240px;
+    height: 240px;
   }
 
-  .hero-subtitle {
-    font-size: 16px;
+  .home-title {
+    font-size: 28px;
   }
 }
+

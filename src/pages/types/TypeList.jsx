@@ -13,81 +13,73 @@ export default function TypeList() {
   }, []);
 
   async function load() {
-    try {
-      const res = await TypeService.get();
-      const data = res?.data ?? res;
-
-      setTypes(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error loading types:", error);
-      setTypes([]);
-    }
+    const result = await TypeService.get();
+    const data = result?.data ?? result;
+    setTypes(Array.isArray(data) ? data : []);
   }
 
   async function deleteType(id) {
     if (!window.confirm("Are you sure you want to delete this type?")) return;
-
-    try {
-      await TypeService.remove(id);
-      load();
-    } catch (error) {
-      console.error("Error deleting type:", error);
-    }
+    await TypeService.remove(id);
+    load();
   }
 
   return (
-    <div className="glass">
-      <h3>Types</h3>
+    <div className="page-wrapper">
+      <div className="page-container">
 
-      <Link
-        to={RouteNames.TYPES_NEW}
-        className="btn btn-primary w-100 my-3"
-      >
-        Add New Type
-      </Link>
+        <h2 className="page-title">Types</h2>
 
-      <div className="table-container">
-        <Table striped hover responsive className="align-middle">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <div className="page-card">
 
-          <tbody>
-            {types.map((type) => (
-              <tr key={type.id}>
-                <td>{type.id}</td>
-                <td>{type.name}</td>
+          <Link
+            to={RouteNames.TYPES_NEW}
+            className="btn btn-add w-100 mb-3"
+          >
+            Add New Type
+          </Link>
 
-                <td>
-                  <div className="d-flex align-items-center gap-2">
-                    
-                    {/* EDIT - Bootstrap primary (plavi) */}
-                    <Button
-                      size="sm"
-                      className="btn-edit"
-                      onClick={() => navigate(`/types/${type.id}`)}
-                    >
-                      Edit
-                    </Button>
+          <div className="table-container">
+            <Table striped hover responsive>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                    <Button
-                      size="sm"
-                      className="btn-delete"
-                      onClick={() => deleteType(type.id)}
-                    >
-                      Delete
-                    </Button>
+              <tbody>
+                {types.map((type) => (
+                  <tr key={type.id}>
+                    <td>{type.id}</td>
+                    <td>{type.name}</td>
 
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                    <td className="d-flex gap-2">
+                      <Button
+                        size="sm"
+                        className="btn-edit"
+                        onClick={() => navigate(`/types/${type.id}`)}
+                      >
+                        Edit
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        className="btn-delete"
+                        onClick={() => deleteType(type.id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </Table>
+          </div>
+
+        </div>
       </div>
     </div>
   );

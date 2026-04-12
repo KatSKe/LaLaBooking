@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import OffersService from "../../services/offers/OffersService";
 import { Button, Table } from "react-bootstrap";
-import { GrValidate } from "react-icons/gr";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
@@ -10,10 +9,7 @@ export default function OfferList() {
 
   const navigate = useNavigate();
 
-  // ADDED: state for offers
   const [offers, setOffers] = useState([]);
-
-  // ADDED: state for types + filter
   const [types, setTypes] = useState([]);
   const [selectedType, setSelectedType] = useState(0);
 
@@ -22,113 +18,108 @@ export default function OfferList() {
     loadTypes();
   }, []);
 
-  // ADDED: load types
   async function loadTypes() {
-    const res = await TypeService.get();
-    setTypes(res.data);
+    const result = await TypeService.get();
+    setTypes(result.data);
   }
 
   async function loadOffers() {
-    const response = await OffersService.get();
-    setOffers(response.data);
+    const result = await OffersService.get();
+    setOffers(result.data);
   }
 
   async function deleteOffer(id) {
-    if (!window.confirm("Are you sure?")) return;
-
+    if (!window.confirm("Are you sure you want to delete this offer?")) return;
     await OffersService.obrisi(id);
     loadOffers();
   }
 
-  function formatPrice(price) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price);
-  }
-
-  // ADDED: filtering logic
   const filteredOffers =
     selectedType === 0
       ? offers
       : offers.filter(o => o.typeId === selectedType);
 
   return (
-    <div className="bg-overlay">
+    <div className="page-wrapper">
+      <div className="page-container">
 
-      <Link to={RouteNames.OFFERS_CREATE} className="btn btn-add w-100 my-3">
-        Add New Offer
-      </Link>
+        <h2 className="page-title">Offers</h2>
 
-      {/* ADDED: TYPE FILTER */}
-      <select
-        className="form-select my-3"
-        onChange={(e) => setSelectedType(parseInt(e.target.value))}
-      >
-        <option value={0}>All Types</option>
-        {types.map(t => (
-          <option key={t.id} value={t.id}>{t.name}</option>
-        ))}
-      </select>
+        <div className="page-card">
 
-      {/* ADDED: responsive wrapper */}
-      <div className="table-responsive">
+          <Link
+            to={RouteNames.OFFERS_CREATE}
+            className="btn btn-add w-100 mb-3"
+          >
+            Add New Offer
+          </Link>
 
-        <Table striped hover>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Type</th> {/* ADDED */}
-              <th>Price</th>
-              <th>Active</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredOffers.map((offer) => (
-              <tr key={offer.sifra}>
-                <td>{offer.naziv}</td>
-                <td>{offer.opis}</td>
-
-                {/* ADDED: TYPE DISPLAY */}
-                <td>{offer.typeName || "-"}</td>
-
-                <td className="text-end">
-                  {formatPrice(offer.cijena)}
-                </td>
-
-                <td style={{ textAlign: "center" }}>
-                  <GrValidate color={offer.aktivan ? "green" : "red"} />
-                </td>
-
-                <td className="d-flex gap-2">
-                  <Button
-                    size="sm"
-                    className="btn-edit"
-                    onClick={() =>
-                      navigate(RouteNames.OFFERS_EDIT.replace(':sifra', offer.sifra))
-                    }
-                  >
-                    Edit
-                  </Button>
-
-                  <Button
-                    size="sm"
-                    className="btn-delete"
-                    onClick={() => deleteOffer(offer.sifra)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
+          <select
+            className="form-select mb-3"
+            onChange={(event) =>
+              setSelectedType(parseInt(event.target.value))
+            }
+          >
+            <option value={0}>All Types</option>
+            {types.map(type => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
             ))}
-          </tbody>
-        </Table>
+          </select>
 
+          <div className="table-container">
+            <Table striped hover responsive>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Type</th>
+                  <th>Price</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredOffers.map((offer) => (
+                  <tr key={offer.sifra}>
+                    <td>{offer.naziv}</td>
+                    <td>{offer.opis}</td>
+                    <td>{offer.typeName || "-"}</td>
+                    <td>{offer.cijena} €</td>
+                    <td>{offer.aktivan ? "Yes" : "No"}</td>
+
+                    <td className="d-flex gap-2">
+                      <Button
+                        size="sm"
+                        className="btn-edit"
+                        onClick={() =>
+                          navigate(
+                            RouteNames.OFFERS_EDIT.replace(":sifra", offer.sifra)
+                          )
+                        }
+                      >
+                        Edit
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        className="btn-delete"
+                        onClick={() => deleteOffer(offer.sifra)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </Table>
+          </div>
+
+        </div>
       </div>
-
     </div>
   );
 }

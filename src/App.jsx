@@ -21,11 +21,9 @@ import { RouteNames } from "./constants";
 export default function App() {
   return (
     <div className="app-shell">
-
       <Menu />
 
       <div className="app-view">
-
         <Routes>
           <Route path={RouteNames.HOME} element={<Home />} />
 
@@ -41,9 +39,7 @@ export default function App() {
           <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
           <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
         </Routes>
-
       </div>
-
     </div>
   );
 }
