@@ -7,7 +7,7 @@ export default function Menu() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // funkcija za aktivni link
+    // function for active link
     const isActive = (path) => location.pathname === path;
 
     return (
@@ -57,6 +57,15 @@ export default function Menu() {
                                 className={isActive(RouteNames.OFFERS) ? "fw-bold text-primary" : ""}
                             >
                                 Offers
+                            </NavDropdown.Item>
+
+                            <NavDropdown.Divider />
+
+                            <NavDropdown.Item
+                                onClick={() => navigate(RouteNames.BOOKING)}
+                                className={isActive(RouteNames.BOOKING) ? "fw-bold text-primary" : ""}
+                            >
+                                Booking
                             </NavDropdown.Item>
 
                         </NavDropdown>

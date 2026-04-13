@@ -12,9 +12,9 @@ export default function TypeCreate() {
     navigate(RouteNames.TYPES);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const data = new FormData(e.target);
+  function handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
 
     create({
       name: data.get("name")
@@ -22,31 +22,38 @@ export default function TypeCreate() {
   }
 
   return (
-    <>
-      <h3>Add New Type</h3>
+    <div className="page-wrapper">
+      <div className="page-container">
 
-      <Form onSubmit={handleSubmit}>
+        <h2 className="page-title">Add New Type</h2>
 
-        <Form.Group>
-          <Form.Label>Name</Form.Label>
-          <Form.Control name="name" required />
-        </Form.Group>
+        <div className="page-card">
 
-        <Row className="mt-3">
-          <Col>
-            <Link to={RouteNames.TYPES} className="btn btn-danger">
-              Cancel
-            </Link>
-          </Col>
+          <Form onSubmit={handleSubmit}>
 
-          <Col className="text-end">
-            <Button type="submit" variant="success">
-              Add Type
-            </Button>
-          </Col>
-        </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control name="name" required />
+            </Form.Group>
 
-      </Form>
-    </>
+            <Row className="mt-3">
+              <Col>
+                <Link to={RouteNames.TYPES} className="btn btn-danger w-100">
+                  Cancel
+                </Link>
+              </Col>
+
+              <Col>
+                <Button type="submit" variant="success" className="w-100">
+                  Add Type
+                </Button>
+              </Col>
+            </Row>
+
+          </Form>
+
+        </div>
+      </div>
+    </div>
   );
 }

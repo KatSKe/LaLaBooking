@@ -15,6 +15,8 @@ import TypeList from "./pages/types/TypeList";
 import TypeCreate from "./pages/types/TypeCreate";
 import TypeEdit from "./pages/types/TypeEdit";
 
+import BookingCreate from "./pages/booking/BookingCreate";
+
 import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
 
@@ -38,6 +40,8 @@ export default function App() {
           <Route path={RouteNames.TYPES} element={<TypeList />} />
           <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
           <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
+
+          <Route path={RouteNames.BOOKING} element={<BookingCreate />} />
         </Routes>
       </div>
     </div>
