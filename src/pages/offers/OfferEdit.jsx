@@ -1,150 +1,77 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Button, Card, Form } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import OffersService from "../../services/offers/OffersService";
-import { Button, Col, Form, Row } from "react-bootstrap";
 import { RouteNames } from "../../constants";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
 
 export default function OfferEdit() {
+  const navigate = useNavigate();
+  const { sifra } = useParams();
 
-    const navigate = useNavigate();
-    const { sifra } = useParams();
+  const [offer, setOffer] = useState({
+    naziv: "",
+    cijena: "",
+    opis: "",
+  });
 
-    const [offer, setOffer] = useState({});
-    const [aktivan, setAktivan] = useState(false);
+  useEffect(() => {
+    loadOffer();
+  }, []);
 
-    // ADDED: types
-    const [types, setTypes] = useState([]);
-    const [selectedType, setSelectedType] = useState("");
+  async function loadOffer() {
+    const res = await OffersService.getBySifra(sifra);
+    setOffer(res.data);
+  }
 
-    useEffect(() => {
-        loadOffer();
-        loadTypes();
-    }, []);
+  function handleChange(e) {
+    const { name, value } = e.target;
 
-    async function loadTypes() {
-        const res = await TypeService.get();
-        setTypes(res.data);
-    }
+    setOffer((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
 
-    async function loadOffer() {
-        const odgovor = await OffersService.getBySifra(sifra);
-        const o = odgovor.data;
+  async function save() {
+    await OffersService.promjeni(sifra, offer);
+    navigate(RouteNames.OFFERS);
+  }
 
-        setOffer(o);
-        setAktivan(o.aktivan ?? false);
-        setSelectedType(o.typeId ?? "");
-    }
+  return (
+    <div className="container py-4">
+      <h2 className="mb-4">Edit Offer</h2>
 
-    async function save(offer) {
-        await OffersService.promjeni(sifra, offer);
-        navigate(RouteNames.OFFERS);
-    }
+      <Card className="p-3">
+        <Form>
+          <Form.Control
+            className="mb-3"
+            placeholder="Offer Name"
+            name="naziv"
+            value={offer.naziv}
+            onChange={handleChange}
+          />
 
-    function onSubmit(e) {
-        e.preventDefault();
-        const data = new FormData(e.target);
+          <Form.Control
+            className="mb-3"
+            placeholder="Price"
+            name="cijena"
+            value={offer.cijena}
+            onChange={handleChange}
+          />
 
-        // ADDED: type logic
-        const typeId = parseInt(data.get("typeId"));
-        const selected = types.find(t => t.id === typeId);
+          <Form.Control
+            className="mb-3"
+            placeholder="Description"
+            name="opis"
+            value={offer.opis}
+            onChange={handleChange}
+          />
 
-        save({
-            naziv: data.get("naziv"),
-            opis: data.get("opis"),
-            cijena: parseFloat(data.get("cijena")),
-            aktivan,
-
-            // ADDED
-            typeId,
-            typeName: selected?.name
-        });
-    }
-
-    return (
-        <>
-            <h3>Edit Offer</h3>
-
-            <Form onSubmit={onSubmit}>
-
-                <Row>
-                    <Col md={6}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control
-                                name="naziv"
-                                defaultValue={offer.naziv}
-                            />
-                        </Form.Group>
-                    </Col>
-
-                    <Col md={6}>
-                        {/* ADDED: TYPE DROPDOWN */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Type</Form.Label>
-                            <Form.Select
-                                name="typeId"
-                                value={selectedType}
-                                onChange={(e) => setSelectedType(e.target.value)}
-                            >
-                                <option value="">Select type</option>
-                                {types.map(t => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                        name="opis"
-                        defaultValue={offer.opis}
-                    />
-                </Form.Group>
-
-                <Row>
-                    <Col md={6}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Price</Form.Label>
-                            <Form.Control
-                                name="cijena"
-                                type="number"
-                                step={0.01}
-                                defaultValue={offer.cijena}
-                            />
-                        </Form.Group>
-                    </Col>
-
-                    <Col md={6} className="d-flex align-items-center">
-                        <Form.Group>
-                            <Form.Check
-                                label="Active"
-                                checked={aktivan}
-                                onChange={(e) => setAktivan(e.target.checked)}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
-
-                <Row className="mt-3">
-                    <Col>
-                        <Link to={RouteNames.OFFERS} className="btn btn-danger w-100">
-                            Cancel
-                        </Link>
-                    </Col>
-
-                    <Col>
-                        <Button type="submit" variant="success" className="w-100">
-                            Save
-                        </Button>
-                    </Col>
-                </Row>
-
-            </Form>
-        </>
-    );
+          <Button variant="success" onClick={save}>
+            Save Changes
+          </Button>
+        </Form>
+      </Card>
+    </div>
+  );
 }

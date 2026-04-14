@@ -41,6 +41,7 @@ export default function App() {
           <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
           <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
 
+          {/* Booking (single flow only) */}
           <Route path={RouteNames.BOOKING} element={<BookingCreate />} />
         </Routes>
       </div>

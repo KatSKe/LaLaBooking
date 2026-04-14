@@ -14,13 +14,25 @@ export default function UserList() {
 
   async function loadUsers() {
     const response = await UserService.get();
-    setUsers(response.data);
+    setUsers(response.data || []);
   }
 
   async function deleteUser(id) {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     await UserService.obrisi(id);
     loadUsers();
+  }
+
+  function getValue(user, newKey, oldKey) {
+    return user?.[newKey] ?? user?.[oldKey] ?? "";
+  }
+
+  function getCity(user) {
+    return user?.city ?? user?.adresa?.mjesto ?? "";
+  }
+
+  function getPhone(user) {
+    return user?.phoneNumber ?? user?.kontaktBroj ?? "";
   }
 
   return (
@@ -55,16 +67,27 @@ export default function UserList() {
 
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.sifra}>
-                    <td>{user.ime}</td>
-                    <td>{user.prezime}</td>
-                    <td>{user.spol}</td>
+                  <tr key={user.sifra || user.id}>
+
+                    <td>{getValue(user, "firstName", "ime")}</td>
+
+                    <td>{getValue(user, "lastName", "prezime")}</td>
+
+                    <td>{getValue(user, "gender", "spol")}</td>
+
                     <td>
-                      {new Date(user.datumRodenja).toLocaleDateString("en-GB")}
+                      {user.dateOfBirth || user.datumRodenja
+                        ? new Date(
+                            user.dateOfBirth || user.datumRodenja
+                          ).toLocaleDateString("en-GB")
+                        : ""}
                     </td>
+
                     <td>{user.email}</td>
-                    <td>{user.kontaktBroj}</td>
-                    <td>{user.adresa?.mjesto}</td>
+
+                    <td>{getPhone(user)}</td>
+
+                    <td>{getCity(user)}</td>
 
                     <td className="d-flex gap-2">
                       <Button
@@ -83,6 +106,7 @@ export default function UserList() {
                         Delete
                       </Button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

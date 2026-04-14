@@ -1,65 +1,59 @@
 import { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Button, Card, Form } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
 import { RouteNames } from "../../constants";
 
 export default function TypeEdit() {
-
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [type, setType] = useState(null);
+  const [type, setType] = useState({
+    naziv: "",
+  });
 
   useEffect(() => {
-    load();
+    loadType();
   }, []);
 
-  async function load() {
-    const res = await TypeService.getById(id);
+  async function loadType() {
+    const res = await TypeService.getBySifra(id);
     setType(res.data);
   }
 
   function handleChange(e) {
-    setType({
-      ...type,
-      name: e.target.value
-    });
+    const { name, value } = e.target;
+
+    setType((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    await TypeService.update(id, type);
+  async function save() {
+    await TypeService.promjeni(id, type);
     navigate(RouteNames.TYPES);
   }
 
-  if (!type) return null;
-
   return (
-    <>
-      <h3>Edit Type</h3>
+    <div className="container py-4">
+      <h2 className="mb-4">Edit Type</h2>
 
-      <Form onSubmit={handleSubmit}>
-
-        <Form.Group>
-          <Form.Label>Name</Form.Label>
+      <Card className="p-3">
+        <Form>
           <Form.Control
-            value={type.name || ""}
+            className="mb-3"
+            placeholder="Type Name"
+            name="naziv"
+            value={type.naziv}
             onChange={handleChange}
           />
-        </Form.Group>
 
-        <div className="d-flex gap-2 mt-3">
-          <Link to={RouteNames.TYPES} className="btn btn-danger">
-            Cancel
-          </Link>
-
-          <Button type="submit">
+          <Button variant="success" onClick={save}>
             Save Changes
           </Button>
-        </div>
-
-      </Form>
-    </>
+        </Form>
+      </Card>
+    </div>
   );
 }

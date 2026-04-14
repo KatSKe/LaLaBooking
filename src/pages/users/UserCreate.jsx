@@ -1,65 +1,155 @@
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
+
 import UserService from "../../services/users/UserService";
 
 export default function UserCreate() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-    async function createUser(user) {
-        await UserService.create(user);
-        navigate(RouteNames.USERS);
+  const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
+    gender: "",
+    dateOfBirth: "",
+    email: "",
+    phoneNumber: "",
+    city: "",
+  });
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+
+    setUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  function isValidPhoneNumber(phone) {
+    const regex = /^\+385\d{8,9}$/;
+    return regex.test(phone);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // reset error
+    setError("");
+
+    // validation
+    if (!isValidPhoneNumber(user.phoneNumber)) {
+      setError("Phone number must be in format +385912345678");
+      return;
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        const data = new FormData(event.target);
+    await UserService.dodaj(user);
 
-        createUser({
-            name: data.get("name"),
-            email: data.get("email")
-        });
-    }
+    navigate(RouteNames.USERS);
+  }
 
-    return (
-        <div className="page-wrapper">
-            <div className="page-container">
+  return (
+    <div className="container py-4">
+      <Card className="p-4">
+        <h2 className="mb-4">Add New User</h2>
 
-                <h2 className="page-title">Add New User</h2>
+        <Form onSubmit={handleSubmit}>
+          <Row className="g-3">
 
-                <div className="page-card">
+            <Col md={6}>
+              <Form.Label>First Name</Form.Label>
+              <Form.Control
+                name="firstName"
+                value={user.firstName}
+                onChange={handleChange}
+                required
+              />
+            </Col>
 
-                    <Form onSubmit={handleSubmit}>
+            <Col md={6}>
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control
+                name="lastName"
+                value={user.lastName}
+                onChange={handleChange}
+                required
+              />
+            </Col>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" name="name" required />
-                        </Form.Group>
+            <Col md={6}>
+              <Form.Label>Gender</Form.Label>
+              <Form.Select
+                name="gender"
+                value={user.gender}
+                onChange={handleChange}
+              >
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Form.Select>
+            </Col>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" name="email" required />
-                        </Form.Group>
+            <Col md={6}>
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                name="dateOfBirth"
+                value={user.dateOfBirth}
+                onChange={handleChange}
+              />
+            </Col>
 
-                        <Row className="mt-3">
-                            <Col>
-                                <Link to={RouteNames.USERS} className="btn btn-danger w-100">
-                                    Cancel
-                                </Link>
-                            </Col>
+            <Col md={6}>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={user.email}
+                onChange={handleChange}
+                required
+              />
+            </Col>
 
-                            <Col>
-                                <Button type="submit" variant="success" className="w-100">
-                                    Add User
-                                </Button>
-                            </Col>
-                        </Row>
+            <Col md={6}>
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
+                name="phoneNumber"
+                value={user.phoneNumber}
+                onChange={handleChange}
+                placeholder="+385912345678"
+                isInvalid={!!error}
+              />
+              <Form.Control.Feedback type="invalid">
+                {error}
+              </Form.Control.Feedback>
+            </Col>
 
-                    </Form>
+            <Col md={12}>
+              <Form.Label>City</Form.Label>
+              <Form.Control
+                name="city"
+                value={user.city}
+                onChange={handleChange}
+              />
+            </Col>
 
-                </div>
-            </div>
-        </div>
-    );
+          </Row>
+
+          <div className="mt-4 d-flex justify-content-end gap-2">
+            <Link to={RouteNames.USERS} className="btn btn-secondary">
+              Cancel
+            </Link>
+
+            <Button type="submit" variant="primary">
+              Save User
+            </Button>
+          </div>
+        </Form>
+      </Card>
+    </div>
+  );
 }
