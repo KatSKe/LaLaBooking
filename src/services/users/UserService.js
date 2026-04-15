@@ -1,13 +1,13 @@
 import UserServiceLocalStorage from "./UserServiceLocalStorage";
-import UserServiceMemorija from "./UserServiceMemory";
+import UserServiceMemory from "./UserServiceMemory";
 import { DATA_SOURCE } from "../../constants";
 
 let Servis = null;
 
-// Odabir izvora podataka
+// DATA SOURCE SELECTION
 switch (DATA_SOURCE) {
-  case "memorija":
-    Servis = UserServiceMemorija;
+  case "memory":
+    Servis = UserServiceMemory;
     break;
 
   case "localStorage":
@@ -15,23 +15,22 @@ switch (DATA_SOURCE) {
     break;
 
   default:
-    console.warn("Nepoznat DATA_SOURCE:", DATA_SOURCE);
-    Servis = null;
+    console.warn("Unknown DATA_SOURCE:", DATA_SOURCE);
+    Servis = UserServiceLocalStorage; // safe fallback
 }
 
-// Fallback ako servis nije definiran
+// SAFE FALLBACK SERVICE
 const PrazanServis = {
   get: async () => ({ success: false, data: [] }),
   getBySifra: async () => ({ success: false, data: {} }),
-  dodaj: async () => ({ success: false, message: "UserService nije učitan" }),
-  promjeni: async () => ({ success: false, message: "UserService nije učitan" }),
-  obrisi: async () => ({ success: false, message: "UserService nije učitan" }),
+  dodaj: async () => ({ success: false, message: "UserService not loaded" }),
+  promjeni: async () => ({ success: false, message: "UserService not loaded" }),
+  obrisi: async () => ({ success: false, message: "UserService not loaded" }),
 };
 
-// Aktivni servis
+// ACTIVE SERVICE
 const AktivniServis = Servis || PrazanServis;
 
-// Export API
 export default {
   get: async () => await AktivniServis.get(),
 

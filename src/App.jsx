@@ -15,11 +15,11 @@ import TypeList from "./pages/types/TypeList";
 import TypeCreate from "./pages/types/TypeCreate";
 import TypeEdit from "./pages/types/TypeEdit";
 
+import BookingList from "./pages/booking/BookingList";
 import BookingCreate from "./pages/booking/BookingCreate";
 
 import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
-import BookingList from "./pages/booking/BookingList";
 
 export default function App() {
   return (
@@ -28,6 +28,7 @@ export default function App() {
 
       <div className="app-view">
         <Routes>
+
           <Route path={RouteNames.HOME} element={<Home />} />
 
           <Route path={RouteNames.OFFERS} element={<OfferList />} />
@@ -42,9 +43,9 @@ export default function App() {
           <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
           <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
 
-          {/* Booking (single flow only) */}
-          <Route path={RouteNames.BOOKING} element={<BookingList />} />
-          <Route path={RouteNames.BOKING_CREATE} element={<BookingCreate />} />
+          <Route path={RouteNames.BOOKINGS} element={<BookingList />} />
+          <Route path={RouteNames.BOOKINGS_CREATE} element={<BookingCreate />} />
+
         </Routes>
       </div>
     </div>

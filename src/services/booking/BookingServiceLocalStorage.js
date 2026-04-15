@@ -17,34 +17,43 @@ export default {
 
   getById: async (id) => ({
     success: true,
-    data: getData().find((b) => b.id == id),
+    data: getData().find((b) => String(b.id) === String(id)),
   }),
 
   dodaj: async (booking) => {
     const data = getData();
 
-    booking.id = Date.now();
+    const newBooking = {
+      ...booking,
+      id: Date.now(),
+    };
 
-    data.push(booking);
+    data.push(newBooking);
     saveData(data);
 
-    return { success: true };
+    return { success: true, data: newBooking };
   },
 
   promjeni: async (id, booking) => {
     const data = getData();
-    const index = data.findIndex((b) => b.id == id);
+    const index = data.findIndex((b) => String(b.id) === String(id));
 
     if (index !== -1) {
-      data[index] = booking;
+      data[index] = {
+        ...data[index],
+        ...booking,
+        id: data[index].id,
+      };
+
       saveData(data);
+      return { success: true, data: data[index] };
     }
 
-    return { success: true };
+    return { success: false, message: "Booking not found" };
   },
 
   obrisi: async (id) => {
-    const data = getData().filter((b) => b.id != id);
+    const data = getData().filter((b) => String(b.id) !== String(id));
     saveData(data);
 
     return { success: true };

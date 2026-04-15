@@ -1,68 +1,41 @@
 import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
 import BookingService from "../../services/booking/BookingService";
-import UsersService from "../../services/users/UserServiceLocalStorage";
-import OffersService from "../../services/offers/OffersService";
-
 import { RouteNames } from "../../constants";
 
 export default function BookingList() {
+  const [bookings, setBookings] = useState([]);
   const navigate = useNavigate();
 
-  const [bookings, setBookings] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [offers, setOffers] = useState([]);
-
   useEffect(() => {
-    loadAll();
+    loadBookings();
   }, []);
 
-  async function loadAll() {
-    const b = await BookingService.get();
-    const u = await UsersService.get();
-    const o = await OffersService.get();
-
-    setBookings(b.data || []);
-    setUsers(u.data || []);
-    setOffers(o.data || []);
+  async function loadBookings() {
+    const res = await BookingService.get();
+    setBookings(res.data || []);
   }
 
-  function getUserName(userId) {
-    const user = users.find(
-      (u) => u.id == userId || u.sifra == userId
-    );
-
-    return user
-      ? `${user.firstName} ${user.lastName}`
-      : "Unknown";
+  function getUserName(b) {
+    const firstName = b.user?.firstName || b.user?.ime || "";
+    const lastName = b.user?.lastName || b.user?.prezime || "";
+    return `${firstName} ${lastName}`.trim() || "No user";
   }
 
-  function getOfferName(offerId) {
-    const offer = offers.find(
-      (o) => o.id == offerId || o.sifra == offerId
-    );
-
-    return offer?.naziv || offer?.name || "Unknown";
+  function getOfferName(b) {
+    return b.offer?.name || b.offer?.naziv || b.offer?.title || "";
   }
 
-  async function deleteBooking(id) {
-    if (!window.confirm("Delete booking?")) return;
-
-    await BookingService.obrisi(id);
-    loadAll();
+  function goToCreate() {
+    navigate(RouteNames.BOOKINGS_CREATE);
   }
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Bookings</h2>
+      <h2 className="mb-3">Bookings</h2>
 
-      <Button
-        className="mb-3"
-        variant="primary"
-        onClick={() => navigate(RouteNames.BOKING_CREATE)}
-      >
+      <Button className="mb-3" onClick={goToCreate}>
         Add New Booking
       </Button>
 
@@ -82,9 +55,9 @@ export default function BookingList() {
 
         <tbody>
           {bookings.map((b) => (
-            <tr key={b.id}>
-              <td>{getUserName(b.user)}</td>
-              <td>{getOfferName(b.offer)}</td>
+            <tr key={b.id || b.sifra}>
+              <td>{getUserName(b)}</td>
+              <td>{getOfferName(b)}</td>
               <td>{b.startDate}</td>
               <td>{b.endDate}</td>
               <td>{b.numberOfRooms}</td>
@@ -92,20 +65,10 @@ export default function BookingList() {
               <td>{b.kids}</td>
 
               <td>
-                <Button
-                  size="sm"
-                  variant="warning"
-                  className="me-2"
-                  onClick={() => navigate(`/booking/${b.id}`)}
-                >
+                <Button size="sm" variant="warning" className="me-2">
                   Edit
                 </Button>
-
-                <Button
-                  size="sm"
-                  variant="danger"
-                  onClick={() => deleteBooking(b.id)}
-                >
+                <Button size="sm" variant="danger">
                   Delete
                 </Button>
               </td>

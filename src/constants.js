@@ -1,4 +1,4 @@
-export const IME_APLIKACIJE = "LaLa Booking";
+export const APP_NAME = "LaLa Booking";
 
 export const RouteNames = {
   HOME: "/",
@@ -15,8 +15,9 @@ export const RouteNames = {
   TYPES_NEW: "/types/new",
   TYPES_EDIT: "/types/:id",
 
-  BOOKING: "/booking",
-  BOKING_CREATE: "/booking/new"
+  BOOKINGS: "/bookings",
+  BOOKINGS_CREATE: "/bookings/new",
+  BOOKINGS_EDIT: "/bookings/:id",
 };
 
 // memory, localStorage, firebase
