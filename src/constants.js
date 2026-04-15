@@ -16,6 +16,7 @@ export const RouteNames = {
   TYPES_EDIT: "/types/:id",
 
   BOOKING: "/booking",
+  BOKING_CREATE: "/booking/new"
 };
 
 // memory, localStorage, firebase

@@ -19,6 +19,7 @@ import BookingCreate from "./pages/booking/BookingCreate";
 
 import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
+import BookingList from "./pages/booking/BookingList";
 
 export default function App() {
   return (
@@ -42,7 +43,8 @@ export default function App() {
           <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
 
           {/* Booking (single flow only) */}
-          <Route path={RouteNames.BOOKING} element={<BookingCreate />} />
+          <Route path={RouteNames.BOOKING} element={<BookingList />} />
+          <Route path={RouteNames.BOKING_CREATE} element={<BookingCreate />} />
         </Routes>
       </div>
     </div>

@@ -61,7 +61,7 @@ export default function BookingList() {
       <Button
         className="mb-3"
         variant="primary"
-        onClick={() => navigate(RouteNames.BOOKING)}
+        onClick={() => navigate(RouteNames.BOKING_CREATE)}
       >
         Add New Booking
       </Button>
