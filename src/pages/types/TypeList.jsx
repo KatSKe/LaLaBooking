@@ -25,61 +25,53 @@ export default function TypeList() {
   }
 
   return (
-    <div className="page-wrapper">
-      <div className="page-container">
+    <div className="container py-4">
+      <h2 className="mb-3">Types</h2>
 
-        <h2 className="page-title">Types</h2>
+      <Link
+        to={RouteNames.TYPES_NEW}
+        className="btn btn-primary w-100 mb-3"
+      >
+        Add New Type
+      </Link>
 
-        <div className="page-card">
+      <div className="table-responsive">
+        <Table striped hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-          <Link
-            to={RouteNames.TYPES_NEW}
-            className="btn btn-add w-100 mb-3"
-          >
-            Add New Type
-          </Link>
+          <tbody>
+            {types.map((type) => (
+              <tr key={type.id}>
+                <td>{type.id}</td>
+                <td>{type.name}</td>
 
-          <div className="table-container">
-            <Table striped hover responsive>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+                <td className="d-flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    onClick={() => navigate(`/types/${type.id}`)}
+                  >
+                    Edit
+                  </Button>
 
-              <tbody>
-                {types.map((type) => (
-                  <tr key={type.id}>
-                    <td>{type.id}</td>
-                    <td>{type.name}</td>
-
-                    <td className="d-flex gap-2">
-                      <Button
-                        size="sm"
-                        className="btn-edit"
-                        onClick={() => navigate(`/types/${type.id}`)}
-                      >
-                        Edit
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        className="btn-delete"
-                        onClick={() => deleteType(type.id)}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </Table>
-          </div>
-
-        </div>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => deleteType(type.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
     </div>
   );

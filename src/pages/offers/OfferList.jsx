@@ -6,7 +6,6 @@ import { RouteNames } from "../../constants";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
 
 export default function OfferList() {
-
   const navigate = useNavigate();
 
   const [offers, setOffers] = useState([]);
@@ -20,12 +19,12 @@ export default function OfferList() {
 
   async function loadTypes() {
     const result = await TypeService.get();
-    setTypes(result.data);
+    setTypes(result.data || []);
   }
 
   async function loadOffers() {
     const result = await OffersService.get();
-    setOffers(result.data);
+    setOffers(result.data || []);
   }
 
   async function deleteOffer(id) {
@@ -37,88 +36,76 @@ export default function OfferList() {
   const filteredOffers =
     selectedType === 0
       ? offers
-      : offers.filter(o => o.typeId === selectedType);
+      : offers.filter((o) => o.typeId === selectedType);
 
   return (
-    <div className="page-wrapper">
-      <div className="page-container">
+    <div className="container py-4">
+      <h2 className="mb-3">Offers</h2>
 
-        <h2 className="page-title">Offers</h2>
+      <Link
+        to={RouteNames.OFFERS_CREATE}
+        className="btn btn-primary w-100 mb-3"
+      >
+        Add New Offer
+      </Link>
 
-        <div className="page-card">
+      <select
+        className="form-select mb-3"
+        onChange={(e) => setSelectedType(parseInt(e.target.value))}
+      >
+        <option value={0}>All Types</option>
+        {types.map((type) => (
+          <option key={type.id} value={type.id}>
+            {type.name}
+          </option>
+        ))}
+      </select>
 
-          <Link
-            to={RouteNames.OFFERS_CREATE}
-            className="btn btn-add w-100 mb-3"
-          >
-            Add New Offer
-          </Link>
+      <div className="table-responsive">
+        <Table striped hover>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-          <select
-            className="form-select mb-3"
-            onChange={(event) =>
-              setSelectedType(parseInt(event.target.value))
-            }
-          >
-            <option value={0}>All Types</option>
-            {types.map(type => (
-              <option key={type.id} value={type.id}>
-                {type.name}
-              </option>
+          <tbody>
+            {filteredOffers.map((offer) => (
+              <tr key={offer.sifra}>
+                <td>{offer.naziv}</td>
+                <td>{offer.opis}</td>
+                <td>{offer.typeName || "-"}</td>
+                <td>{offer.cijena} €</td>
+                <td>{offer.aktivan ? "Yes" : "No"}</td>
+
+                <td className="d-flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    onClick={() =>
+                      navigate(RouteNames.OFFERS_EDIT.replace(":sifra", offer.sifra))
+                    }
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => deleteOffer(offer.sifra)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
             ))}
-          </select>
-
-          <div className="table-container">
-            <Table striped hover responsive>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Price</th>
-                  <th>Active</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredOffers.map((offer) => (
-                  <tr key={offer.sifra}>
-                    <td>{offer.naziv}</td>
-                    <td>{offer.opis}</td>
-                    <td>{offer.typeName || "-"}</td>
-                    <td>{offer.cijena} €</td>
-                    <td>{offer.aktivan ? "Yes" : "No"}</td>
-
-                    <td className="d-flex gap-2">
-                      <Button
-                        size="sm"
-                        className="btn-edit"
-                        onClick={() =>
-                          navigate(
-                            RouteNames.OFFERS_EDIT.replace(":sifra", offer.sifra)
-                          )
-                        }
-                      >
-                        Edit
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        className="btn-delete"
-                        onClick={() => deleteOffer(offer.sifra)}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </Table>
-          </div>
-
-        </div>
+          </tbody>
+        </Table>
       </div>
     </div>
   );

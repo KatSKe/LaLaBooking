@@ -6,112 +6,180 @@ import OffersService from "../../services/offers/OffersService";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
 
 export default function OfferCreate() {
+  const navigate = useNavigate();
+  const [types, setTypes] = useState([]);
 
-    const navigate = useNavigate();
-    const [types, setTypes] = useState([]);
+  const [offer, setOffer] = useState({
+    naziv: "",
+    opis: "",
+    cijena: "",
+    typeId: "",
+    aktivan: false,
+  });
 
-    useEffect(() => {
-        loadTypes();
-    }, []);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
-    async function loadTypes() {
-        const result = await TypeService.get();
-        setTypes(result.data);
-    }
+  useEffect(() => {
+    loadTypes();
+  }, []);
 
-    async function createOffer(offer) {
-        await OffersService.dodaj(offer);
-        navigate(RouteNames.OFFERS);
-    }
+  async function loadTypes() {
+    const result = await TypeService.get();
+    setTypes(result.data || []);
+  }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        const data = new FormData(event.target);
+  function validate(values = offer) {
+    const err = {};
 
-        const typeId = parseInt(data.get("typeId"));
-        const selectedType = types.find(t => t.id === typeId);
+    if (!values.naziv?.trim()) err.naziv = "Name is required";
+    if (!values.typeId) err.typeId = "Type is required";
+    if (!values.cijena && values.cijena !== 0) err.cijena = "Price is required";
 
-        createOffer({
-            naziv: data.get("naziv"),
-            opis: data.get("opis"),
-            cijena: parseFloat(data.get("cijena")),
-            aktivan: data.get("aktivan") === "on",
-            typeId,
-            typeName: selectedType?.name
-        });
-    }
+    return err;
+  }
 
-    return (
-        <div className="page-wrapper">
-            <div className="page-container">
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate(offer));
+  }
 
-                <h2 className="page-title">Add New Offer</h2>
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
 
-                <div className="page-card">
+    const updated = {
+      ...offer,
+      [name]: type === "checkbox" ? checked : value,
+    };
 
-                    <Form onSubmit={handleSubmit}>
+    setOffer(updated);
+    setErrors(validate(updated));
+  }
 
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Name</Form.Label>
-                                    <Form.Control type="text" name="naziv" required />
-                                </Form.Group>
-                            </Col>
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Type</Form.Label>
-                                    <Form.Select name="typeId" required>
-                                        <option value="">Select type</option>
-                                        {types.map(type => (
-                                            <option key={type.id} value={type.id}>
-                                                {type.name}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
+    const err = validate(offer);
+    setErrors(err);
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control type="text" name="opis" />
-                        </Form.Group>
+    setTouched({
+      naziv: true,
+      typeId: true,
+      cijena: true,
+    });
 
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Price</Form.Label>
-                                    <Form.Control type="number" name="cijena" step={0.01} />
-                                </Form.Group>
-                            </Col>
+    if (Object.keys(err).length > 0) return;
 
-                            <Col md={6} className="d-flex align-items-center">
-                                <Form.Group>
-                                    <Form.Check label="Active" name="aktivan" />
-                                </Form.Group>
-                            </Col>
-                        </Row>
+    const type = types.find((t) => t.id === parseInt(offer.typeId));
 
-                        <Row className="mt-3">
-                            <Col>
-                                <Link to={RouteNames.OFFERS} className="btn btn-danger w-100">
-                                    Cancel
-                                </Link>
-                            </Col>
+    await OffersService.dodaj({
+      ...offer,
+      typeId: parseInt(offer.typeId),
+      typeName: type?.name || "",
+    });
 
-                            <Col>
-                                <Button type="submit" variant="success" className="w-100">
-                                    Add New Offer
-                                </Button>
-                            </Col>
-                        </Row>
+    navigate(RouteNames.OFFERS);
+  }
 
-                    </Form>
+  const showError = (field) => touched[field] && errors[field];
 
-                </div>
+  return (
+    <div className="page-wrapper">
+      <div className="page-container">
+
+        <h2 className="page-title">Add New Offer</h2>
+
+        <div className="page-card">
+
+          <Form onSubmit={handleSubmit}>
+
+            <Row className="g-3">
+
+              <Col md={6}>
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  name="naziv"
+                  value={offer.naziv}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("naziv")}
+                  isInvalid={showError("naziv")}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.naziv}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={6}>
+                <Form.Label>Type</Form.Label>
+                <Form.Select
+                  name="typeId"
+                  value={offer.typeId}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("typeId")}
+                  isInvalid={showError("typeId")}
+                >
+                  <option value="">Select type</option>
+                  {types.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Form.Select>
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.typeId}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={12}>
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  name="opis"
+                  value={offer.opis}
+                  onChange={handleChange}
+                />
+              </Col>
+
+              <Col md={6}>
+                <Form.Label>Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="cijena"
+                  value={offer.cijena}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("cijena")}
+                  isInvalid={showError("cijena")}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.cijena}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={6} className="d-flex align-items-end">
+                <Form.Check
+                  label="Active"
+                  name="aktivan"
+                  checked={offer.aktivan}
+                  onChange={handleChange}
+                />
+              </Col>
+
+            </Row>
+
+            <div className="mt-4 d-flex gap-2">
+              <Link to={RouteNames.OFFERS} className="btn btn-secondary w-100">
+                Cancel
+              </Link>
+
+              <Button type="submit" className="btn btn-success w-100">
+                Save Offer
+              </Button>
             </div>
+
+          </Form>
+
         </div>
-    );
+      </div>
+    </div>
+  );
 }

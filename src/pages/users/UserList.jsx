@@ -36,85 +36,67 @@ export default function UserList() {
   }
 
   return (
-    <div className="page-wrapper">
-      <div className="page-container">
+    <div className="container py-4">
+      <h2 className="mb-3">Users</h2>
 
-        <h2 className="page-title">Users</h2>
+      <Link
+        to={RouteNames.USERS_NEW}
+        className="btn btn-primary w-100 mb-3"
+      >
+        Add New User
+      </Link>
 
-        <div className="page-card">
+      <div className="table-responsive">
+        <Table striped hover>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Gender</th>
+              <th>Date of Birth</th>
+              <th>Email</th>
+              <th>Phone Number</th>
+              <th>City</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-          <Link
-            to={RouteNames.USERS_NEW}
-            className="btn btn-add w-100 mb-3"
-          >
-            Add New User
-          </Link>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.sifra || user.id}>
+                <td>{getValue(user, "firstName", "ime")}</td>
+                <td>{getValue(user, "lastName", "prezime")}</td>
+                <td>{getValue(user, "gender", "spol")}</td>
+                <td>
+                  {user.dateOfBirth || user.datumRodenja
+                    ? new Date(user.dateOfBirth || user.datumRodenja).toLocaleDateString("en-GB")
+                    : ""}
+                </td>
+                <td>{user.email}</td>
+                <td>{getPhone(user)}</td>
+                <td>{getCity(user)}</td>
 
-          <div className="table-container">
-            <Table striped hover responsive>
-              <thead>
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Gender</th>
-                  <th>Date of Birth</th>
-                  <th>Email</th>
-                  <th>Phone Number</th>
-                  <th>City</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+                <td className="d-flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    onClick={() => navigate(`/users/${user.sifra}`)}
+                  >
+                    Edit
+                  </Button>
 
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.sifra || user.id}>
-
-                    <td>{getValue(user, "firstName", "ime")}</td>
-
-                    <td>{getValue(user, "lastName", "prezime")}</td>
-
-                    <td>{getValue(user, "gender", "spol")}</td>
-
-                    <td>
-                      {user.dateOfBirth || user.datumRodenja
-                        ? new Date(
-                            user.dateOfBirth || user.datumRodenja
-                          ).toLocaleDateString("en-GB")
-                        : ""}
-                    </td>
-
-                    <td>{user.email}</td>
-
-                    <td>{getPhone(user)}</td>
-
-                    <td>{getCity(user)}</td>
-
-                    <td className="d-flex gap-2">
-                      <Button
-                        size="sm"
-                        className="btn-edit"
-                        onClick={() => navigate(`/users/${user.sifra}`)}
-                      >
-                        Edit
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        className="btn-delete"
-                        onClick={() => deleteUser(user.sifra)}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-
-            </Table>
-          </div>
-
-        </div>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => deleteUser(user.sifra)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
     </div>
   );

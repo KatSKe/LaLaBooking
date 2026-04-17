@@ -2,35 +2,55 @@ import BookingServiceLocalStorage from "./BookingServiceLocalStorage";
 import BookingServiceMemory from "./BookingServiceMemory";
 import { DATA_SOURCE } from "../../constants";
 
-let Servis = null;
+function getService() {
+  switch (DATA_SOURCE) {
+    case "memorija":
+      return BookingServiceMemory;
 
-switch (DATA_SOURCE) {
-  case "memorija":
-    Servis = BookingServiceMemory;
-    break;
+    case "localStorage":
+      return BookingServiceLocalStorage;
 
-  case "localStorage":
-    Servis = BookingServiceLocalStorage;
-    break;
-
-  default:
-    Servis = null;
+    default:
+      console.warn("⚠️ BookingService: DATA_SOURCE is not valid!");
+      return null;
+  }
 }
 
-const PrazanServis = {
-  get: async () => ({ success: false, data: [] }),
-  getById: async () => ({ success: false, data: {} }),
-  dodaj: async () => console.error("BookingService not loaded"),
-  promjeni: async () => console.error("BookingService not loaded"),
-  obrisi: async () => console.error("BookingService not loaded"),
+const Servis = getService();
+
+const fallbackService = {
+  get: async () => ({
+    success: false,
+    data: [],
+    message: "Service not initialized",
+  }),
+
+  getById: async () => ({
+    success: false,
+    data: null,
+    message: "Service not initialized",
+  }),
+
+  dodaj: async () =>
+    console.error("❌ BookingService not initialized (dodaj)"),
+
+  promjeni: async () =>
+    console.error("❌ BookingService not initialized (promjeni)"),
+
+  obrisi: async () =>
+    console.error("❌ BookingService not initialized (obrisi)"),
 };
 
-const AktivniServis = Servis || PrazanServis;
+const ActiveService = Servis || fallbackService;
 
 export default {
-  get: () => AktivniServis.get(),
-  getById: (id) => AktivniServis.getById(id),
-  dodaj: (booking) => AktivniServis.dodaj(booking),
-  promjeni: (id, booking) => AktivniServis.promjeni(id, booking),
-  obrisi: (id) => AktivniServis.obrisi(id),
+  get: () => ActiveService.get(),
+
+  getById: (id) => ActiveService.getById(id),
+
+  dodaj: (booking) => ActiveService.dodaj(booking),
+
+  promjeni: (id, booking) => ActiveService.promjeni(id, booking),
+
+  obrisi: (id) => ActiveService.obrisi(id),
 };

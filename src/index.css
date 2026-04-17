@@ -35,7 +35,7 @@
   z-index: 2;
 }
 
-/* GLASS CARD (STABLE) */
+/* GLASS CARD */
 .home-card {
   display: flex;
   align-items: center;
@@ -81,14 +81,12 @@
   line-height: 1.5;
 }
 
-/* LOTTIE (ORIGINAL SIZE) */
+/* LOTTIE */
 .home-animation {
   width: 260px;
   height: 260px;
 
   flex-shrink: 0;
-  flex: 0 0 auto;
-
   filter: brightness(0) invert(1);
 }
 

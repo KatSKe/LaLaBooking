@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-
 import UserService from "../../services/users/UserService";
 
 export default function UserCreate() {
   const navigate = useNavigate();
 
-  const [error, setError] = useState("");
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
 
   const [user, setUser] = useState({
     firstName: "",
@@ -23,33 +23,52 @@ export default function UserCreate() {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    setUser((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const updated = { ...user, [name]: value };
+    setUser(updated);
+    setErrors(validate(updated));
   }
 
-  function isValidPhoneNumber(phone) {
-    const regex = /^\+385\d{8,9}$/;
-    return regex.test(phone);
+  function validate(values = user) {
+    const err = {};
+
+    if (!values.firstName) err.firstName = "Required";
+    if (!values.lastName) err.lastName = "Required";
+    if (!values.email) err.email = "Required";
+    if (!values.gender) err.gender = "Required";
+    if (!values.dateOfBirth) err.dateOfBirth = "Required";
+    if (!values.phoneNumber) err.phoneNumber = "Required";
+    if (!values.city) err.city = "Required";
+
+    return err;
+  }
+
+  function handleBlur(field) {
+    setTouched((p) => ({ ...p, [field]: true }));
+    setErrors(validate());
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // reset error
-    setError("");
+    const err = validate();
+    setErrors(err);
+    setTouched({
+      firstName: true,
+      lastName: true,
+      gender: true,
+      dateOfBirth: true,
+      email: true,
+      phoneNumber: true,
+      city: true,
+    });
 
-    // validation
-    if (!isValidPhoneNumber(user.phoneNumber)) {
-      setError("Phone number must be in format +385912345678");
-      return;
-    }
+    if (Object.keys(err).length > 0) return;
 
     await UserService.dodaj(user);
-
     navigate(RouteNames.USERS);
   }
+
+  const showError = (f) => touched[f] && errors[f];
 
   return (
     <div className="container py-4">
@@ -65,8 +84,12 @@ export default function UserCreate() {
                 name="firstName"
                 value={user.firstName}
                 onChange={handleChange}
-                required
+                onBlur={() => handleBlur("firstName")}
+                isInvalid={showError("firstName")}
               />
+              <Form.Control.Feedback type="invalid">
+                Required
+              </Form.Control.Feedback>
             </Col>
 
             <Col md={6}>
@@ -75,8 +98,12 @@ export default function UserCreate() {
                 name="lastName"
                 value={user.lastName}
                 onChange={handleChange}
-                required
+                onBlur={() => handleBlur("lastName")}
+                isInvalid={showError("lastName")}
               />
+              <Form.Control.Feedback type="invalid">
+                Required
+              </Form.Control.Feedback>
             </Col>
 
             <Col md={6}>
@@ -85,11 +112,12 @@ export default function UserCreate() {
                 name="gender"
                 value={user.gender}
                 onChange={handleChange}
+                onBlur={() => handleBlur("gender")}
+                isInvalid={showError("gender")}
               >
                 <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option>Male</option>
+                <option>Female</option>
               </Form.Select>
             </Col>
 
@@ -100,32 +128,32 @@ export default function UserCreate() {
                 name="dateOfBirth"
                 value={user.dateOfBirth}
                 onChange={handleChange}
+                onFocus={(e) => e.target.showPicker?.()}
+                onBlur={() => handleBlur("dateOfBirth")}
+                isInvalid={showError("dateOfBirth")}
               />
             </Col>
 
             <Col md={6}>
               <Form.Label>Email</Form.Label>
               <Form.Control
-                type="email"
                 name="email"
                 value={user.email}
                 onChange={handleChange}
-                required
+                onBlur={() => handleBlur("email")}
+                isInvalid={showError("email")}
               />
             </Col>
 
             <Col md={6}>
-              <Form.Label>Phone Number</Form.Label>
+              <Form.Label>Phone</Form.Label>
               <Form.Control
                 name="phoneNumber"
                 value={user.phoneNumber}
                 onChange={handleChange}
-                placeholder="+385912345678"
-                isInvalid={!!error}
+                onBlur={() => handleBlur("phoneNumber")}
+                isInvalid={showError("phoneNumber")}
               />
-              <Form.Control.Feedback type="invalid">
-                {error}
-              </Form.Control.Feedback>
             </Col>
 
             <Col md={12}>
@@ -134,18 +162,20 @@ export default function UserCreate() {
                 name="city"
                 value={user.city}
                 onChange={handleChange}
+                onBlur={() => handleBlur("city")}
+                isInvalid={showError("city")}
               />
             </Col>
 
           </Row>
 
-          <div className="mt-4 d-flex justify-content-end gap-2">
-            <Link to={RouteNames.USERS} className="btn btn-secondary">
+          <div className="mt-4 d-flex gap-2 justify-content-end">
+            <Button variant="secondary" onClick={() => navigate(RouteNames.USERS)}>
               Cancel
-            </Link>
+            </Button>
 
-            <Button type="submit" variant="primary">
-              Save User
+            <Button type="submit" variant="success">
+              Save
             </Button>
           </div>
         </Form>

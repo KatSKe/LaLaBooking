@@ -17,6 +17,7 @@ import TypeEdit from "./pages/types/TypeEdit";
 
 import BookingList from "./pages/booking/BookingList";
 import BookingCreate from "./pages/booking/BookingCreate";
+import BookingEdit from "./pages/booking/BookingEdit";
 
 import Menu from "./components/Menu";
 import { RouteNames } from "./constants";
@@ -24,30 +25,35 @@ import { RouteNames } from "./constants";
 export default function App() {
   return (
     <div className="app-shell">
+
       <Menu />
 
       <div className="app-view">
-        <Routes>
+        <div className="app-content">
+          <Routes>
 
-          <Route path={RouteNames.HOME} element={<Home />} />
+            <Route path={RouteNames.HOME} element={<Home />} />
 
-          <Route path={RouteNames.OFFERS} element={<OfferList />} />
-          <Route path={RouteNames.OFFERS_CREATE} element={<OfferCreate />} />
-          <Route path={RouteNames.OFFERS_EDIT} element={<OfferEdit />} />
+            <Route path={RouteNames.OFFERS} element={<OfferList />} />
+            <Route path={RouteNames.OFFERS_CREATE} element={<OfferCreate />} />
+            <Route path={RouteNames.OFFERS_EDIT} element={<OfferEdit />} />
 
-          <Route path={RouteNames.USERS} element={<UserList />} />
-          <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
-          <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
+            <Route path={RouteNames.USERS} element={<UserList />} />
+            <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
+            <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
 
-          <Route path={RouteNames.TYPES} element={<TypeList />} />
-          <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
-          <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
+            <Route path={RouteNames.TYPES} element={<TypeList />} />
+            <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
+            <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
 
-          <Route path={RouteNames.BOOKINGS} element={<BookingList />} />
-          <Route path={RouteNames.BOOKINGS_CREATE} element={<BookingCreate />} />
+            <Route path={RouteNames.BOOKINGS} element={<BookingList />} />
+            <Route path={RouteNames.BOOKINGS_CREATE} element={<BookingCreate />} />
+            <Route path="/bookings/:id" element={<BookingEdit />} />
 
-        </Routes>
+          </Routes>
+        </div>
       </div>
+
     </div>
   );
 }

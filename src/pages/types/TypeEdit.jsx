@@ -9,29 +9,59 @@ export default function TypeEdit() {
   const { id } = useParams();
 
   const [type, setType] = useState({
-    naziv: "",
+    name: "",
   });
+
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     loadType();
   }, []);
 
   async function loadType() {
-    const res = await TypeService.getBySifra(id);
-    setType(res.data);
+    const res = await TypeService.getById(id);
+    setType(res.data || {});
+  }
+
+  function validate(values = type) {
+    const err = {};
+
+    if (!values.name) err.name = "Type name is required";
+
+    return err;
   }
 
   function handleChange(e) {
     const { name, value } = e.target;
 
-    setType((prev) => ({
-      ...prev,
+    const updated = {
+      ...type,
       [name]: value,
-    }));
+    };
+
+    setType(updated);
+    setErrors(validate(updated));
+  }
+
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate());
+  }
+
+  function showError(field) {
+    return touched[field] && errors[field];
   }
 
   async function save() {
-    await TypeService.promjeni(id, type);
+    const err = validate();
+
+    setErrors(err);
+    setTouched({ name: true });
+
+    if (Object.keys(err).length > 0) return;
+
+    await TypeService.update(id, type);
     navigate(RouteNames.TYPES);
   }
 
@@ -41,17 +71,37 @@ export default function TypeEdit() {
 
       <Card className="p-3">
         <Form>
-          <Form.Control
-            className="mb-3"
-            placeholder="Type Name"
-            name="naziv"
-            value={type.naziv}
-            onChange={handleChange}
-          />
 
-          <Button variant="success" onClick={save}>
-            Save Changes
-          </Button>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              name="name"
+              value={type.name}
+              onChange={handleChange}
+              onBlur={() => handleBlur("name")}
+              style={{ borderColor: showError("name") ? "#dc3545" : "" }}
+            />
+
+            {showError("name") && (
+              <small style={{ color: "#dc3545" }}>
+                Type name is required
+              </small>
+            )}
+          </Form.Group>
+
+          <div className="d-flex gap-2">
+            <Button variant="success" onClick={save}>
+              Save Changes
+            </Button>
+
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate(RouteNames.TYPES)}
+            >
+              Cancel
+            </Button>
+          </div>
+
         </Form>
       </Card>
     </div>

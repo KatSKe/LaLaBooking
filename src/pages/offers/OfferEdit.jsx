@@ -14,25 +14,61 @@ export default function OfferEdit() {
     opis: "",
   });
 
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     loadOffer();
   }, []);
 
   async function loadOffer() {
     const res = await OffersService.getBySifra(sifra);
-    setOffer(res.data);
+    setOffer(res.data || {});
+  }
+
+  function validate(values = offer) {
+    const err = {};
+
+    if (!values.naziv) err.naziv = "Name is required";
+    if (!values.cijena) err.cijena = "Price is required";
+    if (!values.opis) err.opis = "Description is required";
+
+    return err;
   }
 
   function handleChange(e) {
     const { name, value } = e.target;
 
-    setOffer((prev) => ({
-      ...prev,
+    const updated = {
+      ...offer,
       [name]: value,
-    }));
+    };
+
+    setOffer(updated);
+    setErrors(validate(updated));
+  }
+
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate());
+  }
+
+  function showError(field) {
+    return touched[field] && errors[field];
   }
 
   async function save() {
+    const err = validate();
+
+    setErrors(err);
+    setTouched({
+      naziv: true,
+      cijena: true,
+      opis: true,
+    });
+
+    if (Object.keys(err).length > 0) return;
+
     await OffersService.promjeni(sifra, offer);
     navigate(RouteNames.OFFERS);
   }
@@ -43,33 +79,71 @@ export default function OfferEdit() {
 
       <Card className="p-3">
         <Form>
-          <Form.Control
-            className="mb-3"
-            placeholder="Offer Name"
-            name="naziv"
-            value={offer.naziv}
-            onChange={handleChange}
-          />
 
-          <Form.Control
-            className="mb-3"
-            placeholder="Price"
-            name="cijena"
-            value={offer.cijena}
-            onChange={handleChange}
-          />
+          {/* NAME */}
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              name="naziv"
+              value={offer.naziv}
+              onChange={handleChange}
+              onBlur={() => handleBlur("naziv")}
+              style={{ borderColor: showError("naziv") ? "#dc3545" : "" }}
+            />
+            {showError("naziv") && (
+              <small style={{ color: "#dc3545" }}>
+                Name is required
+              </small>
+            )}
+          </Form.Group>
 
-          <Form.Control
-            className="mb-3"
-            placeholder="Description"
-            name="opis"
-            value={offer.opis}
-            onChange={handleChange}
-          />
+          {/* PRICE */}
+          <Form.Group className="mb-3">
+            <Form.Label>Price</Form.Label>
+            <Form.Control
+              name="cijena"
+              value={offer.cijena}
+              onChange={handleChange}
+              onBlur={() => handleBlur("cijena")}
+              style={{ borderColor: showError("cijena") ? "#dc3545" : "" }}
+            />
+            {showError("cijena") && (
+              <small style={{ color: "#dc3545" }}>
+                Price is required
+              </small>
+            )}
+          </Form.Group>
 
-          <Button variant="success" onClick={save}>
-            Save Changes
-          </Button>
+          {/* DESCRIPTION */}
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              name="opis"
+              value={offer.opis}
+              onChange={handleChange}
+              onBlur={() => handleBlur("opis")}
+              style={{ borderColor: showError("opis") ? "#dc3545" : "" }}
+            />
+            {showError("opis") && (
+              <small style={{ color: "#dc3545" }}>
+                Description is required
+              </small>
+            )}
+          </Form.Group>
+
+          <div className="d-flex gap-2">
+            <Button variant="success" onClick={save}>
+              Save Changes
+            </Button>
+
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate(RouteNames.OFFERS)}
+            >
+              Cancel
+            </Button>
+          </div>
+
         </Form>
       </Card>
     </div>

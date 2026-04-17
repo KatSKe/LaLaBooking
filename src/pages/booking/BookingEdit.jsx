@@ -15,14 +15,17 @@ export default function BookingEdit() {
   const [users, setUsers] = useState([]);
   const [offers, setOffers] = useState([]);
 
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [selectedOfferId, setSelectedOfferId] = useState("");
+
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
 
   const [booking, setBooking] = useState({
     startDate: "",
     endDate: "",
-    numberOfRooms: 1,
-    adults: 1,
+    numberOfRooms: 0,
+    adults: 0,
     kids: 0,
   });
 
@@ -39,55 +42,78 @@ export default function BookingEdit() {
     setOffers(o.data || []);
   }
 
+  function formatDate(date) {
+    if (!date) return "";
+    return date.split("T")[0];
+  }
+
   async function loadBooking() {
     const res = await BookingService.getById(id);
-
     if (!res.data) return;
 
     const b = res.data;
 
     setBooking({
-      startDate: b.startDate || "",
-      endDate: b.endDate || "",
-      numberOfRooms: b.numberOfRooms || 1,
-      adults: b.adults || 1,
-      kids: b.kids || 0,
+      startDate: formatDate(b.startDate),
+      endDate: formatDate(b.endDate),
+      numberOfRooms: b.numberOfRooms ?? 0,
+      adults: b.adults ?? 0,
+      kids: b.kids ?? 0,
     });
 
-    const user = (await UsersService.get()).data.find(
-      (x) => String(x.sifra || x.id) === String(b.userId || b.user)
-    );
-
-    const offer = (await OffersService.get()).data.find(
-      (x) => String(x.sifra || x.id) === String(b.offerId || b.offer)
-    );
-
-    setSelectedUser(user || null);
-    setSelectedOffer(offer || null);
+    setSelectedUserId(String(b.userId || ""));
+    setSelectedOfferId(String(b.offer || ""));
   }
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  function validate(values = booking) {
+    const err = {};
 
-    setBooking((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (!selectedUserId) err.user = "User is required";
+    if (!selectedOfferId) err.offer = "Offer is required";
+    if (!values.startDate) err.startDate = "Start Date is required";
+    if (!values.endDate) err.endDate = "End Date is required";
+
+    return err;
+  }
+
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate());
+  }
+
+  function handleNumber(name, value) {
+    const updated = {
+      ...booking,
+      [name]: Math.max(0, Number(value)),
+    };
+
+    setBooking(updated);
+    setErrors(validate(updated));
   }
 
   async function save() {
+    const err = validate();
+
+    setErrors(err);
+    setTouched({
+      user: true,
+      offer: true,
+      startDate: true,
+      endDate: true,
+    });
+
+    if (Object.keys(err).length > 0) return;
+
     await BookingService.promjeni(id, {
       ...booking,
-      userId: selectedUser?.sifra ?? selectedUser?.id,
-      offerId: selectedOffer?.sifra ?? selectedOffer?.id,
+      userId: Number(selectedUserId),
+      offer: Number(selectedOfferId),
     });
 
     navigate(RouteNames.BOOKINGS);
   }
 
-  function cancel() {
-    navigate(RouteNames.BOOKINGS);
-  }
+  const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="container py-4">
@@ -95,108 +121,153 @@ export default function BookingEdit() {
 
       <Card className="p-3">
         <Row className="g-3">
+
           {/* USER */}
           <Col md={6}>
             <Form.Label>User</Form.Label>
+
             <Form.Select
-              value={selectedUser?.sifra || selectedUser?.id || ""}
-              onChange={(e) => {
-                const user = users.find(
-                  (x) => String(x.sifra || x.id) === e.target.value
-                );
-                setSelectedUser(user);
-              }}
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              onBlur={() => handleBlur("user")}
+              style={{ borderColor: showError("user") ? "#dc3545" : "" }}
             >
               <option value="">Select user...</option>
-              {users.map((u) => (
-                <option key={u.sifra || u.id} value={u.sifra || u.id}>
-                  {u.firstName} {u.lastName}
-                </option>
-              ))}
+              {users
+                .filter((u) => u && typeof u === "object")
+                .filter((u) => u.sifra && u.ime && u.prezime)
+                .map((u) => (
+                  <option key={u.sifra} value={u.sifra}>
+                    {u.ime} {u.prezime}
+                  </option>
+                ))}
             </Form.Select>
+
+            {showError("user") && (
+              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
+                User is required
+              </div>
+            )}
           </Col>
 
           {/* OFFER */}
           <Col md={6}>
             <Form.Label>Offer</Form.Label>
+
             <Form.Select
-              value={selectedOffer?.sifra || selectedOffer?.id || ""}
-              onChange={(e) => {
-                const offer = offers.find(
-                  (x) => String(x.sifra || x.id) === e.target.value
-                );
-                setSelectedOffer(offer);
-              }}
+              value={selectedOfferId}
+              onChange={(e) => setSelectedOfferId(e.target.value)}
+              onBlur={() => handleBlur("offer")}
+              style={{ borderColor: showError("offer") ? "#dc3545" : "" }}
             >
               <option value="">Select offer...</option>
               {offers.map((o) => (
-                <option key={o.sifra || o.id} value={o.sifra || o.id}>
-                  {o.name || o.naziv}
+                <option key={o.sifra} value={o.sifra}>
+                  {o.naziv}
                 </option>
               ))}
             </Form.Select>
+
+            {showError("offer") && (
+              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
+                Offer is required
+              </div>
+            )}
           </Col>
 
-          {/* DATES */}
+          {/* START DATE */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
+
             <Form.Control
               type="date"
-              name="startDate"
               value={booking.startDate}
-              onChange={handleChange}
+              onChange={(e) => {
+                const updated = { ...booking, startDate: e.target.value };
+                setBooking(updated);
+                setErrors(validate(updated));
+              }}
+              onFocus={(e) => e.target.showPicker?.()}
+              onBlur={() => handleBlur("startDate")}
+              style={{ borderColor: showError("startDate") ? "#dc3545" : "" }}
             />
+
+            {showError("startDate") && (
+              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
+                Start Date is required
+              </div>
+            )}
           </Col>
 
+          {/* END DATE */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
+
             <Form.Control
               type="date"
-              name="endDate"
               value={booking.endDate}
-              onChange={handleChange}
+              onChange={(e) => {
+                const updated = { ...booking, endDate: e.target.value };
+                setBooking(updated);
+                setErrors(validate(updated));
+              }}
+              onFocus={(e) => e.target.showPicker?.()}
+              onBlur={() => handleBlur("endDate")}
+              style={{ borderColor: showError("endDate") ? "#dc3545" : "" }}
             />
+
+            {showError("endDate") && (
+              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
+                End Date is required
+              </div>
+            )}
           </Col>
 
           {/* NUMBERS */}
           <Col md={4}>
             <Form.Label>Rooms</Form.Label>
+
             <Form.Control
               type="number"
-              name="numberOfRooms"
+              min={0}
               value={booking.numberOfRooms}
-              onChange={handleChange}
+              onChange={(e) => handleNumber("numberOfRooms", e.target.value)}
             />
           </Col>
 
           <Col md={4}>
             <Form.Label>Adults</Form.Label>
+
             <Form.Control
               type="number"
-              name="adults"
+              min={0}
               value={booking.adults}
-              onChange={handleChange}
+              onChange={(e) => handleNumber("adults", e.target.value)}
             />
           </Col>
 
           <Col md={4}>
             <Form.Label>Kids</Form.Label>
+
             <Form.Control
               type="number"
-              name="kids"
+              min={0}
               value={booking.kids}
-              onChange={handleChange}
+              onChange={(e) => handleNumber("kids", e.target.value)}
             />
           </Col>
+
         </Row>
 
-        {/* BUTTONS */}
         <div className="mt-4 d-flex gap-2">
           <Button variant="success" onClick={save}>
             Save Changes
           </Button>
 
-          <Button variant="outline-secondary" onClick={cancel}>
+          <Button
+            variant="outline-secondary"
+            onClick={() => navigate(RouteNames.BOOKINGS)}
+          >
             Cancel
           </Button>
         </div>
