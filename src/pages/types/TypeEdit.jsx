@@ -10,6 +10,7 @@ export default function TypeEdit() {
 
   const [type, setType] = useState({
     name: "",
+    active: true,
   });
 
   const [touched, setTouched] = useState({});
@@ -21,7 +22,11 @@ export default function TypeEdit() {
 
   async function loadType() {
     const res = await TypeService.getById(id);
-    setType(res.data || {});
+
+    setType({
+      ...res.data,
+      active: res.data?.active ?? true,
+    });
   }
 
   function validate(values = type) {
@@ -33,11 +38,11 @@ export default function TypeEdit() {
   }
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { name, value, type: inputType, checked } = e.target;
 
     const updated = {
       ...type,
-      [name]: value,
+      [name]: inputType === "checkbox" ? checked : value,
     };
 
     setType(updated);
@@ -72,11 +77,12 @@ export default function TypeEdit() {
       <Card className="p-3">
         <Form>
 
+          {/* NAME */}
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
               name="name"
-              value={type.name}
+              value={type.name || ""}
               onChange={handleChange}
               onBlur={() => handleBlur("name")}
               style={{ borderColor: showError("name") ? "#dc3545" : "" }}
@@ -84,10 +90,21 @@ export default function TypeEdit() {
 
             {showError("name") && (
               <small style={{ color: "#dc3545" }}>
-                Type name is required
+                {errors.name}
               </small>
             )}
           </Form.Group>
+
+          {/* ACTIVE SWITCH (SAME AS OFFER) */}
+          <Form.Check
+            type="switch"
+            id="type-active-switch"
+            label={type.active ? "Active" : "Inactive"}
+            name="active"
+            checked={type.active}
+            onChange={handleChange}
+            className="mb-3"
+          />
 
           <div className="d-flex gap-2">
             <Button variant="success" onClick={save}>

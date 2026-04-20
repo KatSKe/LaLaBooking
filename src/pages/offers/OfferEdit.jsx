@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import OffersService from "../../services/offers/OffersService";
 import { RouteNames } from "../../constants";
@@ -12,6 +12,7 @@ export default function OfferEdit() {
     naziv: "",
     cijena: "",
     opis: "",
+    active: true,
   });
 
   const [touched, setTouched] = useState({});
@@ -23,25 +24,27 @@ export default function OfferEdit() {
 
   async function loadOffer() {
     const res = await OffersService.getBySifra(sifra);
-    setOffer(res.data || {});
+
+    setOffer({
+      ...res.data,
+      active: res.data?.active ?? true,
+    });
   }
 
   function validate(values = offer) {
     const err = {};
-
     if (!values.naziv) err.naziv = "Name is required";
     if (!values.cijena) err.cijena = "Price is required";
     if (!values.opis) err.opis = "Description is required";
-
     return err;
   }
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     const updated = {
       ...offer,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     };
 
     setOffer(updated);
@@ -80,58 +83,53 @@ export default function OfferEdit() {
       <Card className="p-3">
         <Form>
 
-          {/* NAME */}
-          <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="naziv"
-              value={offer.naziv}
-              onChange={handleChange}
-              onBlur={() => handleBlur("naziv")}
-              style={{ borderColor: showError("naziv") ? "#dc3545" : "" }}
-            />
-            {showError("naziv") && (
-              <small style={{ color: "#dc3545" }}>
-                Name is required
-              </small>
-            )}
-          </Form.Group>
+          <Row className="g-3">
 
-          {/* PRICE */}
-          <Form.Group className="mb-3">
-            <Form.Label>Price</Form.Label>
-            <Form.Control
-              name="cijena"
-              value={offer.cijena}
-              onChange={handleChange}
-              onBlur={() => handleBlur("cijena")}
-              style={{ borderColor: showError("cijena") ? "#dc3545" : "" }}
-            />
-            {showError("cijena") && (
-              <small style={{ color: "#dc3545" }}>
-                Price is required
-              </small>
-            )}
-          </Form.Group>
+            <Col md={4}>
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                name="naziv"
+                value={offer.naziv || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("naziv")}
+              />
+            </Col>
 
-          {/* DESCRIPTION */}
-          <Form.Group className="mb-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              name="opis"
-              value={offer.opis}
-              onChange={handleChange}
-              onBlur={() => handleBlur("opis")}
-              style={{ borderColor: showError("opis") ? "#dc3545" : "" }}
-            />
-            {showError("opis") && (
-              <small style={{ color: "#dc3545" }}>
-                Description is required
-              </small>
-            )}
-          </Form.Group>
+            <Col md={4}>
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                name="cijena"
+                value={offer.cijena || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("cijena")}
+              />
+            </Col>
 
-          <div className="d-flex gap-2">
+            <Col md={4}>
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                name="opis"
+                value={offer.opis || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("opis")}
+              />
+            </Col>
+
+            {/* ACTIVE - STANDARD SWITCH */}
+            <Col md={12} className="mt-3">
+              <Form.Check
+                type="switch"
+                id="offer-active-switch"
+                label={offer.active ? "Active" : "Inactive"}
+                name="active"
+                checked={offer.active}
+                onChange={handleChange}
+              />
+            </Col>
+
+          </Row>
+
+          <div className="d-flex gap-2 mt-4">
             <Button variant="success" onClick={save}>
               Save Changes
             </Button>

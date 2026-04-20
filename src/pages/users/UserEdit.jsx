@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import UsersService from "../../services/users/UserService";
 import { RouteNames } from "../../constants";
@@ -12,6 +12,9 @@ export default function UserEdit() {
     firstName: "",
     lastName: "",
     email: "",
+    dateOfBirth: "",
+    phoneNumber: "",
+    city: "",
   });
 
   const [touched, setTouched] = useState({});
@@ -28,11 +31,9 @@ export default function UserEdit() {
 
   function validate(values = user) {
     const err = {};
-
-    if (!values.firstName) err.firstName = "First Name is required";
-    if (!values.lastName) err.lastName = "Last Name is required";
+    if (!values.firstName) err.firstName = "First name is required";
+    if (!values.lastName) err.lastName = "Last name is required";
     if (!values.email) err.email = "Email is required";
-
     return err;
   }
 
@@ -80,55 +81,70 @@ export default function UserEdit() {
       <Card className="p-3">
         <Form>
 
-          <Form.Group className="mb-3">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control
-              name="firstName"
-              value={user.firstName}
-              onChange={handleChange}
-              onBlur={() => handleBlur("firstName")}
-              style={{ borderColor: showError("firstName") ? "#dc3545" : "" }}
-            />
-            {showError("firstName") && (
-              <small style={{ color: "#dc3545" }}>
-                First Name is required
-              </small>
-            )}
-          </Form.Group>
+          <Row className="g-3">
 
-          <Form.Group className="mb-3">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control
-              name="lastName"
-              value={user.lastName}
-              onChange={handleChange}
-              onBlur={() => handleBlur("lastName")}
-              style={{ borderColor: showError("lastName") ? "#dc3545" : "" }}
-            />
-            {showError("lastName") && (
-              <small style={{ color: "#dc3545" }}>
-                Last Name is required
-              </small>
-            )}
-          </Form.Group>
+            <Col md={4}>
+              <Form.Label>First Name</Form.Label>
+              <Form.Control
+                name="firstName"
+                value={user.firstName || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("firstName")}
+              />
+            </Col>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-              onBlur={() => handleBlur("email")}
-              style={{ borderColor: showError("email") ? "#dc3545" : "" }}
-            />
-            {showError("email") && (
-              <small style={{ color: "#dc3545" }}>
-                Email is required
-              </small>
-            )}
-          </Form.Group>
+            <Col md={4}>
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control
+                name="lastName"
+                value={user.lastName || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("lastName")}
+              />
+            </Col>
 
-          <div className="d-flex gap-2">
+            <Col md={4}>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                name="email"
+                value={user.email || ""}
+                onChange={handleChange}
+                onBlur={() => handleBlur("email")}
+              />
+            </Col>
+
+            {/* NEW FIELDS */}
+            <Col md={4}>
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                name="dateOfBirth"
+                value={user.dateOfBirth || ""}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={4}>
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
+                name="phoneNumber"
+                value={user.phoneNumber || ""}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={4}>
+              <Form.Label>City</Form.Label>
+              <Form.Control
+                name="city"
+                value={user.city || ""}
+                onChange={handleChange}
+              />
+            </Col>
+
+          </Row>
+
+          <div className="d-flex gap-2 mt-4">
             <Button variant="success" onClick={save}>
               Save Changes
             </Button>

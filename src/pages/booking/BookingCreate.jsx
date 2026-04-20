@@ -40,13 +40,13 @@ export default function BookingCreate() {
     setOffers(o.data || []);
   }
 
-  function validate(values = booking) {
+  function validate(current = booking) {
     const err = {};
 
     if (!selectedUserId) err.user = "User is required";
     if (!selectedOfferId) err.offer = "Offer is required";
-    if (!values.startDate) err.startDate = "Start Date is required";
-    if (!values.endDate) err.endDate = "End Date is required";
+    if (!current.startDate) err.startDate = "Start Date is required";
+    if (!current.endDate) err.endDate = "End Date is required";
 
     return err;
   }
@@ -56,14 +56,24 @@ export default function BookingCreate() {
     setErrors(validate());
   }
 
+  function handleDateChange(name, value) {
+    const updated = { ...booking, [name]: value };
+    setBooking(updated);
+    setErrors(validate(updated));
+  }
+
   function handleNumber(name, value) {
     const updated = {
       ...booking,
-      [name]: Math.max(0, Number(value)),
+      [name]: value === "" ? 0 : Math.max(0, Number(value)),
     };
 
     setBooking(updated);
     setErrors(validate(updated));
+  }
+
+  function showError(field) {
+    return touched[field] && errors[field];
   }
 
   async function save() {
@@ -79,16 +89,22 @@ export default function BookingCreate() {
 
     if (Object.keys(err).length > 0) return;
 
+    const selectedUser = users.find(
+      (u) => u.id === Number(selectedUserId)
+    );
+
+    const selectedOffer = offers.find(
+      (o) => o.sifra === Number(selectedOfferId)
+    );
+
     await BookingService.dodaj({
       ...booking,
-      userId: Number(selectedUserId),
-      offer: Number(selectedOfferId),
+      user: selectedUser,     // ✔ FULL OBJECT
+      offer: selectedOffer,   // ✔ FULL OBJECT
     });
 
     navigate(RouteNames.BOOKINGS);
   }
-
-  const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="container py-4">
@@ -109,18 +125,16 @@ export default function BookingCreate() {
             >
               <option value="">Select user...</option>
 
-              {users
-                .filter((u) => u && u.sifra && u.ime && u.prezime)
-                .map((u) => (
-                  <option key={u.sifra} value={u.sifra}>
-                    {u.ime} {u.prezime}
-                  </option>
-                ))}
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.firstName} {u.lastName}
+                </option>
+              ))}
             </Form.Select>
 
             {showError("user") && (
               <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                User is required
+                {errors.user}
               </div>
             )}
           </Col>
@@ -136,6 +150,7 @@ export default function BookingCreate() {
               style={{ borderColor: showError("offer") ? "#dc3545" : "" }}
             >
               <option value="">Select offer...</option>
+
               {offers.map((o) => (
                 <option key={o.sifra} value={o.sifra}>
                   {o.naziv}
@@ -145,7 +160,7 @@ export default function BookingCreate() {
 
             {showError("offer") && (
               <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                Offer is required
+                {errors.offer}
               </div>
             )}
           </Col>
@@ -157,19 +172,16 @@ export default function BookingCreate() {
             <Form.Control
               type="date"
               value={booking.startDate}
-              onFocus={(e) => e.target.showPicker?.()}
-              onChange={(e) => {
-                const updated = { ...booking, startDate: e.target.value };
-                setBooking(updated);
-                setErrors(validate(updated));
-              }}
+              onChange={(e) =>
+                handleDateChange("startDate", e.target.value)
+              }
               onBlur={() => handleBlur("startDate")}
               style={{ borderColor: showError("startDate") ? "#dc3545" : "" }}
             />
 
             {showError("startDate") && (
               <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                Start Date is required
+                {errors.startDate}
               </div>
             )}
           </Col>
@@ -181,19 +193,16 @@ export default function BookingCreate() {
             <Form.Control
               type="date"
               value={booking.endDate}
-              onFocus={(e) => e.target.showPicker?.()}
-              onChange={(e) => {
-                const updated = { ...booking, endDate: e.target.value };
-                setBooking(updated);
-                setErrors(validate(updated));
-              }}
+              onChange={(e) =>
+                handleDateChange("endDate", e.target.value)
+              }
               onBlur={() => handleBlur("endDate")}
               style={{ borderColor: showError("endDate") ? "#dc3545" : "" }}
             />
 
             {showError("endDate") && (
               <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                End Date is required
+                {errors.endDate}
               </div>
             )}
           </Col>
@@ -205,7 +214,9 @@ export default function BookingCreate() {
               type="number"
               min={0}
               value={booking.numberOfRooms}
-              onChange={(e) => handleNumber("numberOfRooms", e.target.value)}
+              onChange={(e) =>
+                handleNumber("numberOfRooms", e.target.value)
+              }
             />
           </Col>
 
