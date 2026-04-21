@@ -99,8 +99,8 @@ export default function BookingCreate() {
 
     await BookingService.dodaj({
       ...booking,
-      user: selectedUser,     // ✔ FULL OBJECT
-      offer: selectedOffer,   // ✔ FULL OBJECT
+      user: selectedUser,
+      offer: selectedOffer,
     });
 
     navigate(RouteNames.BOOKINGS);
@@ -127,7 +127,7 @@ export default function BookingCreate() {
 
               {users.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.firstName} {u.lastName}
+                  {(u.firstName || u.ime) + " " + (u.lastName || u.prezime)}
                 </option>
               ))}
             </Form.Select>
@@ -172,6 +172,8 @@ export default function BookingCreate() {
             <Form.Control
               type="date"
               value={booking.startDate}
+              onFocus={(e) => e.target.showPicker?.()}
+              onClick={(e) => e.target.showPicker?.()}
               onChange={(e) =>
                 handleDateChange("startDate", e.target.value)
               }
@@ -193,6 +195,8 @@ export default function BookingCreate() {
             <Form.Control
               type="date"
               value={booking.endDate}
+              onFocus={(e) => e.target.showPicker?.()}
+              onClick={(e) => e.target.showPicker?.()}
               onChange={(e) =>
                 handleDateChange("endDate", e.target.value)
               }

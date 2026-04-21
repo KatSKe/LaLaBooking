@@ -2,84 +2,135 @@ import { users as defaultUsers } from "./UserDataUser.js";
 
 const STORAGE_KEY = "users";
 
-function dohvatiSveIzStorage() {
-  const podaci = localStorage.getItem(STORAGE_KEY);
+/**
+ * Normalize user object to standard format
+ */
+function normalizeUser(user) {
+  return {
+    ...user,
+    id: user.id ?? user.sifra,
+    firstName: user.firstName ?? user.ime ?? "",
+    lastName: user.lastName ?? user.prezime ?? "",
+  };
+}
 
-  if (!podaci) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
-    return defaultUsers;
+/**
+ * Get all users from localStorage (with auto-fix)
+ */
+function getAllFromStorage() {
+  const data = localStorage.getItem(STORAGE_KEY);
+
+  if (!data) {
+    const normalized = defaultUsers.map(normalizeUser);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
   }
 
   try {
-    return JSON.parse(podaci);
-  } catch (e) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
-    return defaultUsers;
+    const parsed = JSON.parse(data);
+
+    const normalized = parsed.map(normalizeUser);
+
+    // 🔥 overwrite with clean structure
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+
+    return normalized;
+  } catch (error) {
+    const normalized = defaultUsers.map(normalizeUser);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
   }
 }
 
-function spremiUStorage(podaci) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(podaci));
+/**
+ * Save users to localStorage
+ */
+function saveToStorage(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-// 1/4 READ
+/**
+ * 1/4 READ
+ */
 async function get() {
-  const korisnici = dohvatiSveIzStorage();
-  return { success: true, data: [...korisnici] };
+  const users = getAllFromStorage();
+  return { success: true, data: [...users] };
 }
 
-// 2/4 READ BY ID
-async function getBySifra(sifra) {
-  const korisnici = dohvatiSveIzStorage();
-  const k = korisnici.find(x => x.sifra === parseInt(sifra));
+/**
+ * 2/4 READ BY ID
+ */
+async function getById(id) {
+  const users = getAllFromStorage();
+  const user = users.find((u) => String(u.id) === String(id));
 
-  return { success: true, data: k };
+  return { success: true, data: user || null };
 }
 
-// 3/4 CREATE
-async function dodaj(k) {
-  const korisnici = dohvatiSveIzStorage();
+/**
+ * 3/4 CREATE
+ */
+async function add(user) {
+  const users = getAllFromStorage();
 
-  if (korisnici.length === 0) {
-    k.sifra = 1;
-  } else {
-    k.sifra = korisnici[korisnici.length - 1].sifra + 1;
-  }
+  const newId =
+    users.length === 0
+      ? 1
+      : Math.max(...users.map((u) => Number(u.id))) + 1;
 
-  korisnici.push(k);
-  spremiUStorage(korisnici);
+  const newUser = normalizeUser({
+    ...user,
+    id: newId,
+  });
 
-  return { success: true, data: k };
+  users.push(newUser);
+  saveToStorage(users);
+
+  return { success: true, data: newUser };
 }
 
-// 4/4 UPDATE
-async function promjeni(sifra, k) {
-  const korisnici = dohvatiSveIzStorage();
-  const index = korisnici.findIndex(x => x.sifra === parseInt(sifra));
+/**
+ * 4/4 UPDATE
+ */
+async function update(id, user) {
+  const users = getAllFromStorage();
+
+  const index = users.findIndex(
+    (u) => String(u.id) === String(id)
+  );
 
   if (index > -1) {
-    korisnici[index] = { ...korisnici[index], ...k };
-    spremiUStorage(korisnici);
+    const updatedUser = normalizeUser({
+      ...users[index],
+      ...user,
+      id: users[index].id,
+    });
 
-    return { success: true, data: korisnici[index] };
+    users[index] = updatedUser;
+    saveToStorage(users);
+
+    return { success: true, data: updatedUser };
   }
 
   return { success: false, message: "User not found" };
 }
 
-// 5/4 DELETE
-async function obrisi(sifra) {
-  let korisnici = dohvatiSveIzStorage();
-  korisnici = korisnici.filter(x => x.sifra !== parseInt(sifra));
-  spremiUStorage(korisnici);
+/**
+ * 5/4 DELETE
+ */
+async function remove(id) {
+  let users = getAllFromStorage();
+
+  users = users.filter((u) => String(u.id) !== String(id));
+  saveToStorage(users);
 
   return { success: true, message: "Deleted" };
 }
 
 export default {
   get,
-  getBySifra,
-  dodaj,
-  promjeni,
-  obrisi,
+  getById,
+  add,
+  update,
+  remove,
 };
