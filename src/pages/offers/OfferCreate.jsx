@@ -10,11 +10,11 @@ export default function OfferCreate() {
   const [types, setTypes] = useState([]);
 
   const [offer, setOffer] = useState({
-    naziv: "",
-    opis: "",
-    cijena: "",
+    name: "",
+    description: "",
+    price: "",
     typeId: "",
-    aktivan: false,
+    active: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -32,9 +32,9 @@ export default function OfferCreate() {
   function validate(values = offer) {
     const err = {};
 
-    if (!values.naziv) err.naziv = "Name is required";
+    if (!values.name) err.name = "Name is required";
     if (!values.typeId) err.typeId = "Type is required";
-    if (!values.cijena) err.cijena = "Price is required";
+    if (!values.price) err.price = "Price is required";
 
     return err;
   }
@@ -64,9 +64,9 @@ export default function OfferCreate() {
     const err = validate();
     setErrors(err);
     setTouched({
-      naziv: true,
+      name: true,
       typeId: true,
-      cijena: true,
+      price: true,
     });
 
     if (Object.keys(err).length > 0) return;
@@ -95,14 +95,14 @@ export default function OfferCreate() {
             <Col md={6}>
               <Form.Label>Name</Form.Label>
               <Form.Control
-                name="naziv"
-                value={offer.naziv}
+                name="name"
+                value={offer.name}
                 onChange={handleChange}
-                onBlur={() => handleBlur("naziv")}
-                isInvalid={showError("naziv")}
+                onBlur={() => handleBlur("name")}
+                isInvalid={showError("name")}
               />
               <Form.Control.Feedback type="invalid">
-                {errors.naziv}
+                {errors.name}
               </Form.Control.Feedback>
             </Col>
 
@@ -131,8 +131,8 @@ export default function OfferCreate() {
             <Col md={12}>
               <Form.Label>Description</Form.Label>
               <Form.Control
-                name="opis"
-                value={offer.opis}
+                name="description"
+                value={offer.description}
                 onChange={handleChange}
               />
             </Col>
@@ -141,22 +141,22 @@ export default function OfferCreate() {
               <Form.Label>Price</Form.Label>
               <Form.Control
                 type="number"
-                name="cijena"
-                value={offer.cijena}
+                name="price"
+                value={offer.price}
                 onChange={handleChange}
-                onBlur={() => handleBlur("cijena")}
-                isInvalid={showError("cijena")}
+                onBlur={() => handleBlur("price")}
+                isInvalid={showError("price")}
               />
               <Form.Control.Feedback type="invalid">
-                {errors.cijena}
+                {errors.price}
               </Form.Control.Feedback>
             </Col>
 
             <Col md={6} className="d-flex align-items-end">
               <Form.Check
                 label="Active"
-                name="aktivan"
-                checked={offer.aktivan}
+                name="active"
+                checked={offer.active}
                 onChange={handleChange}
               />
             </Col>

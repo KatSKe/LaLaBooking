@@ -77,11 +77,11 @@ export default function OfferList() {
           <tbody>
             {filteredOffers.map((offer) => (
               <tr key={offer.sifra}>
-                <td>{offer.naziv}</td>
-                <td>{offer.opis}</td>
+                <td>{offer.name}</td>
+                <td>{offer.description}</td>
                 <td>{offer.typeName || "-"}</td>
-                <td>{offer.cijena} €</td>
-                <td>{offer.aktivan ? "Yes" : "No"}</td>
+                <td>{offer.price} €</td>
+                <td>{offer.active ? "Yes" : "No"}</td>
 
                 <td className="d-flex gap-2">
                   <Button

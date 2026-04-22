@@ -2,55 +2,55 @@ import UserServiceLocalStorage from "./UserServiceLocalStorage";
 import UserServiceMemory from "./UserServiceMemory";
 import { DATA_SOURCE } from "../../constants";
 
-let Servis = null;
+let Service = null;
 
 switch (DATA_SOURCE) {
   case "memory":
-    Servis = UserServiceMemory;
+    Service = UserServiceMemory;
     break;
 
   case "localStorage":
-    Servis = UserServiceLocalStorage;
+    Service = UserServiceLocalStorage;
     break;
 
   default:
     console.warn("Unknown DATA_SOURCE:", DATA_SOURCE);
-    Servis = UserServiceLocalStorage;
+    Service = UserServiceLocalStorage;
 }
 
-const PrazanServis = {
+const EmptyService = {
   get: async () => ({ success: false, data: [] }),
-  getBySifra: async () => ({ success: false, data: {} }),
-  dodaj: async () => ({ success: false }),
-  promjeni: async () => ({ success: false }),
-  obrisi: async () => ({ success: false }),
+  getById: async () => ({ success: false, data: {} }),
+  add: async () => ({ success: false }),
+  update: async () => ({ success: false }),
+  remove: async () => ({ success: false }),
 };
 
-// 🔥 NORMALIZACIJA USERA (KLJUČNO)
+// 🔥 USER NORMALIZATION (KEY FIX)
 function normalizeUsers(response) {
   return {
     ...response,
     data: (response.data || []).map((u, index) => ({
       ...u,
-      id: u.id ?? u.sifra ?? index, // 🔥 FIX ZA KEY PROBLEM
+      id: u.id ?? u.id ?? index, // 🔥 FIX FOR KEY PROBLEM
     })),
   };
 }
 
-const AktivniServis = Servis || PrazanServis;
+const ActiveService = Service || EmptyService;
 
 export default {
-  get: async () => normalizeUsers(await AktivniServis.get()),
+  get: async () => normalizeUsers(await ActiveService.get()),
 
-  getBySifra: async (sifra) =>
-    await AktivniServis.getBySifra(sifra),
+  getById: async (id) =>
+    await ActiveService.getById(id),
 
-  dodaj: async (users) =>
-    await AktivniServis.dodaj(users),
+  add: async (users) =>
+    await ActiveService.add(users),
 
-  promjeni: async (sifra, users) =>
-    await AktivniServis.promjeni(sifra, users),
+  update: async (id, users) =>
+    await ActiveService.update(id, users),
 
-  obrisi: async (sifra) =>
-    await AktivniServis.obrisi(sifra),
+  remove: async (id) =>
+    await ActiveService.remove(id),
 };

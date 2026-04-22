@@ -25,33 +25,33 @@ function normalizeBooking(b) {
 
   let userObject = b.user;
 
-  // 🔥 ako je stari format (userId)
+  // 🔥 if old format (userId)
   if (!userObject && (b.userId || typeof b.user === "number")) {
     const userId = b.userId ?? b.user;
 
     const foundUser = users.find(
       (u) =>
         String(u.id) === String(userId) ||
-        String(u.sifra) === String(userId)
+        String(u.id) === String(userId)
     );
 
     if (foundUser) {
       userObject = {
-        id: foundUser.id ?? foundUser.sifra,
-        firstName: foundUser.firstName ?? foundUser.ime ?? "",
-        lastName: foundUser.lastName ?? foundUser.prezime ?? "",
+        id: foundUser.id ?? foundUser.id,
+        firstName: foundUser.firstName ?? foundUser.firstName ?? "",
+        lastName: foundUser.lastName ?? foundUser.lastName ?? "",
       };
     }
   }
 
   let offerObject = b.offer;
 
-  // 🔥 ako je stari format (offerId)
+  // 🔥 if old format (offerId)
   if (!offerObject || typeof offerObject !== "object") {
     const offerId = b.offer ?? b.offerId;
 
     const foundOffer = offers.find(
-      (o) => String(o.sifra) === String(offerId)
+      (o) => String(o.id) === String(offerId)
     );
 
     if (foundOffer) {
@@ -98,7 +98,7 @@ export default {
     data: getData().find((b) => String(b.id) === String(id)),
   }),
 
-  dodaj: async (booking) => {
+  add: async (booking) => {
     const data = getData();
 
     const newBooking = {
@@ -112,7 +112,7 @@ export default {
     return { success: true, data: newBooking };
   },
 
-  promjeni: async (id, booking) => {
+  update: async (id, booking) => {
     const data = getData();
     const index = data.findIndex((b) => String(b.id) === String(id));
 
@@ -130,7 +130,7 @@ export default {
     return { success: false, message: "Booking not found" };
   },
 
-  obrisi: async (id) => {
+  remove: async (id) => {
     const data = getData().filter((b) => String(b.id) !== String(id));
     saveData(data);
 

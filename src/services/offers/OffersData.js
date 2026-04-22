@@ -1,20 +1,20 @@
 export const offers = [
   {
-    sifra: 1,
-    naziv: 'Greek experience',
-    opis: 'Rich history, culture and Mediterranean lifestyle',
-    cijena: 2000.99,
-    aktivan: true,
+    id: 1,
+    name: "Greek experience",
+    description: "Rich history, culture and Mediterranean lifestyle",
+    price: 2000.99,
+    active: true,
     typeId: 1,
-    typeName: 'Relax'
+    typeName: "Relax"
   },
   {
-    sifra: 2,
-    naziv: 'Thai experience',
-    opis: 'Adventure through Bangkok, Khao Sok, Koh Phangan, and the Phi Phi Islands',
-    cijena: 1780.99,
-    aktivan: false,
+    id: 2,
+    name: "Thai experience",
+    description: "Adventure through Bangkok, Khao Sok, Koh Phangan, and the Phi Phi Islands",
+    price: 1780.99,
+    active: false,
     typeId: 2,
-    typeName: 'Adrenalin'
+    typeName: "Adrenaline"
   }
 ];

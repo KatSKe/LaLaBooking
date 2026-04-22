@@ -8,9 +8,9 @@ const STORAGE_KEY = "users";
 function normalizeUser(user) {
   return {
     ...user,
-    id: user.id ?? user.sifra,
-    firstName: user.firstName ?? user.ime ?? "",
-    lastName: user.lastName ?? user.prezime ?? "",
+    id: user.id ?? user.id,
+    firstName: user.firstName ?? user.firstName ?? "",
+    lastName: user.lastName ?? user.lastName ?? "",
   };
 }
 

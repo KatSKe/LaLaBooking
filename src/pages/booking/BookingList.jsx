@@ -7,7 +7,6 @@ import { RouteNames } from "../../constants";
 
 export default function BookingList() {
   const [bookings, setBookings] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,33 +15,7 @@ export default function BookingList() {
 
   async function loadData() {
     const res = await BookingService.get();
-
-    console.log("BOOKINGS:", res.data); // 👈 debug
-
     setBookings(res.data || []);
-  }
-
-  function getUserName(b) {
-    if (b.user && typeof b.user === "object") {
-      const fn = b.user.firstName || "";
-      const ln = b.user.lastName || "";
-      return `${fn} ${ln}`.trim() || "Unknown user";
-    }
-
-    return "Unknown user";
-  }
-
-  function getOfferName(b) {
-    if (b.offer && typeof b.offer === "object") {
-      return b.offer.naziv || "Unknown offer";
-    }
-
-    return "Unknown offer";
-  }
-
-  function formatDate(date) {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-GB");
   }
 
   async function handleDelete(id) {
@@ -63,56 +36,52 @@ export default function BookingList() {
         Add New Booking
       </Button>
 
-      <div className="table-responsive">
-        <Table striped bordered hover>
-          <thead className="table-dark">
-            <tr>
-              <th>User</th>
-              <th>Offer</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Rooms</th>
-              <th>Adults</th>
-              <th>Kids</th>
-              <th>Actions</th>
+      <Table striped bordered hover>
+        <thead className="table-dark">
+          <tr>
+            <th>User</th>
+            <th>Offer</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Rooms</th>
+            <th>Adults</th>
+            <th>Kids</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {bookings.map((b) => (
+            <tr key={b.id}>
+              <td>{b.userName}</td>
+              <td>{b.offerName}</td>
+              <td>{b.startDate}</td>
+              <td>{b.endDate}</td>
+              <td>{b.numberOfRooms}</td>
+              <td>{b.adults}</td>
+              <td>{b.kids}</td>
+
+              <td>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  onClick={() => navigate(`/bookings/${b.id}`)}
+                >
+                  Edit
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => handleDelete(b.id)}
+                >
+                  Delete
+                </Button>
+              </td>
             </tr>
-          </thead>
-
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b.id}>
-                <td>{getUserName(b)}</td>
-                <td>{getOfferName(b)}</td>
-                <td>{formatDate(b.startDate)}</td>
-                <td>{formatDate(b.endDate)}</td>
-                <td>{b.numberOfRooms}</td>
-                <td>{b.adults}</td>
-                <td>{b.kids}</td>
-
-                <td>
-                  <div className="d-flex gap-1">
-                    <Button
-                      size="sm"
-                      variant="warning"
-                      onClick={() => navigate(`/bookings/${b.id}`)}
-                    >
-                      Edit
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => handleDelete(b.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 }

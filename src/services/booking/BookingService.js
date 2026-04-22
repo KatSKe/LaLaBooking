@@ -4,7 +4,7 @@ import { DATA_SOURCE } from "../../constants";
 
 function getService() {
   switch (DATA_SOURCE) {
-    case "memorija":
+    case "memory":
       return BookingServiceMemory;
 
     case "localStorage":
@@ -16,7 +16,7 @@ function getService() {
   }
 }
 
-const Servis = getService();
+const Service = getService();
 
 const fallbackService = {
   get: async () => ({
@@ -31,26 +31,26 @@ const fallbackService = {
     message: "Service not initialized",
   }),
 
-  dodaj: async () =>
-    console.error("❌ BookingService not initialized (dodaj)"),
+  add: async () =>
+    console.error("❌ BookingService not initialized (add)"),
 
-  promjeni: async () =>
-    console.error("❌ BookingService not initialized (promjeni)"),
+  update: async () =>
+    console.error("❌ BookingService not initialized (update)"),
 
-  obrisi: async () =>
-    console.error("❌ BookingService not initialized (obrisi)"),
+  remove: async () =>
+    console.error("❌ BookingService not initialized (remove)"),
 };
 
-const ActiveService = Servis || fallbackService;
+const ActiveService = Service || fallbackService;
 
 export default {
   get: () => ActiveService.get(),
 
   getById: (id) => ActiveService.getById(id),
 
-  dodaj: (booking) => ActiveService.dodaj(booking),
+  add: (booking) => ActiveService.add(booking),
 
-  promjeni: (id, booking) => ActiveService.promjeni(id, booking),
+  update: (id, booking) => ActiveService.update(id, booking),
 
-  obrisi: (id) => ActiveService.obrisi(id),
+  remove: (id) => ActiveService.remove(id),
 };

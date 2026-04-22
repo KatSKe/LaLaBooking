@@ -45,7 +45,7 @@ export default function TypeCreate() {
 
     if (Object.keys(err).length > 0) return;
 
-    await TypeService.create(type);
+    await TypeService.add(type);
     navigate(RouteNames.TYPES);
   }
 

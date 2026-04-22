@@ -1,36 +1,36 @@
 import OfferServiceLocalStorage from "./OfferServiceLocalStorage";
-import OfferServiceMemorija from "./OfferServiceMemorija";
+import OfferServiceMemory from "./OfferServiceMemory";
 import { DATA_SOURCE } from "../../constants";
 
-let Servis = null;
+let Service = null;
 
 switch (DATA_SOURCE) {
-  case "memorija":
-    Servis = OfferServiceMemorija;
+  case "memory":
+    Service = OfferServiceMemory;
     break;
 
   case "localStorage":
-    Servis = OfferServiceLocalStorage;
+    Service = OfferServiceLocalStorage;
     break;
 
   default:
-    Servis = null;
+    Service = null;
 }
 
-const PrazanServis = {
+const EmptyService = {
   get: async () => ({ success: false, data: [] }),
-  getBySifra: async () => ({ success: false, data: {} }),
-  dodaj: async () => console.error("OfferService nije učitan"),
-  promjeni: async () => console.error("OfferService nije učitan"),
-  obrisi: async () => console.error("OfferService nije učitan"),
+  getById: async () => ({ success: false, data: {} }),
+  add: async () => console.error("OfferService not loaded"),
+  update: async () => console.error("OfferService not loaded"),
+  remove: async () => console.error("OfferService not loaded"),
 };
 
-const AktivniServis = Servis || PrazanServis;
+const ActiveService = Service || EmptyService;
 
 export default {
-  get: () => AktivniServis.get(),
-  getBySifra: (sifra) => AktivniServis.getBySifra(sifra),
-  dodaj: (offer) => AktivniServis.dodaj(offer),
-  promjeni: (sifra, offer) => AktivniServis.promjeni(sifra, offer),
-  obrisi: (sifra) => AktivniServis.obrisi(sifra),
+  get: () => ActiveService.get(),
+  getById: (id) => ActiveService.getById(id),
+  add: (offer) => ActiveService.add(offer),
+  update: (id, offer) => ActiveService.update(id, offer),
+  remove: (id) => ActiveService.remove(id),
 };

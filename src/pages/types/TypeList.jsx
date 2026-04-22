@@ -28,10 +28,7 @@ export default function TypeList() {
     <div className="container py-4">
       <h2 className="mb-3">Types</h2>
 
-      <Link
-        to={RouteNames.TYPES_NEW}
-        className="btn btn-primary w-100 mb-3"
-      >
+      <Link to={RouteNames.TYPES_NEW} className="btn btn-primary w-100 mb-3">
         Add New Type
       </Link>
 

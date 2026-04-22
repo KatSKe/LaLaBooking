@@ -25,16 +25,21 @@ export default function UserEdit() {
   }, []);
 
   async function loadUser() {
-    const res = await UsersService.getBySifra(id);
-    setUser(res.data || {});
+    const response = await UsersService.getById(id);
+
+    if (response.success && response.data) {
+      setUser(response.data);
+    }
   }
 
   function validate(values = user) {
-    const err = {};
-    if (!values.firstName) err.firstName = "First name is required";
-    if (!values.lastName) err.lastName = "Last name is required";
-    if (!values.email) err.email = "Email is required";
-    return err;
+    const error = {};
+
+    if (!values.firstName) error.firstName = "First name is required";
+    if (!values.lastName) error.lastName = "Last name is required";
+    if (!values.email) error.email = "Email is required";
+
+    return error;
   }
 
   function handleChange(e) {
@@ -59,18 +64,18 @@ export default function UserEdit() {
   }
 
   async function save() {
-    const err = validate();
+    const error = validate();
 
-    setErrors(err);
+    setErrors(error);
     setTouched({
       firstName: true,
       lastName: true,
       email: true,
     });
 
-    if (Object.keys(err).length > 0) return;
+    if (Object.keys(error).length > 0) return;
 
-    await UsersService.promjeni(id, user);
+    await UsersService.update(id, user);
     navigate(RouteNames.USERS);
   }
 
@@ -80,16 +85,16 @@ export default function UserEdit() {
 
       <Card className="p-3">
         <Form>
-
           <Row className="g-3">
 
             <Col md={4}>
               <Form.Label>First Name</Form.Label>
               <Form.Control
                 name="firstName"
-                value={user.firstName || ""}
+                value={user.firstName}
                 onChange={handleChange}
                 onBlur={() => handleBlur("firstName")}
+                isInvalid={showError("firstName")}
               />
             </Col>
 
@@ -97,9 +102,10 @@ export default function UserEdit() {
               <Form.Label>Last Name</Form.Label>
               <Form.Control
                 name="lastName"
-                value={user.lastName || ""}
+                value={user.lastName}
                 onChange={handleChange}
                 onBlur={() => handleBlur("lastName")}
+                isInvalid={showError("lastName")}
               />
             </Col>
 
@@ -107,13 +113,13 @@ export default function UserEdit() {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 name="email"
-                value={user.email || ""}
+                value={user.email}
                 onChange={handleChange}
                 onBlur={() => handleBlur("email")}
+                isInvalid={showError("email")}
               />
             </Col>
 
-            {/* NEW FIELDS */}
             <Col md={4}>
               <Form.Label>Date of Birth</Form.Label>
               <Form.Control
@@ -149,10 +155,7 @@ export default function UserEdit() {
               Save Changes
             </Button>
 
-            <Button
-              variant="outline-secondary"
-              onClick={() => navigate(RouteNames.USERS)}
-            >
+            <Button variant="secondary" onClick={() => navigate(RouteNames.USERS)}>
               Cancel
             </Button>
           </div>

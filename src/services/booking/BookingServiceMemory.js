@@ -1,38 +1,38 @@
 import { bookings } from "./BookingData";
 
-let podaci = [...bookings];
+let data = [...bookings];
 
 export default {
   get: async () => ({
     success: true,
-    data: podaci,
+    data: data,
   }),
 
   getById: async (id) => ({
     success: true,
-    data: podaci.find((b) => b.id == id),
+    data: data.find((b) => b.id == id),
   }),
 
-  dodaj: async (booking) => {
+  add: async (booking) => {
     booking.id = Date.now();
 
-    podaci.push(booking);
+    data.push(booking);
 
     return { success: true };
   },
 
-  promjeni: async (id, booking) => {
-    const index = podaci.findIndex((b) => b.id == id);
+  update: async (id, booking) => {
+    const index = data.findIndex((b) => b.id == id);
 
     if (index !== -1) {
-      podaci[index] = booking;
+      data[index] = booking;
     }
 
     return { success: true };
   },
 
-  obrisi: async (id) => {
-    podaci = podaci.filter((b) => b.id != id);
+  remove: async (id) => {
+    data = data.filter((b) => b.id != id);
 
     return { success: true };
   },

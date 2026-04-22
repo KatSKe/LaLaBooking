@@ -1,59 +1,40 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
+import Menu from "./components/Menu";
+
 import Home from "./pages/Home";
 
+// Offers
 import OfferList from "./pages/offers/OfferList";
 import OfferCreate from "./pages/offers/OfferCreate";
 import OfferEdit from "./pages/offers/OfferEdit";
 
+// Users
 import UserList from "./pages/users/UserList";
 import UserCreate from "./pages/users/UserCreate";
 import UserEdit from "./pages/users/UserEdit";
 
-import TypeList from "./pages/types/TypeList";
-import TypeCreate from "./pages/types/TypeCreate";
-import TypeEdit from "./pages/types/TypeEdit";
-
-import BookingList from "./pages/booking/BookingList";
-import BookingCreate from "./pages/booking/BookingCreate";
-import BookingEdit from "./pages/booking/BookingEdit";
-
-import Menu from "./components/Menu";
-import { RouteNames } from "./constants";
-
-export default function App() {
+function App() {
   return (
-    <div className="app-shell">
-
+    <>
       <Menu />
 
-      <div className="app-view">
-        <div className="app-content">
-          <Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
 
-            <Route path={RouteNames.HOME} element={<Home />} />
+        {/* Offers */}
+        <Route path="/offers" element={<OfferList />} />
+        <Route path="/offers/new" element={<OfferCreate />} />
+        <Route path="/offers/edit/:sifra" element={<OfferEdit />} />
 
-            <Route path={RouteNames.OFFERS} element={<OfferList />} />
-            <Route path={RouteNames.OFFERS_CREATE} element={<OfferCreate />} />
-            <Route path={RouteNames.OFFERS_EDIT} element={<OfferEdit />} />
-
-            <Route path={RouteNames.USERS} element={<UserList />} />
-            <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
-            <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
-
-            <Route path={RouteNames.TYPES} element={<TypeList />} />
-            <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
-            <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
-
-            <Route path={RouteNames.BOOKINGS} element={<BookingList />} />
-            <Route path={RouteNames.BOOKINGS_CREATE} element={<BookingCreate />} />
-            <Route path="/bookings/:id" element={<BookingEdit />} />
-
-          </Routes>
-        </div>
-      </div>
-
-    </div>
+        {/* Users */}
+        <Route path="/users" element={<UserList />} />
+        <Route path="/users/new" element={<UserCreate />} />
+        <Route path="/users/edit/:id" element={<UserEdit />} />
+      </Routes>
+    </>
   );
 }
+
+export default App;

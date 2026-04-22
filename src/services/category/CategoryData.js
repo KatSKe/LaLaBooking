@@ -1,10 +1,10 @@
-export const destinacije = [
+export const categories = [
     {
-        sifra: 1,
-        naziv: 'Destinations available'
+        id: 1,
+        name: "Available destinations"
     },
     {
-        sifra: 2,
-        naziv: 'User'
+        id: 2,
+        name: "User"
     }
 ];

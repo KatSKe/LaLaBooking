@@ -2,73 +2,73 @@ import { offers as defaultOffers } from "./OffersData";
 
 const STORAGE_KEY = "offers";
 
-function dohvatiSveIzStorage() {
-  const podaci = localStorage.getItem(STORAGE_KEY);
+function getAllFromStorage() {
+  const data = localStorage.getItem(STORAGE_KEY);
 
-  // 🔥 AKO NEMA PODATAKA → UBACI DEFAULT
-  if (!podaci) {
+  // 🔥 IF NO DATA → INSERT DEFAULTS
+  if (!data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultOffers));
     return defaultOffers;
   }
 
-  return JSON.parse(podaci);
+  return JSON.parse(data);
 }
 
-function spremiUStorage(podaci) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(podaci));
+function saveToStorage(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 async function get() {
-  const offers = dohvatiSveIzStorage();
+  const offers = getAllFromStorage();
   return { success: true, data: [...offers] };
 }
 
-async function getBySifra(sifra) {
-  const offers = dohvatiSveIzStorage();
-  const offer = offers.find(o => o.sifra === parseInt(sifra));
+async function getById(id) {
+  const offers = getAllFromStorage();
+  const offer = offers.find(o => o.id === parseInt(id));
   return { success: true, data: offer };
 }
 
-async function dodaj(offer) {
-  const offers = dohvatiSveIzStorage();
+async function add(offer) {
+  const offers = getAllFromStorage();
 
   if (offers.length === 0) {
-    offer.sifra = 1;
+    offer.id = 1;
   } else {
-    const maxSifra = Math.max(...offers.map(o => o.sifra));
-    offer.sifra = maxSifra + 1;
+    const maxId = Math.max(...offers.map(o => o.id));
+    offer.id = maxId + 1;
   }
 
   offers.push(offer);
-  spremiUStorage(offers);
+  saveToStorage(offers);
 
   return { success: true, data: offer };
 }
 
-async function promjeni(sifra, offer) {
-  const offers = dohvatiSveIzStorage();
-  const index = offers.findIndex(o => o.sifra === parseInt(sifra));
+async function update(id, offer) {
+  const offers = getAllFromStorage();
+  const index = offers.findIndex(o => o.id === parseInt(id));
 
   if (index !== -1) {
     offers[index] = { ...offers[index], ...offer };
-    spremiUStorage(offers);
+    saveToStorage(offers);
   }
 
   return { success: true, data: offers[index] };
 }
 
-async function obrisi(sifra) {
-  let offers = dohvatiSveIzStorage();
-  offers = offers.filter(o => o.sifra !== parseInt(sifra));
-  spremiUStorage(offers);
+async function remove(id) {
+  let offers = getAllFromStorage();
+  offers = offers.filter(o => o.id !== parseInt(id));
+  saveToStorage(offers);
 
-  return { success: true, message: "Obrisano" };
+  return { success: true, message: "Deleted" };
 }
 
 export default {
   get,
-  getBySifra,
-  dodaj,
-  promjeni,
-  obrisi,
+  getById,
+  add,
+  update,
+  remove,
 };

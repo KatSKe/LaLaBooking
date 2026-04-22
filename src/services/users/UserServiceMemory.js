@@ -5,58 +5,58 @@ async function get() {
   return { success: true, data: [...users] };
 }
 
-async function getBySifra(sifra) {
+async function getById(id) {
   return {
     success: true,
-    data: users.find(k => k.sifra === parseInt(sifra)),
+    data: users.find(u => u.id === parseInt(id)),
   };
 }
 
 // 2/4 CREATE (CRUD)
-async function dodaj(k) {
+async function add(user) {
   if (users.length === 0) {
-    k.sifra = 1;
+    user.id = 1;
   } else {
-    k.sifra = users[users.length - 1].sifra + 1;
+    user.id = users[users.length - 1].id + 1;
   }
 
-  users.push(k);
+  users.push(user);
 
-  return { success: true, data: k };
+  return { success: true, data: user };
 }
 
 // 3/4 UPDATE (CRUD)
-async function promjeni(sifra, k) {
-  const index = nadiIndex(sifra);
+async function update(id, user) {
+  const index = findIndex(id);
 
   if (index > -1) {
-    users[index] = { ...users[index], ...k };
+    users[index] = { ...users[index], ...user };
     return { success: true, data: users[index] };
   }
 
-  return { success: false, message: "Korisnik nije pronađen" };
+  return { success: false, message: "User not found" };
 }
 
-function nadiIndex(sifra) {
-  return users.findIndex(k => k.sifra === parseInt(sifra));
+function findIndex(id) {
+  return users.findIndex(u => u.id === parseInt(id));
 }
 
 // 4/4 DELETE (CRUD)
-async function obrisi(sifra) {
-  const index = nadiIndex(sifra);
+async function remove(id) {
+  const index = findIndex(id);
 
   if (index > -1) {
     users.splice(index, 1);
-    return { success: true, message: "Obrisano" };
+    return { success: true, message: "Deleted" };
   }
 
-  return { success: false, message: "Korisnik nije pronađen" };
+  return { success: false, message: "User not found" };
 }
 
 export default {
   get,
-  dodaj,
-  getBySifra,
-  promjeni,
-  obrisi,
+  add,
+  getById,
+  update,
+  remove,
 };

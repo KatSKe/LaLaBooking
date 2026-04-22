@@ -9,9 +9,9 @@ export default function OfferEdit() {
   const { sifra } = useParams();
 
   const [offer, setOffer] = useState({
-    naziv: "",
-    cijena: "",
-    opis: "",
+    name: "",
+    price: "",
+    description: "",
     active: true,
   });
 
@@ -25,17 +25,21 @@ export default function OfferEdit() {
   async function loadOffer() {
     const res = await OffersService.getBySifra(sifra);
 
+    const data = res.data || {};
+
     setOffer({
-      ...res.data,
-      active: res.data?.active ?? true,
+      name: data.naziv,
+      price: data.cijena,
+      description: data.opis,
+      active: data.active ?? data.aktivan ?? true,
     });
   }
 
   function validate(values = offer) {
     const err = {};
-    if (!values.naziv) err.naziv = "Name is required";
-    if (!values.cijena) err.cijena = "Price is required";
-    if (!values.opis) err.opis = "Description is required";
+    if (!values.name) err.name = "Name is required";
+    if (!values.price) err.price = "Price is required";
+    if (!values.description) err.description = "Description is required";
     return err;
   }
 
@@ -65,14 +69,20 @@ export default function OfferEdit() {
 
     setErrors(err);
     setTouched({
-      naziv: true,
-      cijena: true,
-      opis: true,
+      name: true,
+      price: true,
+      description: true,
     });
 
     if (Object.keys(err).length > 0) return;
 
-    await OffersService.promjeni(sifra, offer);
+    await OffersService.promjeni(sifra, {
+      naziv: offer.name,
+      cijena: offer.price,
+      opis: offer.description,
+      active: offer.active,
+    });
+
     navigate(RouteNames.OFFERS);
   }
 
@@ -88,34 +98,33 @@ export default function OfferEdit() {
             <Col md={4}>
               <Form.Label>Name</Form.Label>
               <Form.Control
-                name="naziv"
-                value={offer.naziv || ""}
+                name="name"
+                value={offer.name || ""}
                 onChange={handleChange}
-                onBlur={() => handleBlur("naziv")}
+                onBlur={() => handleBlur("name")}
               />
             </Col>
 
             <Col md={4}>
               <Form.Label>Price</Form.Label>
               <Form.Control
-                name="cijena"
-                value={offer.cijena || ""}
+                name="price"
+                value={offer.price || ""}
                 onChange={handleChange}
-                onBlur={() => handleBlur("cijena")}
+                onBlur={() => handleBlur("price")}
               />
             </Col>
 
             <Col md={4}>
               <Form.Label>Description</Form.Label>
               <Form.Control
-                name="opis"
-                value={offer.opis || ""}
+                name="description"
+                value={offer.description || ""}
                 onChange={handleChange}
-                onBlur={() => handleBlur("opis")}
+                onBlur={() => handleBlur("description")}
               />
             </Col>
 
-            {/* ACTIVE - STANDARD SWITCH */}
             <Col md={12} className="mt-3">
               <Form.Check
                 type="switch"

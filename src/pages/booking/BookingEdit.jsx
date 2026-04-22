@@ -122,7 +122,6 @@ export default function BookingEdit() {
       <Card className="p-3">
         <Row className="g-3">
 
-          {/* USER */}
           <Col md={6}>
             <Form.Label>User</Form.Label>
 
@@ -142,15 +141,8 @@ export default function BookingEdit() {
                   </option>
                 ))}
             </Form.Select>
-
-            {showError("user") && (
-              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                User is required
-              </div>
-            )}
           </Col>
 
-          {/* OFFER */}
           <Col md={6}>
             <Form.Label>Offer</Form.Label>
 
@@ -167,15 +159,8 @@ export default function BookingEdit() {
                 </option>
               ))}
             </Form.Select>
-
-            {showError("offer") && (
-              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                Offer is required
-              </div>
-            )}
           </Col>
 
-          {/* START DATE */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
 
@@ -187,19 +172,9 @@ export default function BookingEdit() {
                 setBooking(updated);
                 setErrors(validate(updated));
               }}
-              onFocus={(e) => e.target.showPicker?.()}
-              onBlur={() => handleBlur("startDate")}
-              style={{ borderColor: showError("startDate") ? "#dc3545" : "" }}
             />
-
-            {showError("startDate") && (
-              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                Start Date is required
-              </div>
-            )}
           </Col>
 
-          {/* END DATE */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
 
@@ -211,49 +186,6 @@ export default function BookingEdit() {
                 setBooking(updated);
                 setErrors(validate(updated));
               }}
-              onFocus={(e) => e.target.showPicker?.()}
-              onBlur={() => handleBlur("endDate")}
-              style={{ borderColor: showError("endDate") ? "#dc3545" : "" }}
-            />
-
-            {showError("endDate") && (
-              <div style={{ color: "#dc3545", fontSize: "0.75rem" }}>
-                End Date is required
-              </div>
-            )}
-          </Col>
-
-          {/* NUMBERS */}
-          <Col md={4}>
-            <Form.Label>Rooms</Form.Label>
-
-            <Form.Control
-              type="number"
-              min={0}
-              value={booking.numberOfRooms}
-              onChange={(e) => handleNumber("numberOfRooms", e.target.value)}
-            />
-          </Col>
-
-          <Col md={4}>
-            <Form.Label>Adults</Form.Label>
-
-            <Form.Control
-              type="number"
-              min={0}
-              value={booking.adults}
-              onChange={(e) => handleNumber("adults", e.target.value)}
-            />
-          </Col>
-
-          <Col md={4}>
-            <Form.Label>Kids</Form.Label>
-
-            <Form.Control
-              type="number"
-              min={0}
-              value={booking.kids}
-              onChange={(e) => handleNumber("kids", e.target.value)}
             />
           </Col>
 

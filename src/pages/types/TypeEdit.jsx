@@ -77,7 +77,6 @@ export default function TypeEdit() {
       <Card className="p-3">
         <Form>
 
-          {/* NAME */}
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -95,7 +94,6 @@ export default function TypeEdit() {
             )}
           </Form.Group>
 
-          {/* ACTIVE SWITCH (SAME AS OFFER) */}
           <Form.Check
             type="switch"
             id="type-active-switch"

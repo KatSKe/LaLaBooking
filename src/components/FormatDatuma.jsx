@@ -1,19 +1,19 @@
-export default function FormatDatuma({datum,prikazZadano='-'}){
-    if(!datum){
-        return prikazZadano
-    }
+export default function FormatDatuma({ date, defaultDisplay = "-" }) {
+  if (!date) {
+    return defaultDisplay;
+  }
 
-    const d = new Date(datum)
+  const d = new Date(date);
 
-    if(isNaN(d.getTime())){
-        return prikazZadano
-    }
+  if (isNaN(d.getTime())) {
+    return defaultDisplay;
+  }
 
-    return Intl.DateTimeFormat('hr-HR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(d) + (datum.includes('T') ? '' : '.')
-
-
+  return (
+    Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(d) + (date.includes("T") ? "" : ".")
+  );
 }
