@@ -16,16 +16,64 @@ export default function UserCreate() {
     city: "",
   });
 
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
+
+  function capitalize(value) {
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  }
+
+  function validate(values = user) {
+    const error = {};
+
+    if (!values.firstName) error.firstName = "First name is required";
+    if (!values.lastName) error.lastName = "Last name is required";
+    if (!values.email) error.email = "Email is required";
+    if (!values.city) error.city = "City is required";
+
+    return error;
+  }
+
   function handleChange(e) {
     const { name, value } = e.target;
 
-    setUser({
+    let updatedValue = value;
+
+    if (["firstName", "lastName", "city"].includes(name)) {
+      updatedValue = capitalize(value);
+    }
+
+    const updatedUser = {
       ...user,
-      [name]: value,
-    });
+      [name]: updatedValue,
+    };
+
+    setUser(updatedUser);
+    setErrors(validate(updatedUser));
+  }
+
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate());
+  }
+
+  function showError(field) {
+    return touched[field] && errors[field];
   }
 
   async function save() {
+    const error = validate();
+
+    setErrors(error);
+    setTouched({
+      firstName: true,
+      lastName: true,
+      email: true,
+      city: true,
+    });
+
+    if (Object.keys(error).length > 0) return;
+
     await UsersService.add(user);
     navigate(RouteNames.USERS);
   }
@@ -36,7 +84,6 @@ export default function UserCreate() {
 
       <Card className="p-3">
         <Form>
-
           <Row className="g-3">
 
             <Col md={4}>
@@ -45,7 +92,12 @@ export default function UserCreate() {
                 name="firstName"
                 value={user.firstName}
                 onChange={handleChange}
+                onBlur={() => handleBlur("firstName")}
+                isInvalid={showError("firstName")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.firstName}
+              </Form.Control.Feedback>
             </Col>
 
             <Col md={4}>
@@ -54,7 +106,12 @@ export default function UserCreate() {
                 name="lastName"
                 value={user.lastName}
                 onChange={handleChange}
+                onBlur={() => handleBlur("lastName")}
+                isInvalid={showError("lastName")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.lastName}
+              </Form.Control.Feedback>
             </Col>
 
             <Col md={4}>
@@ -63,21 +120,22 @@ export default function UserCreate() {
                 name="email"
                 value={user.email}
                 onChange={handleChange}
+                onBlur={() => handleBlur("email")}
+                isInvalid={showError("email")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.email}
+              </Form.Control.Feedback>
             </Col>
 
-            {/* 🔥 DATE OF BIRTH WITH AUTO CALENDAR */}
             <Col md={4}>
               <Form.Label>Date of Birth</Form.Label>
-
               <Form.Control
                 type="date"
                 name="dateOfBirth"
                 value={user.dateOfBirth}
                 onChange={handleChange}
-                onFocus={(e) => e.target.showPicker?.()} // opens calendar instantly (Chrome/Edge)
-                onClick={(e) => e.target.showPicker?.()} // extra safety
-                style={{ cursor: "pointer" }}
+                onFocus={(e) => e.target.showPicker?.()}
               />
             </Col>
 
@@ -96,7 +154,12 @@ export default function UserCreate() {
                 name="city"
                 value={user.city}
                 onChange={handleChange}
+                onBlur={() => handleBlur("city")}
+                isInvalid={showError("city")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.city}
+              </Form.Control.Feedback>
             </Col>
 
           </Row>
@@ -106,10 +169,7 @@ export default function UserCreate() {
               Save User
             </Button>
 
-            <Button
-              variant="secondary"
-              onClick={() => navigate(RouteNames.USERS)}
-            >
+            <Button variant="secondary" onClick={() => navigate(RouteNames.USERS)}>
               Cancel
             </Button>
           </div>

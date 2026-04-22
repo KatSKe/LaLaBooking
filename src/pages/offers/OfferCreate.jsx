@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 import OffersService from "../../services/offers/OffersService";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
@@ -34,9 +34,26 @@ export default function OfferCreate() {
 
     if (!values.name) err.name = "Name is required";
     if (!values.typeId) err.typeId = "Type is required";
-    if (!values.price) err.price = "Price is required";
+
+    if (!values.price) {
+      err.price = "Price is required";
+    } else if (values.price < 0) {
+      err.price = "Price cannot be negative";
+    }
 
     return err;
+  }
+
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
+
+    const updated = {
+      ...offer,
+      [name]: type === "checkbox" ? checked : value,
+    };
+
+    setOffer(updated);
+    setErrors(validate(updated));
   }
 
   function handleBlur(field) {
@@ -44,25 +61,14 @@ export default function OfferCreate() {
     setErrors(validate());
   }
 
-  function handleChange(e) {
-    const { name, value, type, checked } = e.target;
-
-    const newValue = type === "checkbox" ? checked : value;
-
-    const updated = {
-      ...offer,
-      [name]: newValue,
-    };
-
-    setOffer(updated);
-    setErrors(validate(updated));
-  }
+  const showError = (field) => touched[field] && errors[field];
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     const err = validate();
     setErrors(err);
+
     setTouched({
       name: true,
       typeId: true,
@@ -73,16 +79,15 @@ export default function OfferCreate() {
 
     const type = types.find((t) => t.id === parseInt(offer.typeId));
 
-    await OffersService.dodaj({
+    await OffersService.add({
       ...offer,
+      name: offer.name.charAt(0).toUpperCase() + offer.name.slice(1),
       typeId: parseInt(offer.typeId),
       typeName: type?.name,
     });
 
     navigate(RouteNames.OFFERS);
   }
-
-  const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="container py-4">
@@ -116,6 +121,8 @@ export default function OfferCreate() {
                 isInvalid={showError("typeId")}
               >
                 <option value="">Select type</option>
+
+                {/* 🔥 ALL TYPES INCLUDED */}
                 {types.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -138,7 +145,7 @@ export default function OfferCreate() {
             </Col>
 
             <Col md={6}>
-              <Form.Label>Price</Form.Label>
+              <Form.Label>Price (€)</Form.Label>
               <Form.Control
                 type="number"
                 name="price"
@@ -146,6 +153,7 @@ export default function OfferCreate() {
                 onChange={handleChange}
                 onBlur={() => handleBlur("price")}
                 isInvalid={showError("price")}
+                min="0"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.price}
@@ -164,14 +172,19 @@ export default function OfferCreate() {
           </Row>
 
           <div className="mt-4 d-flex gap-2">
-            <Link to={RouteNames.OFFERS} className="btn btn-secondary w-100">
+            <Button
+              variant="secondary"
+              className="w-100"
+              onClick={() => navigate(RouteNames.OFFERS)}
+            >
               Cancel
-            </Link>
+            </Button>
 
-            <Button type="submit" className="btn btn-success w-100">
+            <Button type="submit" className="w-100 btn-success">
               Save Offer
             </Button>
           </div>
+
         </Form>
       </Card>
     </div>

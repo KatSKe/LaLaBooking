@@ -5,11 +5,11 @@ export const RouteNames = {
 
   OFFERS: "/offers",
   OFFERS_CREATE: "/offers/new",
-  OFFERS_EDIT: "/offers/:sifra",
+  OFFERS_EDIT: "/offers/edit/:id",
 
   USERS: "/users",
   USERS_NEW: "/users/new",
-  USERS_EDIT: "/users/:id",
+  USERS_EDIT: "/users/edit/:id",
 
   TYPES: "/types",
   TYPES_NEW: "/types/new",
@@ -20,5 +20,4 @@ export const RouteNames = {
   BOOKINGS_EDIT: "/bookings/:id",
 };
 
-// memory, localStorage, firebase
 export const DATA_SOURCE = "localStorage";

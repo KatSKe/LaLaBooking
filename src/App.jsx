@@ -15,6 +15,11 @@ import UserList from "./pages/users/UserList";
 import UserCreate from "./pages/users/UserCreate";
 import UserEdit from "./pages/users/UserEdit";
 
+// Types
+import TypeList from "./pages/types/TypeList";
+import TypeCreate from "./pages/types/TypeCreate";
+import TypeEdit from "./pages/types/TypeEdit";
+
 function App() {
   return (
     <>
@@ -32,6 +37,11 @@ function App() {
         <Route path="/users" element={<UserList />} />
         <Route path="/users/new" element={<UserCreate />} />
         <Route path="/users/edit/:id" element={<UserEdit />} />
+
+        {/* Types */}
+        <Route path="/types" element={<TypeList />} />
+        <Route path="/types/new" element={<TypeCreate />} />
+        <Route path="/types/:id" element={<TypeEdit />} />
       </Routes>
     </>
   );

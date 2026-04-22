@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
 import { RouteNames } from "../../constants";
+
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default function TypeList() {
   const navigate = useNavigate();
@@ -14,31 +16,39 @@ export default function TypeList() {
 
   async function load() {
     const result = await TypeService.get();
-    const data = result?.data ?? result;
-    setTypes(Array.isArray(data) ? data : []);
+    setTypes(result.data || []);
   }
 
   async function deleteType(id) {
     if (!window.confirm("Are you sure you want to delete this type?")) return;
+
     await TypeService.remove(id);
     load();
   }
 
   return (
     <div className="container py-4">
+
       <h2 className="mb-3">Types</h2>
 
-      <Link to={RouteNames.TYPES_NEW} className="btn btn-primary w-100 mb-3">
+      {/* BUTTON LIKE USERS */}
+      <Button
+        className="mb-3 w-100"
+        onClick={() => navigate(RouteNames.TYPES_NEW)}
+      >
+        <Plus size={18} style={{ marginRight: 6 }} />
         Add New Type
-      </Link>
+      </Button>
 
+      {/* TABLE */}
       <div className="table-responsive">
         <Table striped hover>
           <thead>
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Actions</th>
+              <th>Active</th>
+              <th className="text-end">Actions</th>
             </tr>
           </thead>
 
@@ -48,26 +58,35 @@ export default function TypeList() {
                 <td>{type.id}</td>
                 <td>{type.name}</td>
 
-                <td className="d-flex gap-2">
+                <td>
+                  {type.active !== false ? (
+                    <span className="text-success">Active</span>
+                  ) : (
+                    <span className="text-danger">Inactive</span>
+                  )}
+                </td>
+
+                <td className="text-end d-flex justify-content-end gap-2">
                   <Button
                     size="sm"
-                    variant="warning"
+                    variant="outline-warning"
                     onClick={() => navigate(`/types/${type.id}`)}
                   >
-                    Edit
+                    <Pencil size={16} />
                   </Button>
 
                   <Button
                     size="sm"
-                    variant="danger"
+                    variant="outline-danger"
                     onClick={() => deleteType(type.id)}
                   >
-                    Delete
+                    <Trash2 size={16} />
                   </Button>
                 </td>
               </tr>
             ))}
           </tbody>
+
         </Table>
       </div>
     </div>

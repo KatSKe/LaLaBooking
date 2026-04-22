@@ -14,23 +14,15 @@ switch (DATA_SOURCE) {
     break;
 
   default:
-    Service = null;
+    Service = OfferServiceLocalStorage; // fallback safety
 }
 
-const EmptyService = {
-  get: async () => ({ success: false, data: [] }),
-  getById: async () => ({ success: false, data: {} }),
-  add: async () => console.error("OfferService not loaded"),
-  update: async () => console.error("OfferService not loaded"),
-  remove: async () => console.error("OfferService not loaded"),
-};
-
-const ActiveService = Service || EmptyService;
-
 export default {
-  get: () => ActiveService.get(),
-  getById: (id) => ActiveService.getById(id),
-  add: (offer) => ActiveService.add(offer),
-  update: (id, offer) => ActiveService.update(id, offer),
-  remove: (id) => ActiveService.remove(id),
+  get: () => Service.get(),
+  getById: (id) => Service.getById(id),
+
+  // STANDARD API (ENGLISH ONLY)
+  add: (offer) => Service.add(offer),
+  update: (id, offer) => Service.update(id, offer),
+  remove: (id) => Service.remove(id),
 };

@@ -24,12 +24,16 @@ export default function UserEdit() {
     loadUser();
   }, []);
 
+  // ✅ FIXED LOAD USER (SAFE REDIRECT)
   async function loadUser() {
     const response = await UsersService.getById(id);
 
-    if (response.success && response.data) {
-      setUser(response.data);
+    if (!response.success || !response.data) {
+      navigate(RouteNames.USERS);
+      return;
     }
+
+    setUser(response.data);
   }
 
   function validate(values = user) {

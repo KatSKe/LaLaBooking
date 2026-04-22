@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button } from "react-bootstrap";
+
+import { Pencil, Trash2, Plus } from "lucide-react";
+
 import UserService from "../../services/users/UserService";
 import { RouteNames } from "../../constants";
 
@@ -24,6 +27,20 @@ export default function UserList() {
     loadUsers();
   }
 
+  function formatPhoneNumber(phone) {
+    if (!phone) return "";
+    const digits = phone.replace(/\D/g, "");
+
+    if (digits.startsWith("385")) {
+      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
+        5,
+        8
+      )} ${digits.slice(8)}`;
+    }
+
+    return digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+  }
+
   return (
     <div className="container py-4">
       <h2 className="mb-3">Users</h2>
@@ -32,6 +49,7 @@ export default function UserList() {
         className="mb-3 w-100"
         onClick={() => navigate(RouteNames.USERS_NEW)}
       >
+        <Plus size={18} style={{ marginRight: 6 }} />
         Add New User
       </Button>
 
@@ -42,7 +60,8 @@ export default function UserList() {
               <th>First Name</th>
               <th>Last Name</th>
               <th>Email</th>
-              <th>Phone</th>
+              <th>Date of Birth</th>
+              <th>Phone Number</th>
               <th>City</th>
               <th>Actions</th>
             </tr>
@@ -54,26 +73,37 @@ export default function UserList() {
                 <td>{user.firstName}</td>
                 <td>{user.lastName}</td>
                 <td>{user.email}</td>
-                <td>{user.phoneNumber}</td>
+
+                <td>
+                  {user.dateOfBirth
+                    ? new Date(user.dateOfBirth).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : ""}
+                </td>
+
+                <td>{formatPhoneNumber(user.phoneNumber)}</td>
                 <td>{user.city}</td>
 
                 <td className="d-flex gap-2">
                   <Button
                     size="sm"
-                    variant="warning"
+                    variant="outline-warning"
                     onClick={() =>
                       navigate(RouteNames.USERS_EDIT.replace(":id", user.id))
                     }
                   >
-                    Edit
+                    <Pencil size={16} />
                   </Button>
 
                   <Button
                     size="sm"
-                    variant="danger"
+                    variant="outline-danger"
                     onClick={() => deleteUser(user.id)}
                   >
-                    Delete
+                    <Trash2 size={16} />
                   </Button>
                 </td>
               </tr>

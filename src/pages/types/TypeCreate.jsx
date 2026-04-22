@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TypeService from "../../services/types/TypeServiceLocalStorage";
 import { RouteNames } from "../../constants";
 
@@ -9,26 +9,34 @@ export default function TypeCreate() {
 
   const [type, setType] = useState({
     name: "",
+    active: true,
   });
 
-  const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
+
+  function formatName(value) {
+    if (!value) return "";
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
 
   function validate(values = type) {
     const err = {};
-    if (!values.name) err.name = "Name is required";
+
+    if (!values.name || !values.name.trim()) {
+      err.name = "Type name is required";
+    }
+
     return err;
   }
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { name, value, type: inputType, checked } = e.target;
 
-    setType((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    setErrors(validate({ ...type, [name]: value }));
+    setType({
+      ...type,
+      [name]: inputType === "checkbox" ? checked : value,
+    });
   }
 
   function handleBlur(field) {
@@ -36,50 +44,81 @@ export default function TypeCreate() {
     setErrors(validate());
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  function showError(field) {
+    return touched[field] && errors[field];
+  }
 
+  async function save() {
     const err = validate();
+
     setErrors(err);
     setTouched({ name: true });
 
     if (Object.keys(err).length > 0) return;
 
-    await TypeService.add(type);
+    const newType = {
+      name: formatName(type.name.trim()),
+      active: type.active,
+    };
+
+    await TypeService.create(newType);
+
     navigate(RouteNames.TYPES);
   }
 
-  const showError = (field) => touched[field] && errors[field];
-
   return (
     <div className="container py-4">
-      <Card className="p-4">
-        <h2 className="mb-4">Add New Type</h2>
+      <h2 className="mb-4">Add New Type</h2>
 
-        <Form onSubmit={handleSubmit}>
+      <Card className="p-3">
+        <Form>
+
+          {/* NAME */}
           <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Type Name</Form.Label>
+
             <Form.Control
               name="name"
               value={type.name}
               onChange={handleChange}
               onBlur={() => handleBlur("name")}
-              isInvalid={showError("name")}
+              placeholder="Enter type name..."
+              style={{
+                borderColor: showError("name") ? "#dc3545" : "",
+              }}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.name}
-            </Form.Control.Feedback>
+
+            {showError("name") && (
+              <small style={{ color: "#dc3545" }}>
+                {errors.name}
+              </small>
+            )}
           </Form.Group>
 
-          <div className="d-flex gap-2">
-            <Link to={RouteNames.TYPES} className="btn btn-secondary w-100">
-              Cancel
-            </Link>
+          {/* ACTIVE */}
+          <Form.Check
+            type="switch"
+            label={type.active ? "Active" : "Inactive"}
+            name="active"
+            checked={type.active}
+            onChange={handleChange}
+            className="mb-3"
+          />
 
-            <Button type="submit" className="btn btn-success w-100">
+          {/* BUTTONS */}
+          <div className="d-flex gap-2">
+            <Button variant="primary" onClick={save}>
               Save Type
             </Button>
+
+            <Button
+              variant="outline-secondary"
+              onClick={() => navigate(RouteNames.TYPES)}
+            >
+              Cancel
+            </Button>
           </div>
+
         </Form>
       </Card>
     </div>

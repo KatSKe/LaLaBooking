@@ -23,16 +23,25 @@ export default function TypeEdit() {
   async function loadType() {
     const res = await TypeService.getById(id);
 
-    setType({
-      ...res.data,
-      active: res.data?.active ?? true,
-    });
+    if (res?.data) {
+      setType({
+        name: res.data.name || "",
+        active: res.data.active ?? true,
+      });
+    }
+  }
+
+  function formatName(value) {
+    if (!value) return "";
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
   function validate(values = type) {
     const err = {};
 
-    if (!values.name) err.name = "Type name is required";
+    if (!values.name || !values.name.trim()) {
+      err.name = "Type name is required";
+    }
 
     return err;
   }
@@ -40,13 +49,10 @@ export default function TypeEdit() {
   function handleChange(e) {
     const { name, value, type: inputType, checked } = e.target;
 
-    const updated = {
+    setType({
       ...type,
       [name]: inputType === "checkbox" ? checked : value,
-    };
-
-    setType(updated);
-    setErrors(validate(updated));
+    });
   }
 
   function handleBlur(field) {
@@ -66,7 +72,13 @@ export default function TypeEdit() {
 
     if (Object.keys(err).length > 0) return;
 
-    await TypeService.update(id, type);
+    const updatedType = {
+      ...type,
+      name: formatName(type.name.trim()),
+    };
+
+    await TypeService.update(id, updatedType);
+
     navigate(RouteNames.TYPES);
   }
 
@@ -77,14 +89,19 @@ export default function TypeEdit() {
       <Card className="p-3">
         <Form>
 
+          {/* NAME */}
           <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Type Name</Form.Label>
+
             <Form.Control
               name="name"
-              value={type.name || ""}
+              value={type.name}
               onChange={handleChange}
               onBlur={() => handleBlur("name")}
-              style={{ borderColor: showError("name") ? "#dc3545" : "" }}
+              placeholder="Enter type name..."
+              style={{
+                borderColor: showError("name") ? "#dc3545" : "",
+              }}
             />
 
             {showError("name") && (
@@ -94,9 +111,9 @@ export default function TypeEdit() {
             )}
           </Form.Group>
 
+          {/* ACTIVE */}
           <Form.Check
             type="switch"
-            id="type-active-switch"
             label={type.active ? "Active" : "Inactive"}
             name="active"
             checked={type.active}
@@ -104,6 +121,7 @@ export default function TypeEdit() {
             className="mb-3"
           />
 
+          {/* BUTTONS */}
           <div className="d-flex gap-2">
             <Button variant="success" onClick={save}>
               Save Changes

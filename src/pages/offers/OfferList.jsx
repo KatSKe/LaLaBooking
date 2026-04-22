@@ -1,110 +1,85 @@
 import { useEffect, useState } from "react";
+import { Table, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
 import OffersService from "../../services/offers/OffersService";
-import { Button, Table } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function OfferList() {
   const navigate = useNavigate();
-
   const [offers, setOffers] = useState([]);
-  const [types, setTypes] = useState([]);
-  const [selectedType, setSelectedType] = useState(0);
 
   useEffect(() => {
-    loadOffers();
-    loadTypes();
+    load();
   }, []);
 
-  async function loadTypes() {
-    const result = await TypeService.get();
-    setTypes(result.data || []);
+  async function load() {
+    const res = await OffersService.get();
+    setOffers(res.data || []);
   }
 
-  async function loadOffers() {
-    const result = await OffersService.get();
-    setOffers(result.data || []);
-  }
+  async function remove(id) {
+    if (!window.confirm("Delete this offer?")) return;
 
-  async function deleteOffer(id) {
-    if (!window.confirm("Are you sure you want to delete this offer?")) return;
     await OffersService.obrisi(id);
-    loadOffers();
+    load();
   }
-
-  const filteredOffers =
-    selectedType === 0
-      ? offers
-      : offers.filter((o) => o.typeId === selectedType);
 
   return (
     <div className="container py-4">
+
       <h2 className="mb-3">Offers</h2>
 
-      <Link
-        to={RouteNames.OFFERS_CREATE}
-        className="btn btn-primary w-100 mb-3"
+      <Button
+        className="mb-3 w-100"
+        onClick={() => navigate(RouteNames.OFFERS_CREATE)}
       >
         Add New Offer
-      </Link>
-
-      <select
-        className="form-select mb-3"
-        onChange={(e) => setSelectedType(parseInt(e.target.value))}
-      >
-        <option value={0}>All Types</option>
-        {types.map((type) => (
-          <option key={type.id} value={type.id}>
-            {type.name}
-          </option>
-        ))}
-      </select>
+      </Button>
 
       <div className="table-responsive">
         <Table striped hover>
           <thead>
             <tr>
               <th>Name</th>
-              <th>Description</th>
               <th>Type</th>
               <th>Price</th>
               <th>Active</th>
-              <th>Actions</th>
+              <th className="text-end">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredOffers.map((offer) => (
-              <tr key={offer.sifra}>
-                <td>{offer.name}</td>
-                <td>{offer.description}</td>
-                <td>{offer.typeName || "-"}</td>
-                <td>{offer.price} €</td>
-                <td>{offer.active ? "Yes" : "No"}</td>
+            {offers.map(o => (
+              <tr key={o.id}>
+                <td>{o.name}</td>
+                <td>{o.typeName}</td>
+                <td>{o.price} €</td>
+                <td>{o.active ? "Active" : "Inactive"}</td>
 
-                <td className="d-flex gap-2">
+                <td className="text-end d-flex justify-content-end gap-2">
                   <Button
                     size="sm"
-                    variant="warning"
-                    onClick={() =>
-                      navigate(RouteNames.OFFERS_EDIT.replace(":sifra", offer.sifra))
-                    }
+                    variant="outline-warning"
+                    onClick={() => navigate(`/offers/edit/${o.id}`)}
                   >
-                    Edit
+                    <Pencil size={16} />
                   </Button>
 
                   <Button
                     size="sm"
-                    variant="danger"
-                    onClick={() => deleteOffer(offer.sifra)}
+                    variant="outline-danger"
+                    onClick={() => remove(o.id)}
                   >
-                    Delete
+                    <Trash2 size={16} />
                   </Button>
                 </td>
               </tr>
             ))}
           </tbody>
+
         </Table>
       </div>
     </div>

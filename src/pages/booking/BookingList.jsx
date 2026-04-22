@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
+import { Plus, Pencil, Trash2 } from "lucide-react";
+
 import BookingService from "../../services/booking/BookingService";
 import { RouteNames } from "../../constants";
 
@@ -33,6 +35,7 @@ export default function BookingList() {
         className="mb-3"
         onClick={() => navigate(RouteNames.BOOKINGS_CREATE)}
       >
+        <Plus size={18} style={{ marginRight: 6 }} />
         Add New Booking
       </Button>
 
@@ -61,13 +64,13 @@ export default function BookingList() {
               <td>{b.adults}</td>
               <td>{b.kids}</td>
 
-              <td>
+              <td className="d-flex gap-2">
                 <Button
                   size="sm"
                   variant="warning"
                   onClick={() => navigate(`/bookings/${b.id}`)}
                 >
-                  Edit
+                  <Pencil size={16} />
                 </Button>
 
                 <Button
@@ -75,7 +78,7 @@ export default function BookingList() {
                   variant="danger"
                   onClick={() => handleDelete(b.id)}
                 >
-                  Delete
+                  <Trash2 size={16} />
                 </Button>
               </td>
             </tr>
