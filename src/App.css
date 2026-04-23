@@ -12,7 +12,7 @@
 }
 
 /* =========================
-   HOME BACKGROUND
+   BACKGROUND
 ========================= */
 
 .home-background {
@@ -30,30 +30,14 @@
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1;
 }
 
 /* =========================
-   CONTENT
+   GLASS CARD
 ========================= */
 
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* DARK OVERLAY */
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-}
-
-/* GLASS CARD */
 .glass-card {
   position: relative;
   z-index: 2;
@@ -70,7 +54,7 @@
   text-align: center;
   color: white;
 
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================
@@ -84,9 +68,18 @@
   margin-top: 20px;
 }
 
-/* LOTTIE SIZE */
 .lottie-center svg,
 .lottie-center canvas {
   width: 120px !important;
   height: 120px !important;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 25px;
+  }
 }

@@ -62,7 +62,7 @@ export default function BookingEdit() {
     });
 
     setSelectedUserId(String(b.userId || ""));
-    setSelectedOfferId(String(b.offer || ""));
+    setSelectedOfferId(String(b.offerId || ""));
   }
 
   function validate(values = booking) {
@@ -81,6 +81,8 @@ export default function BookingEdit() {
     setErrors(validate());
   }
 
+  const showError = (field) => touched[field] && errors[field];
+
   function handleNumber(name, value) {
     const updated = {
       ...booking,
@@ -95,6 +97,7 @@ export default function BookingEdit() {
     const err = validate();
 
     setErrors(err);
+
     setTouched({
       user: true,
       offer: true,
@@ -104,16 +107,28 @@ export default function BookingEdit() {
 
     if (Object.keys(err).length > 0) return;
 
+    const selectedUser = users.find(
+      (u) => String(u.id) === String(selectedUserId)
+    );
+
+    const selectedOffer = offers.find(
+      (o) => String(o.id) === String(selectedOfferId)
+    );
+
     await BookingService.promjeni(id, {
       ...booking,
+
       userId: Number(selectedUserId),
-      offer: Number(selectedOfferId),
+      userName: selectedUser
+        ? `${selectedUser.firstName ?? ""} ${selectedUser.lastName ?? ""}`.trim()
+        : "Unknown user",
+
+      offerId: Number(selectedOfferId),
+      offerName: selectedOffer?.name ?? selectedOffer?.title ?? "Unknown offer",
     });
 
     navigate(RouteNames.BOOKINGS);
   }
-
-  const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="container py-4">
@@ -122,6 +137,7 @@ export default function BookingEdit() {
       <Card className="p-3">
         <Row className="g-3">
 
+          {/* USER */}
           <Col md={6}>
             <Form.Label>User</Form.Label>
 
@@ -129,20 +145,19 @@ export default function BookingEdit() {
               value={selectedUserId}
               onChange={(e) => setSelectedUserId(e.target.value)}
               onBlur={() => handleBlur("user")}
-              style={{ borderColor: showError("user") ? "#dc3545" : "" }}
+              isInvalid={showError("user")}
             >
               <option value="">Select user...</option>
-              {users
-                .filter((u) => u && typeof u === "object")
-                .filter((u) => u.sifra && u.ime && u.prezime)
-                .map((u) => (
-                  <option key={u.sifra} value={u.sifra}>
-                    {u.ime} {u.prezime}
-                  </option>
-                ))}
+
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.firstName} {u.lastName}
+                </option>
+              ))}
             </Form.Select>
           </Col>
 
+          {/* OFFER */}
           <Col md={6}>
             <Form.Label>Offer</Form.Label>
 
@@ -150,42 +165,85 @@ export default function BookingEdit() {
               value={selectedOfferId}
               onChange={(e) => setSelectedOfferId(e.target.value)}
               onBlur={() => handleBlur("offer")}
-              style={{ borderColor: showError("offer") ? "#dc3545" : "" }}
+              isInvalid={showError("offer")}
             >
               <option value="">Select offer...</option>
+
               {offers.map((o) => (
-                <option key={o.sifra} value={o.sifra}>
-                  {o.naziv}
+                <option key={o.id} value={o.id}>
+                  {o.name ?? o.title}
                 </option>
               ))}
             </Form.Select>
           </Col>
 
+          {/* START DATE */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
 
             <Form.Control
               type="date"
               value={booking.startDate}
-              onChange={(e) => {
-                const updated = { ...booking, startDate: e.target.value };
-                setBooking(updated);
-                setErrors(validate(updated));
-              }}
+              onChange={(e) =>
+                setBooking({ ...booking, startDate: e.target.value })
+              }
+              onFocus={(e) => e.target.showPicker?.()}
             />
           </Col>
 
+          {/* END DATE */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
 
             <Form.Control
               type="date"
               value={booking.endDate}
-              onChange={(e) => {
-                const updated = { ...booking, endDate: e.target.value };
-                setBooking(updated);
-                setErrors(validate(updated));
-              }}
+              onChange={(e) =>
+                setBooking({ ...booking, endDate: e.target.value })
+              }
+              onFocus={(e) => e.target.showPicker?.()}
+            />
+          </Col>
+
+          {/* ROOMS */}
+          <Col md={4}>
+            <Form.Label>Rooms</Form.Label>
+
+            <Form.Control
+              type="number"
+              min="0"
+              value={booking.numberOfRooms}
+              onChange={(e) =>
+                handleNumber("numberOfRooms", e.target.value)
+              }
+            />
+          </Col>
+
+          {/* ADULTS */}
+          <Col md={4}>
+            <Form.Label>Adults</Form.Label>
+
+            <Form.Control
+              type="number"
+              min="0"
+              value={booking.adults}
+              onChange={(e) =>
+                handleNumber("adults", e.target.value)
+              }
+            />
+          </Col>
+
+          {/* KIDS */}
+          <Col md={4}>
+            <Form.Label>Kids</Form.Label>
+
+            <Form.Control
+              type="number"
+              min="0"
+              value={booking.kids}
+              onChange={(e) =>
+                handleNumber("kids", e.target.value)
+              }
             />
           </Col>
 

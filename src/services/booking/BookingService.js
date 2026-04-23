@@ -52,5 +52,8 @@ export default {
 
   update: (id, booking) => ActiveService.update(id, booking),
 
+  // 🔥 FIX: alias for your BookingEdit.jsx
+  promjeni: (id, booking) => ActiveService.update(id, booking),
+
   remove: (id) => ActiveService.remove(id),
 };

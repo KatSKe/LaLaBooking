@@ -7,10 +7,10 @@ const STORAGE_KEY = "users";
  */
 function normalizeUser(user) {
   return {
-    ...user,
-    id: user.id ?? user.id,
-    firstName: user.firstName ?? user.firstName ?? "",
-    lastName: user.lastName ?? user.lastName ?? "",
+    id: user.id,
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
   };
 }
 
@@ -31,7 +31,7 @@ function getAllFromStorage() {
 
     const normalized = parsed.map(normalizeUser);
 
-    // 🔥 overwrite with clean structure
+    // overwrite with clean structure
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
 
     return normalized;
@@ -50,7 +50,7 @@ function saveToStorage(data) {
 }
 
 /**
- * 1/4 READ
+ * READ
  */
 async function get() {
   const users = getAllFromStorage();
@@ -58,7 +58,7 @@ async function get() {
 }
 
 /**
- * 2/4 READ BY ID
+ * READ BY ID
  */
 async function getById(id) {
   const users = getAllFromStorage();
@@ -68,7 +68,7 @@ async function getById(id) {
 }
 
 /**
- * 3/4 CREATE
+ * CREATE
  */
 async function add(user) {
   const users = getAllFromStorage();
@@ -90,7 +90,7 @@ async function add(user) {
 }
 
 /**
- * 4/4 UPDATE
+ * UPDATE
  */
 async function update(id, user) {
   const users = getAllFromStorage();
@@ -116,7 +116,7 @@ async function update(id, user) {
 }
 
 /**
- * 5/4 DELETE
+ * DELETE
  */
 async function remove(id) {
   let users = getAllFromStorage();

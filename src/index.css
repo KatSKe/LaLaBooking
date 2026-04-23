@@ -3,7 +3,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 40px 20px;
 
   background-image: url("/images/hero.jpg");
@@ -15,14 +14,12 @@
   overflow: hidden;
 }
 
-/* BLUR OVERLAY */
+/* OVERLAY */
 .home-page::before {
   content: "";
   position: absolute;
   inset: 0;
-
   background: rgba(0, 0, 0, 0.35);
-
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -71,7 +68,7 @@
 
 .home-title {
   font-size: 36px;
-  margin: 0 0 10px 0;
+  margin-bottom: 10px;
   font-weight: 700;
 }
 
@@ -81,11 +78,10 @@
   line-height: 1.5;
 }
 
-/* LOTTIE */
+/* ANIMATION */
 .home-animation {
   width: 260px;
   height: 260px;
-
   flex-shrink: 0;
   filter: brightness(0) invert(1);
 }

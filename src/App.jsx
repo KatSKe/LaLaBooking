@@ -20,6 +20,11 @@ import TypeList from "./pages/types/TypeList";
 import TypeCreate from "./pages/types/TypeCreate";
 import TypeEdit from "./pages/types/TypeEdit";
 
+// ✅ BOOKINGS (FIXED PATH)
+import BookingList from "./pages/booking/BookingList";
+import BookingCreate from "./pages/booking/BookingCreate";
+import BookingEdit from "./pages/booking/BookingEdit";
+
 function App() {
   return (
     <>
@@ -42,6 +47,11 @@ function App() {
         <Route path="/types" element={<TypeList />} />
         <Route path="/types/new" element={<TypeCreate />} />
         <Route path="/types/:id" element={<TypeEdit />} />
+
+        {/* ✅ BOOKINGS */}
+        <Route path="/bookings" element={<BookingList />} />
+        <Route path="/bookings/new" element={<BookingCreate />} />
+        <Route path="/bookings/:id" element={<BookingEdit />} />
       </Routes>
     </>
   );

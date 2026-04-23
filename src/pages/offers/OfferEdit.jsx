@@ -207,12 +207,12 @@ export default function OfferEdit() {
           {/* BUTTONS */}
           <div className="mt-4 d-flex gap-2">
 
-            <Button type="submit" className="btn btn-success w-100">
+            <Button variant="success" type="submit">
               Save Changes
             </Button>
 
             <Button
-              className="btn btn-outline-secondary w-100"
+              variant="secondary"
               onClick={() => navigate(RouteNames.OFFERS)}
             >
               Cancel
