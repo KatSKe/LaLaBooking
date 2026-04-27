@@ -61,7 +61,7 @@ export default function UserList() {
               <th>Last Name</th>
               <th>Email</th>
               <th>Date of Birth</th>
-              <th>Phone Number</th>
+              <th>Contact Number</th>
               <th>City</th>
               <th>Actions</th>
             </tr>
@@ -84,8 +84,8 @@ export default function UserList() {
                     : ""}
                 </td>
 
-                <td>{formatPhoneNumber(user.phoneNumber)}</td>
-                <td>{user.city}</td>
+                <td>{formatPhoneNumber(user.contactNumber)}</td>
+                <td>{user.address.city}</td>
 
                 <td className="d-flex gap-2">
                   <Button

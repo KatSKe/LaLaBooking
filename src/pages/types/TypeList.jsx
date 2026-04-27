@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
 import { Pencil, Trash2, Plus } from "lucide-react";
