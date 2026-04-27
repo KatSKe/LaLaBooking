@@ -2,21 +2,24 @@ import { users as defaultUsers } from "./UserDataUser.js";
 
 const STORAGE_KEY = "users";
 
-/**
- * Normalize user object to standard format
- */
 function normalizeUser(user) {
   return {
     id: user.id,
     firstName: user.firstName || "",
     lastName: user.lastName || "",
-    name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+    email: user.email || "",
+    dateOfBirth: user.dateOfBirth || "",
+    contactNumber: user.contactNumber || "",
+    gender: user.gender || "",
+    address: {
+      street: user.address?.street || "",
+      houseNumber: user.address?.houseNumber || "",
+      postalCode: user.address?.postalCode || "",
+      city: user.address?.city || "",
+    },
   };
 }
 
-/**
- * Get all users from localStorage (with auto-fix)
- */
 function getAllFromStorage() {
   const data = localStorage.getItem(STORAGE_KEY);
 
@@ -28,48 +31,32 @@ function getAllFromStorage() {
 
   try {
     const parsed = JSON.parse(data);
-
     const normalized = parsed.map(normalizeUser);
-
-    // overwrite with clean structure
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-
     return normalized;
-  } catch (error) {
+  } catch {
     const normalized = defaultUsers.map(normalizeUser);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
     return normalized;
   }
 }
 
-/**
- * Save users to localStorage
- */
 function saveToStorage(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-/**
- * READ
- */
 async function get() {
-  const users = getAllFromStorage();
-  return { success: true, data: [...users] };
+  return { success: true, data: getAllFromStorage() };
 }
 
-/**
- * READ BY ID
- */
 async function getById(id) {
   const users = getAllFromStorage();
-  const user = users.find((u) => String(u.id) === String(id));
-
-  return { success: true, data: user || null };
+  return {
+    success: true,
+    data: users.find((u) => String(u.id) === String(id)) || null,
+  };
 }
 
-/**
- * CREATE
- */
 async function add(user) {
   const users = getAllFromStorage();
 
@@ -89,42 +76,31 @@ async function add(user) {
   return { success: true, data: newUser };
 }
 
-/**
- * UPDATE
- */
 async function update(id, user) {
   const users = getAllFromStorage();
 
-  const index = users.findIndex(
-    (u) => String(u.id) === String(id)
-  );
+  const index = users.findIndex((u) => String(u.id) === String(id));
 
   if (index > -1) {
-    const updatedUser = normalizeUser({
+    users[index] = normalizeUser({
       ...users[index],
       ...user,
       id: users[index].id,
     });
 
-    users[index] = updatedUser;
     saveToStorage(users);
-
-    return { success: true, data: updatedUser };
+    return { success: true, data: users[index] };
   }
 
-  return { success: false, message: "User not found" };
+  return { success: false };
 }
 
-/**
- * DELETE
- */
 async function remove(id) {
   let users = getAllFromStorage();
-
   users = users.filter((u) => String(u.id) !== String(id));
   saveToStorage(users);
 
-  return { success: true, message: "Deleted" };
+  return { success: true };
 }
 
 export default {

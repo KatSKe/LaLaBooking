@@ -3,10 +3,6 @@ export const APP_NAME = "LaLa Booking";
 export const RouteNames = {
   HOME: "/",
 
-  OFFERS: "/offers",
-  OFFERS_CREATE: "/offers/new",
-  OFFERS_EDIT: "/offers/edit/:id",
-
   USERS: "/users",
   USERS_NEW: "/users/new",
   USERS_EDIT: "/users/edit/:id",
@@ -14,6 +10,10 @@ export const RouteNames = {
   TYPES: "/types",
   TYPES_NEW: "/types/new",
   TYPES_EDIT: "/types/:id",
+
+  OFFERS: "/offers",
+  OFFERS_CREATE: "/offers/new",
+  OFFERS_EDIT: "/offers/edit/:id",
 
   BOOKINGS: "/bookings",
   BOOKINGS_CREATE: "/bookings/new",
