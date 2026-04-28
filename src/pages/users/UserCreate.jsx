@@ -145,13 +145,13 @@ export default function UserCreate() {
 
     if (Object.keys(error).length > 0) return;
 
-    await UsersService.add(user);
+    await UsersService.create(user);
     navigate(RouteNames.USERS);
   }
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Add New User</h2>
+      <h2 className="mb-4">Add User</h2>
 
       <Card className="p-3">
         <Form>
@@ -204,7 +204,7 @@ export default function UserCreate() {
               <Form.Control
                 type="date"
                 name="dateOfBirth"
-                value={user.dateOfBirth}
+                value={user.dateOfBirth || ""}
                 onChange={handleChange}
                 onFocus={(e) => e.target.showPicker?.()}
                 onMouseEnter={(e) => e.target.showPicker?.()}
@@ -220,7 +220,7 @@ export default function UserCreate() {
               <Form.Label>Contact Number</Form.Label>
               <Form.Control
                 name="contactNumber"
-                value={user.contactNumber}
+                value={user.contactNumber || ""}
                 onChange={handleChange}
                 placeholder="+385 91 234 5678"
                 onBlur={() => handleBlur("contactNumber")}
@@ -230,6 +230,33 @@ export default function UserCreate() {
               <Form.Control.Feedback type="invalid">
                 {errors.contactNumber}
               </Form.Control.Feedback>
+            </Col>
+
+            <Col md={6}>
+              <Form.Label>Street</Form.Label>
+              <Form.Control
+                name="address.street"
+                value={user.address.street}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={6}>
+              <Form.Label>House Number</Form.Label>
+              <Form.Control
+                name="address.houseNumber"
+                value={user.address.houseNumber}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={6}>
+              <Form.Label>Postal Code</Form.Label>
+              <Form.Control
+                name="address.postalCode"
+                value={user.address.postalCode}
+                onChange={handleChange}
+              />
             </Col>
 
             <Col md={6}>
@@ -250,10 +277,13 @@ export default function UserCreate() {
 
           <div className="d-flex gap-2 mt-4">
             <Button variant="success" onClick={save}>
-              Save User
+              Save
             </Button>
 
-            <Button variant="secondary" onClick={() => navigate(RouteNames.USERS)}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(RouteNames.USERS)}
+            >
               Cancel
             </Button>
           </div>
