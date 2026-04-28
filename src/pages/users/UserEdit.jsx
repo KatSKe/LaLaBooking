@@ -37,7 +37,15 @@ export default function UserEdit() {
       return;
     }
 
-    setUser(response.data);
+    setUser({
+      ...response.data,
+      address: {
+        street: response.data.address?.street || "",
+        houseNumber: response.data.address?.houseNumber || "",
+        postalCode: response.data.address?.postalCode || "",
+        city: response.data.address?.city || "",
+      },
+    });
   }
 
   function capitalize(value) {
@@ -46,25 +54,29 @@ export default function UserEdit() {
       .replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
-  // ✅ EMAIL VALIDATION
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // ✅ PHONE FORMAT (LIVE)
   function formatPhone(value) {
-    const digits = value.replace(/\D/g, "");
+    let digits = value.replace(/\D/g, "");
 
     if (digits.length === 0) return "";
 
-    if (digits.startsWith("385")) {
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
-        5,
-        8
-      )} ${digits.slice(8, 12)}`.trim();
+    if (digits.startsWith("0")) {
+      digits = "385" + digits.slice(1);
     }
 
-    return digits;
+    if (!digits.startsWith("385")) {
+      digits = "385" + digits;
+    }
+
+    digits = digits.slice(0, 12);
+
+    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
+      5,
+      8
+    )} ${digits.slice(8, 12)}`.trim();
   }
 
   function validate(values = user) {
@@ -91,7 +103,6 @@ export default function UserEdit() {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    // ADDRESS
     if (name.startsWith("address.")) {
       const field = name.split(".")[1];
 
@@ -108,13 +119,10 @@ export default function UserEdit() {
       return;
     }
 
-    // PHONE (numbers only + format)
     if (name === "contactNumber") {
-      const formatted = formatPhone(value);
-
       const updated = {
         ...user,
-        contactNumber: formatted,
+        contactNumber: formatPhone(value),
       };
 
       setUser(updated);
@@ -252,7 +260,7 @@ export default function UserEdit() {
               <Form.Label>Street</Form.Label>
               <Form.Control
                 name="address.street"
-                value={user.address?.street || ""}
+                value={user.address.street}
                 onChange={handleChange}
               />
             </Col>
@@ -261,7 +269,7 @@ export default function UserEdit() {
               <Form.Label>House Number</Form.Label>
               <Form.Control
                 name="address.houseNumber"
-                value={user.address?.houseNumber || ""}
+                value={user.address.houseNumber}
                 onChange={handleChange}
               />
             </Col>
@@ -270,7 +278,7 @@ export default function UserEdit() {
               <Form.Label>Postal Code</Form.Label>
               <Form.Control
                 name="address.postalCode"
-                value={user.address?.postalCode || ""}
+                value={user.address.postalCode}
                 onChange={handleChange}
               />
             </Col>
@@ -279,7 +287,7 @@ export default function UserEdit() {
               <Form.Label>City</Form.Label>
               <Form.Control
                 name="address.city"
-                value={user.address?.city || ""}
+                value={user.address.city}
                 onChange={handleChange}
                 onBlur={() => handleBlur("city")}
                 isInvalid={showError("city")}

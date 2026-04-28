@@ -30,25 +30,29 @@ export default function UserCreate() {
       .replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
-  // ✅ EMAIL VALIDATION
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // ✅ PHONE FORMAT (LIVE)
   function formatPhone(value) {
-    const digits = value.replace(/\D/g, "");
+    let digits = value.replace(/\D/g, "");
 
     if (digits.length === 0) return "";
 
-    if (digits.startsWith("385")) {
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
-        5,
-        8
-      )} ${digits.slice(8, 12)}`.trim();
+    if (digits.startsWith("0")) {
+      digits = "385" + digits.slice(1);
     }
 
-    return digits;
+    if (!digits.startsWith("385")) {
+      digits = "385" + digits;
+    }
+
+    digits = digits.slice(0, 12);
+
+    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
+      5,
+      8
+    )} ${digits.slice(8, 12)}`.trim();
   }
 
   function validate(values = user) {
@@ -75,7 +79,6 @@ export default function UserCreate() {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    // ADDRESS
     if (name.startsWith("address.")) {
       const field = name.split(".")[1];
 
@@ -92,13 +95,10 @@ export default function UserCreate() {
       return;
     }
 
-    // PHONE (numbers only + format)
     if (name === "contactNumber") {
-      const formatted = formatPhone(value);
-
       const updated = {
         ...user,
-        contactNumber: formatted,
+        contactNumber: formatPhone(value),
       };
 
       setUser(updated);
@@ -230,33 +230,6 @@ export default function UserCreate() {
               <Form.Control.Feedback type="invalid">
                 {errors.contactNumber}
               </Form.Control.Feedback>
-            </Col>
-
-            <Col md={6}>
-              <Form.Label>Street</Form.Label>
-              <Form.Control
-                name="address.street"
-                value={user.address.street}
-                onChange={handleChange}
-              />
-            </Col>
-
-            <Col md={6}>
-              <Form.Label>House Number</Form.Label>
-              <Form.Control
-                name="address.houseNumber"
-                value={user.address.houseNumber}
-                onChange={handleChange}
-              />
-            </Col>
-
-            <Col md={6}>
-              <Form.Label>Postal Code</Form.Label>
-              <Form.Control
-                name="address.postalCode"
-                value={user.address.postalCode}
-                onChange={handleChange}
-              />
             </Col>
 
             <Col md={6}>
