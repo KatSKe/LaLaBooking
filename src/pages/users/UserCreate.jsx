@@ -145,7 +145,7 @@ export default function UserCreate() {
 
     if (Object.keys(error).length > 0) return;
 
-    await UsersService.create(user);
+    await UsersService.add(user);
     navigate(RouteNames.USERS);
   }
 
