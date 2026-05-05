@@ -24,6 +24,7 @@ import TypeEdit from "./pages/types/TypeEdit";
 import BookingList from "./pages/booking/BookingList";
 import BookingCreate from "./pages/booking/BookingCreate";
 import BookingEdit from "./pages/booking/BookingEdit";
+import { RouteNames } from "./constants";
 
 function App() {
   return (
@@ -34,24 +35,24 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* Offers */}
-        <Route path="/offers" element={<OfferList />} />
-        <Route path="/offers/new" element={<OfferCreate />} />
-        <Route path="/offers/edit/:sifra" element={<OfferEdit />} />
+        <Route path={RouteNames.OFFERS} element={<OfferList />} />
+        <Route path={RouteNames.OFFERS_CREATE} element={<OfferCreate />} />
+        <Route path={RouteNames.OFFERS_EDIT} element={<OfferEdit />} />
 
         {/* Users */}
-        <Route path="/users" element={<UserList />} />
-        <Route path="/users/new" element={<UserCreate />} />
-        <Route path="/users/edit/:id" element={<UserEdit />} />
+        <Route path={RouteNames.USERS} element={<UserList />} />
+        <Route path={RouteNames.USERS_NEW} element={<UserCreate />} />
+        <Route path={RouteNames.USERS_EDIT} element={<UserEdit />} />
 
         {/* Types */}
-        <Route path="/types" element={<TypeList />} />
-        <Route path="/types/new" element={<TypeCreate />} />
-        <Route path="/types/:id" element={<TypeEdit />} />
+        <Route path={RouteNames.TYPES} element={<TypeList />} />
+        <Route path={RouteNames.TYPES_NEW} element={<TypeCreate />} />
+        <Route path={RouteNames.TYPES_EDIT} element={<TypeEdit />} />
 
         {/* ✅ BOOKINGS */}
-        <Route path="/bookings" element={<BookingList />} />
-        <Route path="/bookings/new" element={<BookingCreate />} />
-        <Route path="/bookings/:id" element={<BookingEdit />} />
+        <Route path={RouteNames.BOOKINGS} element={<BookingList />} />
+        <Route path={RouteNames.BOOKINGS_CREATE} element={<BookingCreate />} />
+        <Route path={RouteNames.BOOKINGS_EDIT} element={<BookingEdit />} />
       </Routes>
     </>
   );

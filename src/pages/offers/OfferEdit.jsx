@@ -128,7 +128,7 @@ export default function OfferEdit() {
               <Form.Label>Name</Form.Label>
               <Form.Control
                 name="name"
-                value={offer.name}
+                defaultValue={offer.name}
                 onChange={handleChange}
                 onBlur={() => handleBlur("name")}
                 isInvalid={showError("name")}
