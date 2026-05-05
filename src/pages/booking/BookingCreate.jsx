@@ -47,14 +47,6 @@ export default function BookingCreate() {
     if (!values.startDate) newErrors.startDate = "Start date is required";
     if (!values.endDate) newErrors.endDate = "End date is required";
 
-    if (
-      values.startDate &&
-      values.endDate &&
-      values.startDate > values.endDate
-    ) {
-      newErrors.endDate = "End date must be after start date";
-    }
-
     return newErrors;
   }
 
@@ -103,20 +95,12 @@ export default function BookingCreate() {
     );
 
     await BookingService.add({
-      userId: booking.userId,
+      ...booking,
       userName: selectedUser
         ? `${selectedUser.firstName ?? ""} ${selectedUser.lastName ?? ""}`.trim()
-        : "Unknown user",
+        : "",
 
-      offerId: booking.offerId,
-      offerName: selectedOffer?.name ?? "Unknown offer",
-
-      startDate: booking.startDate,
-      endDate: booking.endDate,
-
-      numberOfRooms: Number(booking.numberOfRooms),
-      adults: Number(booking.adults),
-      kids: Number(booking.kids),
+      offerName: selectedOffer?.name ?? "",
     });
 
     navigate(RouteNames.BOOKINGS);
@@ -124,16 +108,15 @@ export default function BookingCreate() {
 
   return (
     <div className="container py-4">
+
       <Card className="p-4">
         <h2 className="mb-4">Add New Booking</h2>
 
         <Form onSubmit={handleSubmit}>
           <Row className="g-3">
 
-            {/* USER */}
             <Col md={6}>
               <Form.Label>User</Form.Label>
-
               <Form.Select
                 name="userId"
                 value={booking.userId}
@@ -142,23 +125,16 @@ export default function BookingCreate() {
                 isInvalid={showError("userId")}
               >
                 <option value="">Select user</option>
-
                 {users.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.firstName} {user.lastName}
                   </option>
                 ))}
               </Form.Select>
-
-              <Form.Control.Feedback type="invalid">
-                {errors.userId}
-              </Form.Control.Feedback>
             </Col>
 
-            {/* OFFER */}
             <Col md={6}>
               <Form.Label>Offer</Form.Label>
-
               <Form.Select
                 name="offerId"
                 value={booking.offerId}
@@ -167,53 +143,36 @@ export default function BookingCreate() {
                 isInvalid={showError("offerId")}
               >
                 <option value="">Select offer</option>
-
                 {offers.map((offer) => (
                   <option key={offer.id} value={offer.id}>
                     {offer.name}
                   </option>
                 ))}
               </Form.Select>
-
-              <Form.Control.Feedback type="invalid">
-                {errors.offerId}
-              </Form.Control.Feedback>
             </Col>
 
-            {/* START DATE (FIXED CALENDAR) */}
             <Col md={6}>
               <Form.Label>Start Date</Form.Label>
-
               <Form.Control
                 type="date"
                 name="startDate"
                 value={booking.startDate}
                 onChange={handleChange}
-                onBlur={() => handleBlur("startDate")}
-                onFocus={(e) => e.target.showPicker?.()}
-                isInvalid={showError("startDate")}
               />
             </Col>
 
-            {/* END DATE (FIXED CALENDAR) */}
             <Col md={6}>
               <Form.Label>End Date</Form.Label>
-
               <Form.Control
                 type="date"
                 name="endDate"
                 value={booking.endDate}
                 onChange={handleChange}
-                onBlur={() => handleBlur("endDate")}
-                onFocus={(e) => e.target.showPicker?.()}
-                isInvalid={showError("endDate")}
               />
             </Col>
 
-            {/* ROOMS */}
             <Col md={4}>
               <Form.Label>Rooms</Form.Label>
-
               <Form.Control
                 type="number"
                 min="0"
@@ -223,10 +182,8 @@ export default function BookingCreate() {
               />
             </Col>
 
-            {/* ADULTS */}
             <Col md={4}>
               <Form.Label>Adults</Form.Label>
-
               <Form.Control
                 type="number"
                 min="0"
@@ -236,10 +193,8 @@ export default function BookingCreate() {
               />
             </Col>
 
-            {/* KIDS */}
             <Col md={4}>
               <Form.Label>Kids</Form.Label>
-
               <Form.Control
                 type="number"
                 min="0"
@@ -251,17 +206,20 @@ export default function BookingCreate() {
 
           </Row>
 
+          {/* ✅ SAME AS ADD NEW OFFER */}
           <div className="d-flex gap-2 mt-4">
-            <Button variant="primary" type="submit">
+
+            <Button variant="success" type="submit">
               Create Booking
             </Button>
 
             <Button
-              variant="outline-secondary"
+              variant="secondary"
               onClick={() => navigate(RouteNames.BOOKINGS)}
             >
               Cancel
             </Button>
+
           </div>
 
         </Form>
