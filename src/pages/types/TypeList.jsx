@@ -42,7 +42,6 @@ export default function TypeList() {
         <Table striped hover>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Active</th>
               <th className="text-end">Actions</th>
@@ -52,7 +51,6 @@ export default function TypeList() {
           <tbody>
             {types.map((type) => (
               <tr key={type.id}>
-                <td>{type.id}</td>
                 <td>{type.name}</td>
 
                 <td>
