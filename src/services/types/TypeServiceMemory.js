@@ -2,54 +2,76 @@ import { types as defaultTypes } from "../../data/typeData";
 
 let types = [...defaultTypes];
 
-// READ ALL
+function formatName(value) {
+  if (!value) return "";
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+function normalizeType(type) {
+  return {
+    id: Number(type.id),
+    name: formatName(type.name || ""),
+    active: type.active ?? true,
+  };
+}
+
 async function get() {
-  return { success: true, data: types };
+  return { success: true, data: types.map(normalizeType) };
 }
 
-// READ BY ID
 async function getById(id) {
-  const item = types.find(x => x.id === parseInt(id));
-  return { success: true, data: item };
+  return {
+    success: true,
+    data: types.find((type) => type.id === Number(id)) || null,
+  };
 }
 
-// CREATE
-async function create(type) {
-  const newType = { ...type };
+async function add(type) {
+  const newId =
+    types.length === 0
+      ? 1
+      : types[types.length - 1].id + 1;
 
-  if (types.length === 0) {
-    newType.id = 1;
-  } else {
-    newType.id = types[types.length - 1].id + 1;
-  }
+  const newType = normalizeType({
+    ...type,
+    id: newId,
+  });
 
   types.push(newType);
 
   return { success: true, data: newType };
 }
 
-// UPDATE
 async function update(id, type) {
-  const index = types.findIndex(x => x.id === parseInt(id));
+  const index = types.findIndex(
+    (item) => item.id === Number(id)
+  );
 
   if (index > -1) {
-    types[index] = { ...types[index], ...type };
+    types[index] = normalizeType({
+      ...types[index],
+      ...type,
+      id: types[index].id,
+    });
+
     return { success: true, data: types[index] };
   }
 
   return { success: false };
 }
 
-// DELETE
 async function remove(id) {
-  types = types.filter(x => x.id !== parseInt(id));
+  types = types.filter(
+    (type) => type.id !== Number(id)
+  );
+
   return { success: true };
 }
 
 export default {
   get,
   getById,
-  create,
+  add,
   update,
-  remove
+  remove,
 };

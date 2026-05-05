@@ -28,10 +28,8 @@ export default function TypeList() {
 
   return (
     <div className="container py-4">
-
       <h2 className="mb-3">Types</h2>
 
-      {/* BUTTON LIKE USERS */}
       <Button
         className="mb-3 w-100"
         onClick={() => navigate(RouteNames.TYPES_NEW)}
@@ -40,7 +38,6 @@ export default function TypeList() {
         Add New Type
       </Button>
 
-      {/* TABLE */}
       <div className="table-responsive">
         <Table striped hover>
           <thead>
@@ -59,7 +56,7 @@ export default function TypeList() {
                 <td>{type.name}</td>
 
                 <td>
-                  {type.active !== false ? (
+                  {type.active ? (
                     <span className="text-success">Active</span>
                   ) : (
                     <span className="text-danger">Inactive</span>
@@ -70,7 +67,9 @@ export default function TypeList() {
                   <Button
                     size="sm"
                     variant="outline-warning"
-                    onClick={() => navigate(`/types/${type.id}`)}
+                    onClick={() =>
+                      navigate(RouteNames.TYPES_EDIT.replace(":id", type.id))
+                    }
                   >
                     <Pencil size={16} />
                   </Button>
@@ -86,7 +85,6 @@ export default function TypeList() {
               </tr>
             ))}
           </tbody>
-
         </Table>
       </div>
     </div>

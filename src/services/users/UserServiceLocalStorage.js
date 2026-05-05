@@ -4,7 +4,7 @@ const STORAGE_KEY = "users";
 
 function normalizeUser(user) {
   return {
-    id: user.id,
+    id: Number(user.id),
     firstName: user.firstName || "",
     lastName: user.lastName || "",
     email: user.email || "",
@@ -31,9 +31,7 @@ function getAllFromStorage() {
 
   try {
     const parsed = JSON.parse(data);
-    const normalized = parsed.map(normalizeUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-    return normalized;
+    return parsed.map(normalizeUser);
   } catch {
     const normalized = defaultUsers.map(normalizeUser);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
@@ -53,7 +51,7 @@ async function getById(id) {
   const users = getAllFromStorage();
   return {
     success: true,
-    data: users.find((u) => String(u.id) === String(id)) || null,
+    data: users.find((u) => u.id === Number(id)) || null,
   };
 }
 
@@ -63,7 +61,7 @@ async function add(user) {
   const newId =
     users.length === 0
       ? 1
-      : Math.max(...users.map((u) => Number(u.id))) + 1;
+      : Math.max(...users.map((u) => u.id)) + 1;
 
   const newUser = normalizeUser({
     ...user,
@@ -79,7 +77,7 @@ async function add(user) {
 async function update(id, user) {
   const users = getAllFromStorage();
 
-  const index = users.findIndex((u) => String(u.id) === String(id));
+  const index = users.findIndex((u) => u.id === Number(id));
 
   if (index > -1) {
     users[index] = normalizeUser({
@@ -97,7 +95,7 @@ async function update(id, user) {
 
 async function remove(id) {
   let users = getAllFromStorage();
-  users = users.filter((u) => String(u.id) !== String(id));
+  users = users.filter((u) => u.id !== Number(id));
   saveToStorage(users);
 
   return { success: true };

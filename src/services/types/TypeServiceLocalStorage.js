@@ -2,77 +2,104 @@ import { types as defaultTypes } from "../../data/typeData";
 
 const STORAGE_KEY = "types";
 
-function normalize(types) {
-  return types.map(t => ({
-    id: t.id,
-    name: t.name,
-    active: t.active ?? true   // 🔥 FIX: fallback
-  }));
+function formatName(value) {
+  if (!value) return "";
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
-function getAll() {
+function normalizeType(type) {
+  return {
+    id: Number(type.id),
+    name: formatName(type.name || ""),
+    active: type.active ?? true,
+  };
+}
+
+function getAllFromStorage() {
   const data = localStorage.getItem(STORAGE_KEY);
 
   if (!data) {
-    const initial = normalize(defaultTypes);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+    const normalized = defaultTypes.map(normalizeType);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
   }
 
-  return normalize(JSON.parse(data));
+  try {
+    const parsed = JSON.parse(data);
+    return parsed.map(normalizeType);
+  } catch (error) {
+    const normalized = defaultTypes.map(normalizeType);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
+  }
 }
 
-function save(data) {
+function saveToStorage(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 async function get() {
-  return { success: true, data: getAll() };
+  return { success: true, data: getAllFromStorage() };
 }
 
 async function getById(id) {
-  const types = getAll();
-  const type = types.find(x => x.id === Number(id));
+  const types = getAllFromStorage();
 
-  return { success: true, data: type };
+  return {
+    success: true,
+    data: types.find((type) => type.id === Number(id)) || null,
+  };
 }
 
-async function create(type) {
-  const types = getAll();
+async function add(type) {
+  const types = getAllFromStorage();
 
-  const newType = {
-    id: types.length > 0 ? Math.max(...types.map(t => t.id)) + 1 : 1,
-    name: type.name,
-    active: type.active ?? true
-  };
+  const newId =
+    types.length === 0
+      ? 1
+      : Math.max(...types.map((type) => type.id)) + 1;
+
+  const newType = normalizeType({
+    ...type,
+    id: newId,
+  });
 
   types.push(newType);
-  save(types);
+  saveToStorage(types);
 
   return { success: true, data: newType };
 }
 
-async function update(id, updatedType) {
-  const types = getAll();
-  const index = types.findIndex(x => x.id === Number(id));
+async function update(id, type) {
+  const types = getAllFromStorage();
 
-  if (index === -1) return { success: false };
+  const index = types.findIndex(
+    (item) => item.id === Number(id)
+  );
 
-  types[index] = {
-    ...types[index],
-    ...updatedType,
-  };
+  if (index > -1) {
+    types[index] = normalizeType({
+      ...types[index],
+      ...type,
+      id: types[index].id,
+    });
 
-  save(types);
+    saveToStorage(types);
 
-  return { success: true, data: types[index] };
+    return { success: true, data: types[index] };
+  }
+
+  return { success: false };
 }
 
 async function remove(id) {
-  let types = getAll();
-  types = types.filter(x => x.id !== Number(id));
+  let types = getAllFromStorage();
 
-  save(types);
+  types = types.filter(
+    (type) => type.id !== Number(id)
+  );
+
+  saveToStorage(types);
 
   return { success: true };
 }
@@ -80,7 +107,7 @@ async function remove(id) {
 export default {
   get,
   getById,
-  create,
+  add,
   update,
-  remove
+  remove,
 };

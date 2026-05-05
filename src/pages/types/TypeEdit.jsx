@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
 export default function TypeEdit() {
@@ -21,33 +21,28 @@ export default function TypeEdit() {
   }, []);
 
   async function loadType() {
-    const res = await TypeService.getById(id);
+    const result = await TypeService.getById(id);
 
-    if (res?.data) {
+    if (result?.data) {
       setType({
-        name: res.data.name || "",
-        active: res.data.active ?? true,
+        name: result.data.name || "",
+        active: result.data.active ?? true,
       });
     }
   }
 
-  function formatName(value) {
-    if (!value) return "";
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  }
-
   function validate(values = type) {
-    const err = {};
+    const error = {};
 
     if (!values.name || !values.name.trim()) {
-      err.name = "Type name is required";
+      error.name = "Type name is required";
     }
 
-    return err;
+    return error;
   }
 
-  function handleChange(e) {
-    const { name, value, type: inputType, checked } = e.target;
+  function handleChange(event) {
+    const { name, value, type: inputType, checked } = event.target;
 
     setType({
       ...type,
@@ -56,7 +51,7 @@ export default function TypeEdit() {
   }
 
   function handleBlur(field) {
-    setTouched((prev) => ({ ...prev, [field]: true }));
+    setTouched((previous) => ({ ...previous, [field]: true }));
     setErrors(validate());
   }
 
@@ -65,16 +60,16 @@ export default function TypeEdit() {
   }
 
   async function save() {
-    const err = validate();
+    const error = validate();
 
-    setErrors(err);
+    setErrors(error);
     setTouched({ name: true });
 
-    if (Object.keys(err).length > 0) return;
+    if (Object.keys(error).length > 0) return;
 
     const updatedType = {
       ...type,
-      name: formatName(type.name.trim()),
+      name: type.name.trim(),
     };
 
     await TypeService.update(id, updatedType);
@@ -88,8 +83,6 @@ export default function TypeEdit() {
 
       <Card className="p-3">
         <Form>
-
-          {/* NAME */}
           <Form.Group className="mb-3">
             <Form.Label>Type Name</Form.Label>
 
@@ -111,7 +104,6 @@ export default function TypeEdit() {
             )}
           </Form.Group>
 
-          {/* ACTIVE */}
           <Form.Check
             type="switch"
             label={type.active ? "Active" : "Inactive"}
@@ -121,8 +113,7 @@ export default function TypeEdit() {
             className="mb-3"
           />
 
-          {/* BUTTONS */}
-          <div className="d-flex gap-2">
+          <div className="d-flex flex-wrap gap-2">
             <Button variant="success" onClick={save}>
               Save Changes
             </Button>
@@ -134,7 +125,6 @@ export default function TypeEdit() {
               Cancel
             </Button>
           </div>
-
         </Form>
       </Card>
     </div>

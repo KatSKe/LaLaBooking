@@ -20,37 +20,26 @@ switch (DATA_SOURCE) {
 
 const EmptyService = {
   get: async () => ({ success: false, data: [] }),
-  getById: async () => ({ success: false, data: {} }),
+  getById: async () => ({ success: false, data: null }),
   add: async () => ({ success: false }),
   update: async () => ({ success: false }),
   remove: async () => ({ success: false }),
 };
 
-// 🔥 USER NORMALIZATION (KEY FIX)
-function normalizeUsers(response) {
-  return {
-    ...response,
-    data: (response.data || []).map((u, index) => ({
-      ...u,
-      id: u.id ?? u.id ?? index, // 🔥 FIX FOR KEY PROBLEM
-    })),
-  };
-}
-
 const ActiveService = Service || EmptyService;
 
 export default {
-  get: async () => normalizeUsers(await ActiveService.get()),
+  get: async () => await ActiveService.get(),
 
   getById: async (id) =>
-    await ActiveService.getById(id),
+    await ActiveService.getById(Number(id)),
 
-  add: async (users) =>
-    await ActiveService.add(users),
+  add: async (user) =>
+    await ActiveService.add(user),
 
-  update: async (id, users) =>
-    await ActiveService.update(id, users),
+  update: async (id, user) =>
+    await ActiveService.update(Number(id), user),
 
   remove: async (id) =>
-    await ActiveService.remove(id),
+    await ActiveService.remove(Number(id)),
 };

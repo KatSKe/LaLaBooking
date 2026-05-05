@@ -12,19 +12,19 @@ export default function OfferList() {
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    load();
+    loadOffers();
   }, []);
 
-  async function load() {
+  async function loadOffers() {
     const res = await OffersService.get();
     setOffers(res.data || []);
   }
 
-  async function remove(id) {
-    if (!window.confirm("Delete this offer?")) return;
+  async function removeOffer(id) {
+    if (!window.confirm("Are you sure you want to delete this offer?")) return;
 
-    await OffersService.obrisi(id);
-    load();
+    await OffersService.remove(id);
+    loadOffers();
   }
 
   return (
@@ -56,7 +56,7 @@ export default function OfferList() {
               <tr key={o.id}>
                 <td>{o.name}</td>
                 <td>{o.typeName}</td>
-                <td>{o.price} €</td>
+                <td>{Number(o.price).toFixed(2)} €</td>
                 <td>{o.active ? "Active" : "Inactive"}</td>
 
                 <td className="text-end d-flex justify-content-end gap-2">
@@ -71,7 +71,7 @@ export default function OfferList() {
                   <Button
                     size="sm"
                     variant="outline-danger"
-                    onClick={() => remove(o.id)}
+                    onClick={() => removeOffer(o.id)}
                   >
                     <Trash2 size={16} />
                   </Button>

@@ -1,56 +1,75 @@
 import { users } from "./UserDataUser";
 
-// 1/4 READ (CRUD)
+function normalizeUser(user) {
+  return {
+    id: Number(user.id),
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    email: user.email || "",
+    dateOfBirth: user.dateOfBirth || "",
+    contactNumber: user.contactNumber || "",
+    gender: user.gender || "",
+    address: {
+      street: user.address?.street || "",
+      houseNumber: user.address?.houseNumber || "",
+      postalCode: user.address?.postalCode || "",
+      city: user.address?.city || "",
+    },
+  };
+}
+
 async function get() {
-  return { success: true, data: [...users] };
+  return { success: true, data: users.map(normalizeUser) };
 }
 
 async function getById(id) {
   return {
     success: true,
-    data: users.find(u => u.id === parseInt(id)),
+    data: users.find((u) => u.id === Number(id)) || null,
   };
 }
 
-// 2/4 CREATE (CRUD)
 async function add(user) {
-  if (users.length === 0) {
-    user.id = 1;
-  } else {
-    user.id = users[users.length - 1].id + 1;
-  }
+  const newId =
+    users.length === 0
+      ? 1
+      : users[users.length - 1].id + 1;
 
-  users.push(user);
+  const newUser = normalizeUser({
+    ...user,
+    id: newId,
+  });
 
-  return { success: true, data: user };
+  users.push(newUser);
+
+  return { success: true, data: newUser };
 }
 
-// 3/4 UPDATE (CRUD)
 async function update(id, user) {
-  const index = findIndex(id);
+  const index = users.findIndex((u) => u.id === Number(id));
 
   if (index > -1) {
-    users[index] = { ...users[index], ...user };
+    users[index] = normalizeUser({
+      ...users[index],
+      ...user,
+      id: users[index].id,
+    });
+
     return { success: true, data: users[index] };
   }
 
-  return { success: false, message: "User not found" };
+  return { success: false };
 }
 
-function findIndex(id) {
-  return users.findIndex(u => u.id === parseInt(id));
-}
-
-// 4/4 DELETE (CRUD)
 async function remove(id) {
-  const index = findIndex(id);
+  const index = users.findIndex((u) => u.id === Number(id));
 
   if (index > -1) {
     users.splice(index, 1);
-    return { success: true, message: "Deleted" };
+    return { success: true };
   }
 
-  return { success: false, message: "User not found" };
+  return { success: false };
 }
 
 export default {
