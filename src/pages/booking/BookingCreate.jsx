@@ -54,12 +54,13 @@ export default function BookingCreate() {
   function handleChange(event) {
     const { name, value } = event.target;
 
+    const numericFields = ["numberOfRooms", "adults", "kids"];
+
     const updated = {
       ...booking,
-      [name]:
-        name === "numberOfRooms" || name === "adults" || name === "kids"
-          ? Number(value)
-          : value,
+      [name]: numericFields.includes(name)
+        ? Math.max(0, Number(value)) // 🔥 BLOCK NEGATIVE VALUES
+        : value,
     };
 
     setBooking(updated);
@@ -160,7 +161,6 @@ export default function BookingCreate() {
               </Form.Select>
             </Col>
 
-            {/* ✅ START DATE CALENDAR FIX */}
             <Col md={6}>
               <Form.Label>Start Date</Form.Label>
               <Form.Control
@@ -175,7 +175,6 @@ export default function BookingCreate() {
               />
             </Col>
 
-            {/* ✅ END DATE CALENDAR FIX */}
             <Col md={6}>
               <Form.Label>End Date</Form.Label>
               <Form.Control
@@ -196,6 +195,7 @@ export default function BookingCreate() {
                 type="number"
                 name="numberOfRooms"
                 value={booking.numberOfRooms}
+                min={0}   // 🔥 UI BLOCK
                 onChange={handleChange}
               />
             </Col>
@@ -206,6 +206,7 @@ export default function BookingCreate() {
                 type="number"
                 name="adults"
                 value={booking.adults}
+                min={0}   // 🔥 UI BLOCK
                 onChange={handleChange}
               />
             </Col>
@@ -216,6 +217,7 @@ export default function BookingCreate() {
                 type="number"
                 name="kids"
                 value={booking.kids}
+                min={0}   // 🔥 UI BLOCK
                 onChange={handleChange}
               />
             </Col>

@@ -60,14 +60,13 @@ export default function BookingEdit() {
   function handleChange(e) {
     const { name, value } = e.target;
 
+    const numericFields = ["numberOfRooms", "adults", "kids"];
+
     setBooking({
       ...booking,
-      [name]:
-        name === "numberOfRooms" ||
-        name === "adults" ||
-        name === "kids"
-          ? Number(value)
-          : value,
+      [name]: numericFields.includes(name)
+        ? Math.max(0, Number(value)) // 🔥 no negative values
+        : value,
     });
   }
 
@@ -138,7 +137,7 @@ export default function BookingEdit() {
             </Form.Select>
           </Col>
 
-          {/* ✅ START DATE CALENDAR FIX */}
+          {/* ✅ DATE PICKER FIX (RESTORED) */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
             <Form.Control
@@ -151,7 +150,6 @@ export default function BookingEdit() {
             />
           </Col>
 
-          {/* ✅ END DATE CALENDAR FIX */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
             <Form.Control
@@ -170,6 +168,7 @@ export default function BookingEdit() {
               type="number"
               name="numberOfRooms"
               value={booking.numberOfRooms}
+              min={0}
               onChange={handleChange}
             />
           </Col>
@@ -180,6 +179,7 @@ export default function BookingEdit() {
               type="number"
               name="adults"
               value={booking.adults}
+              min={0}
               onChange={handleChange}
             />
           </Col>
@@ -190,6 +190,7 @@ export default function BookingEdit() {
               type="number"
               name="kids"
               value={booking.kids}
+              min={0}
               onChange={handleChange}
             />
           </Col>

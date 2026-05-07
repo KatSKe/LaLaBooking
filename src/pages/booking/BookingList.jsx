@@ -29,10 +29,10 @@ export default function BookingList() {
     <div className="container py-4">
       <h2 className="mb-3">Bookings</h2>
 
-      {/* 🔵 FIXED NAVIGATION */}
+      {/* Add New Booking */}
       <Button
         className="mb-3 w-100"
-        onClick={() => navigate("/bookings/new")}
+        onClick={() => navigate(RouteNames.BOOKINGS_CREATE)}
       >
         Add New Booking
       </Button>
@@ -62,7 +62,7 @@ export default function BookingList() {
                     size="sm"
                     variant="outline-warning"
                     onClick={() =>
-                      navigate(`/bookings/edit/${b.id}`)
+                      navigate(`/bookings/${b.id}`) // ✅ FIXED ROUTE
                     }
                   >
                     Edit
