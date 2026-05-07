@@ -2,20 +2,37 @@ import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import BookingService from "../../services/booking/BookingServiceLocalStorage";
+import BookingService from "../../services/booking/BookingService";
 import { RouteNames } from "../../constants";
+import UserService from "../../services/users/UserService";
+import OffersService from "../../services/offers/OffersService";
 
 export default function BookingList() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [offers, setOffers] = useState([]);
 
   useEffect(() => {
+    loadOffers()
+    loadUsers()
     load();
   }, []);
 
   async function load() {
     const result = await BookingService.get();
+    // console.table(result.data)
     setBookings(result.data || []);
+  }
+
+  async function loadUsers() {
+    const response = await UserService.get();
+    setUsers(response.data || []);
+  }
+
+  async function loadOffers() {
+    const res = await OffersService.get();
+    setOffers(res.data || []);
   }
 
   async function remove(id) {
@@ -23,6 +40,16 @@ export default function BookingList() {
 
     await BookingService.remove(id);
     load();
+  }
+
+  function fullUserName(userID){
+    const user = users.find(e=>e.id==userID)
+    return user.firstName + ' ' + user.lastName
+  }
+
+  function fullOfferName(offerID){
+    const offer = offers.find(e=>e.id==offerID)
+    return offer.name
   }
 
   return (
@@ -52,8 +79,8 @@ export default function BookingList() {
           <tbody>
             {bookings.map((b) => (
               <tr key={b.id}>
-                <td>{b.userName}</td>
-                <td>{b.offerName}</td>
+                <td>{fullUserName(b.user)}</td>
+                <td>{fullOfferName(b.offer)}</td>
                 <td>{b.startDate}</td>
                 <td>{b.endDate}</td>
 
