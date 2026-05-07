@@ -22,6 +22,7 @@ export default function BookingCreate() {
     numberOfRooms: 0,
     adults: 0,
     kids: 0,
+    active: true,
   });
 
   const [errors, setErrors] = useState({});
@@ -55,11 +56,21 @@ export default function BookingCreate() {
 
     const updated = {
       ...booking,
-      [name]: value,
+      [name]:
+        name === "numberOfRooms" || name === "adults" || name === "kids"
+          ? Number(value)
+          : value,
     };
 
     setBooking(updated);
     setErrors(validate(updated));
+  }
+
+  function toggleActive() {
+    setBooking((prev) => ({
+      ...prev,
+      active: !prev.active,
+    }));
   }
 
   function handleBlur(field) {
@@ -99,7 +110,6 @@ export default function BookingCreate() {
       userName: selectedUser
         ? `${selectedUser.firstName ?? ""} ${selectedUser.lastName ?? ""}`.trim()
         : "",
-
       offerName: selectedOffer?.name ?? "",
     });
 
@@ -108,7 +118,6 @@ export default function BookingCreate() {
 
   return (
     <div className="container py-4">
-
       <Card className="p-4">
         <h2 className="mb-4">Add New Booking</h2>
 
@@ -151,6 +160,7 @@ export default function BookingCreate() {
               </Form.Select>
             </Col>
 
+            {/* ✅ START DATE CALENDAR FIX */}
             <Col md={6}>
               <Form.Label>Start Date</Form.Label>
               <Form.Control
@@ -158,9 +168,14 @@ export default function BookingCreate() {
                 name="startDate"
                 value={booking.startDate}
                 onChange={handleChange}
+                onFocus={(e) => e.target.showPicker?.()}
+                onMouseEnter={(e) => e.target.showPicker?.()}
+                onBlur={() => handleBlur("startDate")}
+                isInvalid={showError("startDate")}
               />
             </Col>
 
+            {/* ✅ END DATE CALENDAR FIX */}
             <Col md={6}>
               <Form.Label>End Date</Form.Label>
               <Form.Control
@@ -168,6 +183,10 @@ export default function BookingCreate() {
                 name="endDate"
                 value={booking.endDate}
                 onChange={handleChange}
+                onFocus={(e) => e.target.showPicker?.()}
+                onMouseEnter={(e) => e.target.showPicker?.()}
+                onBlur={() => handleBlur("endDate")}
+                isInvalid={showError("endDate")}
               />
             </Col>
 
@@ -175,7 +194,6 @@ export default function BookingCreate() {
               <Form.Label>Rooms</Form.Label>
               <Form.Control
                 type="number"
-                min="0"
                 name="numberOfRooms"
                 value={booking.numberOfRooms}
                 onChange={handleChange}
@@ -186,7 +204,6 @@ export default function BookingCreate() {
               <Form.Label>Adults</Form.Label>
               <Form.Control
                 type="number"
-                min="0"
                 name="adults"
                 value={booking.adults}
                 onChange={handleChange}
@@ -197,18 +214,25 @@ export default function BookingCreate() {
               <Form.Label>Kids</Form.Label>
               <Form.Control
                 type="number"
-                min="0"
                 name="kids"
                 value={booking.kids}
                 onChange={handleChange}
               />
             </Col>
 
+            <Col md={12}>
+              <Form.Check
+                type="switch"
+                id="active-switch"
+                label="Active"
+                checked={booking.active}
+                onChange={toggleActive}
+              />
+            </Col>
+
           </Row>
 
-          {/* ✅ SAME AS ADD NEW OFFER */}
           <div className="d-flex gap-2 mt-4">
-
             <Button variant="success" type="submit">
               Create Booking
             </Button>
@@ -219,7 +243,6 @@ export default function BookingCreate() {
             >
               Cancel
             </Button>
-
           </div>
 
         </Form>

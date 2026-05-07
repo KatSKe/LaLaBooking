@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
-import BookingService from "../../services/booking/BookingService";
+import BookingService from "../../services/booking/BookingServiceLocalStorage";
 import UsersService from "../../services/users/UserServiceLocalStorage";
 import OffersService from "../../services/offers/OffersService";
 
@@ -23,6 +23,7 @@ export default function BookingEdit() {
     numberOfRooms: 0,
     adults: 0,
     kids: 0,
+    active: true,
   });
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function BookingEdit() {
       numberOfRooms: b.numberOfRooms ?? 0,
       adults: b.adults ?? 0,
       kids: b.kids ?? 0,
+      active: b.active ?? true,
     });
   }
 
@@ -60,8 +62,20 @@ export default function BookingEdit() {
 
     setBooking({
       ...booking,
-      [name]: value,
+      [name]:
+        name === "numberOfRooms" ||
+        name === "adults" ||
+        name === "kids"
+          ? Number(value)
+          : value,
     });
+  }
+
+  function toggleActive() {
+    setBooking((prev) => ({
+      ...prev,
+      active: !prev.active,
+    }));
   }
 
   async function save() {
@@ -75,11 +89,9 @@ export default function BookingEdit() {
 
     await BookingService.update(id, {
       ...booking,
-
       userName: selectedUser
         ? `${selectedUser.firstName ?? ""} ${selectedUser.lastName ?? ""}`.trim()
         : "",
-
       offerName: selectedOffer?.name ?? "",
     });
 
@@ -94,7 +106,6 @@ export default function BookingEdit() {
 
         <Row className="g-3">
 
-          {/* USER */}
           <Col md={6}>
             <Form.Label>User</Form.Label>
             <Form.Select
@@ -111,7 +122,6 @@ export default function BookingEdit() {
             </Form.Select>
           </Col>
 
-          {/* OFFER */}
           <Col md={6}>
             <Form.Label>Offer</Form.Label>
             <Form.Select
@@ -128,7 +138,7 @@ export default function BookingEdit() {
             </Form.Select>
           </Col>
 
-          {/* DATES */}
+          {/* ✅ START DATE CALENDAR FIX */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
             <Form.Control
@@ -136,9 +146,12 @@ export default function BookingEdit() {
               name="startDate"
               value={booking.startDate}
               onChange={handleChange}
+              onFocus={(e) => e.target.showPicker?.()}
+              onMouseEnter={(e) => e.target.showPicker?.()}
             />
           </Col>
 
+          {/* ✅ END DATE CALENDAR FIX */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
             <Form.Control
@@ -146,10 +159,11 @@ export default function BookingEdit() {
               name="endDate"
               value={booking.endDate}
               onChange={handleChange}
+              onFocus={(e) => e.target.showPicker?.()}
+              onMouseEnter={(e) => e.target.showPicker?.()}
             />
           </Col>
 
-          {/* NUMBERS */}
           <Col md={4}>
             <Form.Label>Rooms</Form.Label>
             <Form.Control
@@ -180,9 +194,18 @@ export default function BookingEdit() {
             />
           </Col>
 
+          <Col md={12}>
+            <Form.Check
+              type="switch"
+              id="active-switch-edit"
+              label="Active"
+              checked={booking.active}
+              onChange={toggleActive}
+            />
+          </Col>
+
         </Row>
 
-        {/* ACTIONS */}
         <div className="d-flex gap-2 mt-4">
 
           <Button variant="success" onClick={save}>

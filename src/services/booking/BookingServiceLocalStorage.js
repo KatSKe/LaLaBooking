@@ -1,86 +1,52 @@
 const STORAGE_KEY = "bookings";
 
-/**
- * Get users from localStorage (for mapping)
- */
 function getUsers() {
   const data = localStorage.getItem("users");
   return data ? JSON.parse(data) : [];
 }
 
-/**
- * Get offers from localStorage (for mapping)
- */
 function getOffers() {
   const data = localStorage.getItem("offers");
   return data ? JSON.parse(data) : [];
 }
 
 /**
- * Normalize booking (AUTO FIX OLD DATA)
+ * FIXED: only for READ compatibility, NO overwriting storage
  */
 function normalizeBooking(b) {
   const users = getUsers();
   const offers = getOffers();
 
-  let userObject = b.user;
+  const userId = b.userId ?? (typeof b.user === "number" ? b.user : null);
 
-  // 🔥 if old format (userId)
-  if (!userObject && (b.userId || typeof b.user === "number")) {
-    const userId = b.userId ?? b.user;
+  const offerId = b.offerId ?? (typeof b.offer === "number" ? b.offer : null);
 
-    const foundUser = users.find(
-      (u) =>
-        String(u.id) === String(userId) ||
-        String(u.id) === String(userId)
-    );
-
-    if (foundUser) {
-      userObject = {
-        id: foundUser.id ?? foundUser.id,
-        firstName: foundUser.firstName ?? foundUser.firstName ?? "",
-        lastName: foundUser.lastName ?? foundUser.lastName ?? "",
-      };
-    }
-  }
-
-  let offerObject = b.offer;
-
-  // 🔥 if old format (offerId)
-  if (!offerObject || typeof offerObject !== "object") {
-    const offerId = b.offer ?? b.offerId;
-
-    const foundOffer = offers.find(
-      (o) => String(o.id) === String(offerId)
-    );
-
-    if (foundOffer) {
-      offerObject = {
-        ...foundOffer,
-      };
-    }
-  }
+  const foundUser = users.find((u) => String(u.id) === String(userId));
+  const foundOffer = offers.find((o) => String(o.id) === String(offerId));
 
   return {
     ...b,
-    user: userObject || null,
-    offer: offerObject || null,
+
+    userId: userId ?? b.userId,
+    offerId: offerId ?? b.offerId,
+
+    user: foundUser
+      ? {
+          id: foundUser.id,
+          firstName: foundUser.firstName,
+          lastName: foundUser.lastName,
+        }
+      : null,
+
+    offer: foundOffer || null,
   };
 }
 
-/**
- * Get data with normalization
- */
 function getData() {
   const data = localStorage.getItem(STORAGE_KEY);
   const parsed = data ? JSON.parse(data) : [];
 
-  const normalized = parsed.map(normalizeBooking);
-
-  // 🔥 overwrite clean data
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-
-  return normalized;
+  return parsed; // ❗ NO normalization write-back anymore
 }
 
 function saveData(data) {
@@ -90,12 +56,12 @@ function saveData(data) {
 export default {
   get: async () => ({
     success: true,
-    data: getData(),
+    data: getData().map(normalizeBooking),
   }),
 
   getById: async (id) => ({
     success: true,
-    data: getData().find((b) => String(b.id) === String(id)),
+    data: getData().map(normalizeBooking).find((b) => String(b.id) === String(id)),
   }),
 
   add: async (booking) => {
@@ -114,20 +80,22 @@ export default {
 
   update: async (id, booking) => {
     const data = getData();
+
     const index = data.findIndex((b) => String(b.id) === String(id));
 
-    if (index !== -1) {
-      data[index] = {
-        ...data[index],
-        ...booking,
-        id: data[index].id,
-      };
-
-      saveData(data);
-      return { success: true, data: data[index] };
+    if (index === -1) {
+      return { success: false, message: "Booking not found" };
     }
 
-    return { success: false, message: "Booking not found" };
+    data[index] = {
+      ...data[index],
+      ...booking,
+      id: data[index].id,
+    };
+
+    saveData(data);
+
+    return { success: true, data: data[index] };
   },
 
   remove: async (id) => {
