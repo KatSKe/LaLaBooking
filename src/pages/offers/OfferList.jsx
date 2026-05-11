@@ -1,30 +1,50 @@
 import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
-import OffersService from "../../services/offers/OffersService";
-import { RouteNames } from "../../constants";
-
 import { Pencil, Trash2 } from "lucide-react";
 
-export default function OfferList() {
+import OffersService from "../../services/offers/OffersService";
+import TypeService from "../../services/types/TypeServiceLocalStorage";
+import { RouteNames } from "../../constants";
+
+export default function OffersList() {
   const navigate = useNavigate();
+
   const [offers, setOffers] = useState([]);
+  const [types, setTypes] = useState([]);
 
   useEffect(() => {
     loadOffers();
+    loadTypes();
   }, []);
 
   async function loadOffers() {
-    const res = await OffersService.get();
-    setOffers(res.data || []);
+    const response = await OffersService.get();
+    setOffers(response.data || []);
   }
 
-  async function removeOffer(id) {
-    if (!window.confirm("Are you sure you want to delete this offer?")) return;
+  async function loadTypes() {
+    const response = await TypeService.get();
+    setTypes(response.data || []);
+  }
+
+  async function deleteOffer(id) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this offer?"
+    );
+
+    if (!confirmDelete) return;
 
     await OffersService.remove(id);
     loadOffers();
+  }
+
+  function getTypeName(typeId) {
+    const type = types.find(
+      (item) => item.id === Number(typeId)
+    );
+
+    return type ? type.name : "Not assigned";
   }
 
   return (
@@ -41,29 +61,48 @@ export default function OfferList() {
 
       <div className="table-responsive">
         <Table striped hover>
+
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Offer Name</th>
               <th>Type</th>
-              <th>Price</th>
-              <th>Active</th>
+              <th>Price (€)</th>
+              <th>Status</th>
               <th className="text-end">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {offers.map(o => (
-              <tr key={o.id}>
-                <td>{o.name}</td>
-                <td>{o.typeName}</td>
-                <td>{Number(o.price).toFixed(2)} €</td>
-                <td>{o.active ? "Active" : "Inactive"}</td>
+            {offers.map((offer) => (
+              <tr key={offer.id}>
+
+                <td>{offer.name}</td>
+
+                <td>{getTypeName(offer.typeId)}</td>
+
+                <td>
+                  {Number(offer.price).toFixed(2)}
+                </td>
+
+                <td>
+                  {offer.active
+                    ? "Active"
+                    : "Inactive"}
+                </td>
 
                 <td className="text-end d-flex justify-content-end gap-2">
+
                   <Button
                     size="sm"
                     variant="outline-warning"
-                    onClick={() => navigate(`/offers/edit/${o.id}`)}
+                    onClick={() =>
+                      navigate(
+                        RouteNames.OFFERS_EDIT.replace(
+                          ":id",
+                          offer.id
+                        )
+                      )
+                    }
                   >
                     <Pencil size={16} />
                   </Button>
@@ -71,11 +110,15 @@ export default function OfferList() {
                   <Button
                     size="sm"
                     variant="outline-danger"
-                    onClick={() => removeOffer(o.id)}
+                    onClick={() =>
+                      deleteOffer(offer.id)
+                    }
                   >
                     <Trash2 size={16} />
                   </Button>
+
                 </td>
+
               </tr>
             ))}
           </tbody>

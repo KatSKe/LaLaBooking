@@ -2,79 +2,108 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button } from "react-bootstrap";
 import { Pencil, Trash2 } from "lucide-react";
-import UserService from "../../services/users/UserService";
+
+import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
-export default function UserList() {
+export default function TypeList() {
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
+  const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    loadUsers();
+    loadTypes();
   }, []);
 
-  async function loadUsers() {
-    const response = await UserService.get();
-    setUsers(response.data || []);
+  async function loadTypes() {
+    const response = await TypeService.get();
+    setTypes(response.data || []);
   }
 
-  async function deleteUser(id) {
+  async function deleteType(id) {
     if (!window.confirm("Are you sure?")) return;
-    await UserService.remove(id);
-    loadUsers();
+
+    await TypeService.remove(id);
+    loadTypes();
+  }
+
+  function getStatusLabel(active) {
+    return active ? "Active" : "Inactive";
+  }
+
+  function getStatusStyle(active) {
+    return {
+      padding: "4px 10px",
+      borderRadius: "8px",
+      fontSize: "0.85rem",
+      fontWeight: 600,
+      display: "inline-block",
+      backgroundColor: active ? "#d1f7d6" : "#ffd6d6",
+      color: active ? "#1e7a33" : "#a11a1a",
+    };
   }
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">Users</h2>
-      <Button 
-        className="w-100 mb-4" 
-        onClick={() => navigate(RouteNames.USERS_NEW)}
+      <h2 className="mb-3">Types</h2>
+
+      <Button
+        className="w-100 mb-4"
+        onClick={() => navigate(RouteNames.TYPES_NEW)}
       >
-        + Add New User
+        + Add New Type
       </Button>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Date of Birth</th>
-            <th>Contact Number</th>
-            <th>City</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
-              <td>{user.email}</td>
-              <td>{user.dateOfBirth}</td>
-              <td>{user.contactNumber}</td>
-              <td>{user.address?.city}</td>
-              <td className="d-flex gap-2">
-                <Button 
-                  variant="outline-warning" 
-                  size="sm"
-                  onClick={() => navigate(RouteNames.USERS_EDIT.replace(":id", user.id))}
-                >
-                  <Pencil size={16} />
-                </Button>
-                <Button 
-                  variant="outline-danger" 
-                  size="sm"
-                  onClick={() => deleteUser(user.id)}
-                >
-                  <Trash2 size={16} />
-                </Button>
-              </td>
+      <div className="table-responsive">
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Active</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+
+          <tbody>
+            {types.map((type) => (
+              <tr key={type.id}>
+                <td>{type.name}</td>
+
+                {/* ACTIVE STATUS WITH COLORS */}
+                <td>
+                  <span style={getStatusStyle(type.active)}>
+                    {getStatusLabel(type.active)}
+                  </span>
+                </td>
+
+                <td className="d-flex gap-2">
+                  <Button
+                    variant="outline-warning"
+                    size="sm"
+                    onClick={() =>
+                      navigate(
+                        RouteNames.TYPES_EDIT.replace(
+                          ":id",
+                          type.id
+                        )
+                      )
+                    }
+                  >
+                    <Pencil size={16} />
+                  </Button>
+
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => deleteType(type.id)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }

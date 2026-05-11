@@ -20,4 +20,5 @@ export const RouteNames = {
   BOOKINGS_EDIT: "/bookings/:id",
 };
 
-export const DATA_SOURCE = "localstorage";
+
+export const DATA_SOURCE = "localStorage";

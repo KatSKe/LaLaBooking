@@ -26,6 +26,10 @@ export default function BookingEdit() {
     active: true,
   });
 
+  // ✅ NEW: validation
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
   useEffect(() => {
     loadData();
     loadBooking();
@@ -57,17 +61,41 @@ export default function BookingEdit() {
     });
   }
 
+  // ✅ VALIDATION
+  function validate(values = booking) {
+    const error = {};
+
+    if (!values.userId) error.userId = "User is required";
+    if (!values.offerId) error.offerId = "Offer is required";
+    if (!values.startDate) error.startDate = "Start date is required";
+    if (!values.endDate) error.endDate = "End date is required";
+
+    return error;
+  }
+
   function handleChange(e) {
     const { name, value } = e.target;
 
     const numericFields = ["numberOfRooms", "adults", "kids"];
 
-    setBooking({
+    const updated = {
       ...booking,
       [name]: numericFields.includes(name)
-        ? Math.max(0, Number(value)) // 🔥 no negative values
+        ? Math.max(0, Number(value))
         : value,
-    });
+    };
+
+    setBooking(updated);
+    setErrors(validate(updated));
+  }
+
+  function handleBlur(field) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validate(booking));
+  }
+
+  function showError(field) {
+    return touched[field] && errors[field];
   }
 
   function toggleActive() {
@@ -78,6 +106,19 @@ export default function BookingEdit() {
   }
 
   async function save() {
+    const validationErrors = validate();
+
+    setErrors(validationErrors);
+
+    setTouched({
+      userId: true,
+      offerId: true,
+      startDate: true,
+      endDate: true,
+    });
+
+    if (Object.keys(validationErrors).length > 0) return;
+
     const selectedUser = users.find(
       (u) => String(u.id) === String(booking.userId)
     );
@@ -105,12 +146,16 @@ export default function BookingEdit() {
 
         <Row className="g-3">
 
+          {/* USER */}
           <Col md={6}>
             <Form.Label>User</Form.Label>
+
             <Form.Select
               name="userId"
               value={booking.userId}
               onChange={handleChange}
+              onBlur={() => handleBlur("userId")}
+              isInvalid={showError("userId")}
             >
               <option value="">Select user</option>
               {users.map((u) => (
@@ -119,14 +164,22 @@ export default function BookingEdit() {
                 </option>
               ))}
             </Form.Select>
+
+            <Form.Control.Feedback type="invalid">
+              {errors.userId}
+            </Form.Control.Feedback>
           </Col>
 
+          {/* OFFER */}
           <Col md={6}>
             <Form.Label>Offer</Form.Label>
+
             <Form.Select
               name="offerId"
               value={booking.offerId}
               onChange={handleChange}
+              onBlur={() => handleBlur("offerId")}
+              isInvalid={showError("offerId")}
             >
               <option value="">Select offer</option>
               {offers.map((o) => (
@@ -135,33 +188,53 @@ export default function BookingEdit() {
                 </option>
               ))}
             </Form.Select>
+
+            <Form.Control.Feedback type="invalid">
+              {errors.offerId}
+            </Form.Control.Feedback>
           </Col>
 
-          {/* ✅ DATE PICKER FIX (RESTORED) */}
+          {/* START DATE */}
           <Col md={6}>
             <Form.Label>Start Date</Form.Label>
+
             <Form.Control
               type="date"
               name="startDate"
               value={booking.startDate}
               onChange={handleChange}
+              onBlur={() => handleBlur("startDate")}
               onFocus={(e) => e.target.showPicker?.()}
               onMouseEnter={(e) => e.target.showPicker?.()}
+              isInvalid={showError("startDate")}
             />
+
+            <Form.Control.Feedback type="invalid">
+              {errors.startDate}
+            </Form.Control.Feedback>
           </Col>
 
+          {/* END DATE */}
           <Col md={6}>
             <Form.Label>End Date</Form.Label>
+
             <Form.Control
               type="date"
               name="endDate"
               value={booking.endDate}
               onChange={handleChange}
+              onBlur={() => handleBlur("endDate")}
               onFocus={(e) => e.target.showPicker?.()}
               onMouseEnter={(e) => e.target.showPicker?.()}
+              isInvalid={showError("endDate")}
             />
+
+            <Form.Control.Feedback type="invalid">
+              {errors.endDate}
+            </Form.Control.Feedback>
           </Col>
 
+          {/* NUMBERS */}
           <Col md={4}>
             <Form.Label>Rooms</Form.Label>
             <Form.Control
@@ -195,10 +268,10 @@ export default function BookingEdit() {
             />
           </Col>
 
+          {/* ACTIVE */}
           <Col md={12}>
             <Form.Check
               type="switch"
-              id="active-switch-edit"
               label="Active"
               checked={booking.active}
               onChange={toggleActive}
