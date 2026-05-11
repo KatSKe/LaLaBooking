@@ -1,22 +1,26 @@
 import BookingServiceLocalStorage from "./BookingServiceLocalStorage";
 import BookingServiceMemory from "./BookingServiceMemory";
+
 import { DATA_SOURCE } from "../../constants";
 
 function getService() {
-  switch (DATA_SOURCE) {
+  switch (DATA_SOURCE?.toLowerCase()) {
     case "memory":
       return BookingServiceMemory;
 
-    case "localStorage":
+    case "localstorage":
       return BookingServiceLocalStorage;
 
     default:
-      console.warn("⚠️ BookingService: DATA_SOURCE is not valid!");
+      console.warn(
+        "BookingService: DATA_SOURCE is not valid!"
+      );
+
       return null;
   }
 }
 
-const Service = getService();
+const activeService = getService();
 
 const fallbackService = {
   get: async () => ({
@@ -31,29 +35,36 @@ const fallbackService = {
     message: "Service not initialized",
   }),
 
-  add: async () =>
-    console.error("❌ BookingService not initialized (add)"),
+  add: async () => ({
+    success: false,
+    message: "Service not initialized",
+  }),
 
-  update: async () =>
-    console.error("❌ BookingService not initialized (update)"),
+  update: async () => ({
+    success: false,
+    message: "Service not initialized",
+  }),
 
-  remove: async () =>
-    console.error("❌ BookingService not initialized (remove)"),
+  remove: async () => ({
+    success: false,
+    message: "Service not initialized",
+  }),
 };
 
-const ActiveService = Service || fallbackService;
+const service = activeService || fallbackService;
 
 export default {
-  get: () => ActiveService.get(),
+  get: () => service.get(),
 
-  getById: (id) => ActiveService.getById(id),
+  getById: (id) => service.getById(id),
 
-  add: (booking) => ActiveService.add(booking),
+  add: (booking) => service.add(booking),
 
-  update: (id, booking) => ActiveService.update(id, booking),
+  update: (id, booking) =>
+    service.update(id, booking),
 
-  // 🔥 FIX: alias for your BookingEdit.jsx
-  promjeni: (id, booking) => ActiveService.update(id, booking),
+  promjeni: (id, booking) =>
+    service.update(id, booking),
 
-  remove: (id) => ActiveService.remove(id),
+  remove: (id) => service.remove(id),
 };

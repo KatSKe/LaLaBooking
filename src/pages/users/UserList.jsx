@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button } from "react-bootstrap";
-
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 import UserService from "../../services/users/UserService";
@@ -9,6 +8,7 @@ import { RouteNames } from "../../constants";
 
 export default function UserList() {
   const navigate = useNavigate();
+
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,11 @@ export default function UserList() {
   }
 
   async function deleteUser(id) {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmed) return;
 
     await UserService.remove(id);
     loadUsers();
@@ -29,16 +33,27 @@ export default function UserList() {
 
   function formatPhoneNumber(phone) {
     if (!phone) return "";
+
     const digits = phone.replace(/\D/g, "");
 
     if (digits.startsWith("385")) {
-      return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
-        5,
-        8
-      )} ${digits.slice(8)}`;
+      return `+${digits.slice(0, 3)} ${digits.slice(
+        3,
+        5
+      )} ${digits.slice(5, 8)} ${digits.slice(8)}`;
     }
 
     return digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+  }
+
+  function formatDate(date) {
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   }
 
   return (
@@ -74,17 +89,10 @@ export default function UserList() {
                 <td>{user.lastName}</td>
                 <td>{user.email}</td>
 
-                <td>
-                  {user.dateOfBirth
-                    ? new Date(user.dateOfBirth).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : ""}
-                </td>
+                <td>{formatDate(user.dateOfBirth)}</td>
 
                 <td>{formatPhoneNumber(user.contactNumber)}</td>
+
                 <td>{user.address?.city}</td>
 
                 <td className="d-flex gap-2">
@@ -92,7 +100,9 @@ export default function UserList() {
                     size="sm"
                     variant="outline-warning"
                     onClick={() =>
-                      navigate(RouteNames.USERS_EDIT.replace(":id", user.id))
+                      navigate(
+                        RouteNames.USERS_EDIT.replace(":id", user.id)
+                      )
                     }
                   >
                     <Pencil size={16} />

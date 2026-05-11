@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+
 import UsersService from "../../services/users/UserService";
 import { RouteNames } from "../../constants";
 
@@ -39,6 +40,9 @@ export default function UserEdit() {
 
     setUser({
       ...response.data,
+      dateOfBirth: response.data.dateOfBirth
+        ? response.data.dateOfBirth.split("T")[0]
+        : "",
       address: {
         street: response.data.address?.street || "",
         houseNumber: response.data.address?.houseNumber || "",
@@ -51,7 +55,7 @@ export default function UserEdit() {
   function capitalize(value) {
     return value
       .toLowerCase()
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   }
 
   function isValidEmail(email) {
@@ -61,7 +65,7 @@ export default function UserEdit() {
   function formatPhone(value) {
     let digits = value.replace(/\D/g, "");
 
-    if (digits.length === 0) return "";
+    if (!digits) return "";
 
     if (digits.startsWith("0")) {
       digits = "385" + digits.slice(1);
@@ -73,29 +77,40 @@ export default function UserEdit() {
 
     digits = digits.slice(0, 12);
 
-    return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(
-      5,
-      8
-    )} ${digits.slice(8, 12)}`.trim();
+    return `+${digits.slice(0, 3)} ${digits.slice(
+      3,
+      5
+    )} ${digits.slice(5, 8)} ${digits.slice(8, 12)}`.trim();
   }
 
   function validate(values = user) {
     const error = {};
 
-    if (!values.firstName) error.firstName = "First name is required";
-    if (!values.lastName) error.lastName = "Last name is required";
+    if (!values.firstName) {
+      error.firstName = "First name is required";
+    }
 
-    if (!values.email) error.email = "Email is required";
-    else if (!isValidEmail(values.email))
+    if (!values.lastName) {
+      error.lastName = "Last name is required";
+    }
+
+    if (!values.email) {
+      error.email = "Email is required";
+    } else if (!isValidEmail(values.email)) {
       error.email = "Invalid email format";
+    }
 
-    if (!values.contactNumber)
+    if (!values.contactNumber) {
       error.contactNumber = "Contact number is required";
+    }
 
-    if (!values.dateOfBirth)
+    if (!values.dateOfBirth) {
       error.dateOfBirth = "Date of birth is required";
+    }
 
-    if (!values.address.city) error.city = "City is required";
+    if (!values.address.city) {
+      error.city = "City is required";
+    }
 
     return error;
   }
@@ -106,7 +121,7 @@ export default function UserEdit() {
     if (name.startsWith("address.")) {
       const field = name.split(".")[1];
 
-      const updated = {
+      const updatedUser = {
         ...user,
         address: {
           ...user.address,
@@ -114,19 +129,21 @@ export default function UserEdit() {
         },
       };
 
-      setUser(updated);
-      setErrors(validate(updated));
+      setUser(updatedUser);
+      setErrors(validate(updatedUser));
+
       return;
     }
 
     if (name === "contactNumber") {
-      const updated = {
+      const updatedUser = {
         ...user,
         contactNumber: formatPhone(value),
       };
 
-      setUser(updated);
-      setErrors(validate(updated));
+      setUser(updatedUser);
+      setErrors(validate(updatedUser));
+
       return;
     }
 
@@ -146,7 +163,11 @@ export default function UserEdit() {
   }
 
   function handleBlur(field) {
-    setTouched((prev) => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+
     setErrors(validate());
   }
 
@@ -155,9 +176,10 @@ export default function UserEdit() {
   }
 
   async function save() {
-    const error = validate();
+    const validationErrors = validate();
 
-    setErrors(error);
+    setErrors(validationErrors);
+
     setTouched({
       firstName: true,
       lastName: true,
@@ -167,9 +189,12 @@ export default function UserEdit() {
       city: true,
     });
 
-    if (Object.keys(error).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
     await UsersService.update(id, user);
+
     navigate(RouteNames.USERS);
   }
 
@@ -180,9 +205,9 @@ export default function UserEdit() {
       <Card className="p-3">
         <Form>
           <Row className="g-3">
-
             <Col md={4}>
               <Form.Label>First Name</Form.Label>
+
               <Form.Control
                 name="firstName"
                 value={user.firstName}
@@ -190,6 +215,7 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("firstName")}
                 isInvalid={showError("firstName")}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.firstName}
               </Form.Control.Feedback>
@@ -197,6 +223,7 @@ export default function UserEdit() {
 
             <Col md={4}>
               <Form.Label>Last Name</Form.Label>
+
               <Form.Control
                 name="lastName"
                 value={user.lastName}
@@ -204,6 +231,7 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("lastName")}
                 isInvalid={showError("lastName")}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.lastName}
               </Form.Control.Feedback>
@@ -211,6 +239,7 @@ export default function UserEdit() {
 
             <Col md={4}>
               <Form.Label>Email</Form.Label>
+
               <Form.Control
                 name="email"
                 value={user.email}
@@ -218,6 +247,7 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("email")}
                 isInvalid={showError("email")}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.email}
               </Form.Control.Feedback>
@@ -225,6 +255,7 @@ export default function UserEdit() {
 
             <Col md={4}>
               <Form.Label>Date of Birth</Form.Label>
+
               <Form.Control
                 type="date"
                 name="dateOfBirth"
@@ -235,6 +266,7 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("dateOfBirth")}
                 isInvalid={showError("dateOfBirth")}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.dateOfBirth}
               </Form.Control.Feedback>
@@ -242,6 +274,7 @@ export default function UserEdit() {
 
             <Col md={4}>
               <Form.Label>Contact Number</Form.Label>
+
               <Form.Control
                 name="contactNumber"
                 value={user.contactNumber || ""}
@@ -250,7 +283,11 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("contactNumber")}
                 isInvalid={showError("contactNumber")}
               />
-              <Form.Text muted>Format: +385 91 234 5678</Form.Text>
+
+              <Form.Text muted>
+                Format: +385 91 234 5678
+              </Form.Text>
+
               <Form.Control.Feedback type="invalid">
                 {errors.contactNumber}
               </Form.Control.Feedback>
@@ -258,6 +295,7 @@ export default function UserEdit() {
 
             <Col md={6}>
               <Form.Label>Street</Form.Label>
+
               <Form.Control
                 name="address.street"
                 value={user.address.street}
@@ -267,6 +305,7 @@ export default function UserEdit() {
 
             <Col md={6}>
               <Form.Label>House Number</Form.Label>
+
               <Form.Control
                 name="address.houseNumber"
                 value={user.address.houseNumber}
@@ -276,6 +315,7 @@ export default function UserEdit() {
 
             <Col md={6}>
               <Form.Label>Postal Code</Form.Label>
+
               <Form.Control
                 name="address.postalCode"
                 value={user.address.postalCode}
@@ -285,6 +325,7 @@ export default function UserEdit() {
 
             <Col md={6}>
               <Form.Label>City</Form.Label>
+
               <Form.Control
                 name="address.city"
                 value={user.address.city}
@@ -292,11 +333,11 @@ export default function UserEdit() {
                 onBlur={() => handleBlur("city")}
                 isInvalid={showError("city")}
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.city}
               </Form.Control.Feedback>
             </Col>
-
           </Row>
 
           <div className="d-flex gap-2 mt-4">
@@ -304,11 +345,13 @@ export default function UserEdit() {
               Save Changes
             </Button>
 
-            <Button variant="secondary" onClick={() => navigate(RouteNames.USERS)}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(RouteNames.USERS)}
+            >
               Cancel
             </Button>
           </div>
-
         </Form>
       </Card>
     </div>

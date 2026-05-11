@@ -3,63 +3,105 @@ import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import BookingService from "../../services/booking/BookingService";
-import { RouteNames } from "../../constants";
 import UserService from "../../services/users/UserService";
 import OffersService from "../../services/offers/OffersService";
 
+import { RouteNames } from "../../constants";
+
 export default function BookingList() {
   const navigate = useNavigate();
+
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    loadOffers()
-    loadUsers()
-    load();
+    loadBookings();
+    loadUsers();
+    loadOffers();
   }, []);
 
-  async function load() {
-    const result = await BookingService.get();
-    // console.table(result.data)
-    setBookings(result.data || []);
+  async function loadBookings() {
+    const response = await BookingService.get();
+
+    setBookings(response.data || []);
   }
 
   async function loadUsers() {
     const response = await UserService.get();
+
     setUsers(response.data || []);
   }
 
   async function loadOffers() {
-    const res = await OffersService.get();
-    setOffers(res.data || []);
+    const response = await OffersService.get();
+
+    setOffers(response.data || []);
   }
 
-  async function remove(id) {
-    if (!window.confirm("Delete booking?")) return;
+  async function removeBooking(id) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this booking?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
 
     await BookingService.remove(id);
-    load();
+
+    loadBookings();
   }
 
-  function fullUserName(userID){
-    const user = users.find(e=>e.id==userID)
-    return user.firstName + ' ' + user.lastName
+  function getUserFullName(userId) {
+    const user = users.find(
+      (item) => String(item.id) === String(userId)
+    );
+
+    if (!user) {
+      return "";
+    }
+
+    return `${user.firstName} ${user.lastName}`;
   }
 
-  function fullOfferName(offerID){
-    const offer = offers.find(e=>e.id==offerID)
-    return offer.name
+  function getOfferName(offerId) {
+    const offer = offers.find(
+      (item) =>
+        String(item.id) === String(offerId)
+    );
+
+    if (!offer) {
+      return "";
+    }
+
+    return offer.name;
+  }
+
+  function formatDate(date) {
+    if (!date) {
+      return "";
+    }
+
+    return new Date(date).toLocaleDateString(
+      "en-GB",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }
+    );
   }
 
   return (
     <div className="container py-4">
       <h2 className="mb-3">Bookings</h2>
 
-      {/* Add New Booking */}
       <Button
         className="mb-3 w-100"
-        onClick={() => navigate(RouteNames.BOOKINGS_CREATE)}
+        onClick={() =>
+          navigate(RouteNames.BOOKINGS_CREATE)
+        }
       >
         Add New Booking
       </Button>
@@ -72,36 +114,92 @@ export default function BookingList() {
               <th>Offer</th>
               <th>Start Date</th>
               <th>End Date</th>
-              <th className="text-end">Actions</th>
+              <th>Rooms</th>
+              <th>Adults</th>
+              <th>Kids</th>
+              <th>Status</th>
+              <th className="text-end">
+                Actions
+              </th>
             </tr>
           </thead>
 
           <tbody>
-            {bookings.map((b) => (
-              <tr key={b.id}>
-                <td>{fullUserName(b.user)}</td>
-                <td>{fullOfferName(b.offer)}</td>
-                <td>{b.startDate}</td>
-                <td>{b.endDate}</td>
+            {bookings.map((booking) => (
+              <tr key={booking.id}>
+                <td>
+                  {getUserFullName(
+                    booking.userId
+                  )}
+                </td>
 
-                <td className="text-end d-flex justify-content-end gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline-warning"
-                    onClick={() =>
-                      navigate(`/bookings/${b.id}`) // ✅ FIXED ROUTE
-                    }
-                  >
-                    Edit
-                  </Button>
+                <td>
+                  {getOfferName(
+                    booking.offerId
+                  )}
+                </td>
 
-                  <Button
-                    size="sm"
-                    variant="outline-danger"
-                    onClick={() => remove(b.id)}
-                  >
-                    Delete
-                  </Button>
+                <td>
+                  {formatDate(
+                    booking.startDate
+                  )}
+                </td>
+
+                <td>
+                  {formatDate(
+                    booking.endDate
+                  )}
+                </td>
+
+                <td>
+                  {booking.numberOfRooms}
+                </td>
+
+                <td>{booking.adults}</td>
+
+                <td>{booking.kids}</td>
+
+                <td>
+                  {booking.active ? (
+                    <span className="text-success fw-semibold">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="text-danger fw-semibold">
+                      Inactive
+                    </span>
+                  )}
+                </td>
+
+                <td className="text-end">
+                  <div className="d-flex justify-content-end gap-2 flex-wrap">
+                    <Button
+                      size="sm"
+                      variant="outline-warning"
+                      onClick={() =>
+                        navigate(
+                          RouteNames.BOOKINGS_EDIT.replace(
+                            ":id",
+                            booking.id
+                          )
+                        )
+                      }
+                    >
+                      Edit
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="outline-danger"
+                      onClick={() =>
+                        removeBooking(
+                          booking.id
+                        )
+                      }
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}

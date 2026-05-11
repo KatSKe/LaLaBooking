@@ -2,33 +2,45 @@ const STORAGE_KEY = "bookings";
 
 function getUsers() {
   const data = localStorage.getItem("users");
+
   return data ? JSON.parse(data) : [];
 }
 
 function getOffers() {
   const data = localStorage.getItem("offers");
+
   return data ? JSON.parse(data) : [];
 }
 
-/**
- * FIXED: only for READ compatibility, NO overwriting storage
- */
-function normalizeBooking(b) {
+function normalizeBooking(booking) {
   const users = getUsers();
   const offers = getOffers();
 
-  const userId = b.userId ?? (typeof b.user === "number" ? b.user : null);
+  const userId =
+    booking.userId ??
+    (typeof booking.user === "number"
+      ? booking.user
+      : null);
 
-  const offerId = b.offerId ?? (typeof b.offer === "number" ? b.offer : null);
+  const offerId =
+    booking.offerId ??
+    (typeof booking.offer === "number"
+      ? booking.offer
+      : null);
 
-  const foundUser = users.find((u) => String(u.id) === String(userId));
-  const foundOffer = offers.find((o) => String(o.id) === String(offerId));
+  const foundUser = users.find(
+    (user) => String(user.id) === String(userId)
+  );
+
+  const foundOffer = offers.find(
+    (offer) => String(offer.id) === String(offerId)
+  );
 
   return {
-    ...b,
+    ...booking,
 
-    userId: userId ?? b.userId,
-    offerId: offerId ?? b.offerId,
+    userId,
+    offerId,
 
     user: foundUser
       ? {
@@ -44,13 +56,15 @@ function normalizeBooking(b) {
 
 function getData() {
   const data = localStorage.getItem(STORAGE_KEY);
-  const parsed = data ? JSON.parse(data) : [];
 
-  return parsed; // ❗ NO normalization write-back anymore
+  return data ? JSON.parse(data) : [];
 }
 
 function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
 }
 
 export default {
@@ -61,7 +75,12 @@ export default {
 
   getById: async (id) => ({
     success: true,
-    data: getData().map(normalizeBooking).find((b) => String(b.id) === String(id)),
+    data: getData()
+      .map(normalizeBooking)
+      .find(
+        (booking) =>
+          String(booking.id) === String(id)
+      ),
   }),
 
   add: async (booking) => {
@@ -73,18 +92,27 @@ export default {
     };
 
     data.push(newBooking);
+
     saveData(data);
 
-    return { success: true, data: newBooking };
+    return {
+      success: true,
+      data: newBooking,
+    };
   },
 
   update: async (id, booking) => {
     const data = getData();
 
-    const index = data.findIndex((b) => String(b.id) === String(id));
+    const index = data.findIndex(
+      (item) => String(item.id) === String(id)
+    );
 
     if (index === -1) {
-      return { success: false, message: "Booking not found" };
+      return {
+        success: false,
+        message: "Booking not found",
+      };
     }
 
     data[index] = {
@@ -95,13 +123,22 @@ export default {
 
     saveData(data);
 
-    return { success: true, data: data[index] };
+    return {
+      success: true,
+      data: data[index],
+    };
   },
 
   remove: async (id) => {
-    const data = getData().filter((b) => String(b.id) !== String(id));
-    saveData(data);
+    const filtered = getData().filter(
+      (booking) =>
+        String(booking.id) !== String(id)
+    );
 
-    return { success: true };
+    saveData(filtered);
+
+    return {
+      success: true,
+    };
   },
 };
