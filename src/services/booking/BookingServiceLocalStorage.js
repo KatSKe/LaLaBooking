@@ -1,3 +1,5 @@
+import { bookings as defaultBookings } from "./BookingData";
+
 const STORAGE_KEY = "bookings";
 
 function getUsers() {
@@ -57,7 +59,13 @@ function normalizeBooking(booking) {
 function getData() {
   const data = localStorage.getItem(STORAGE_KEY);
 
-  return data ? JSON.parse(data) : [];
+  
+    if (!data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBookings));
+        return defaultBookings;
+      }
+
+  return JSON.parse(data);
 }
 
 function saveData(data) {
@@ -70,7 +78,7 @@ function saveData(data) {
 export default {
   get: async () => ({
     success: true,
-    data: getData().map(normalizeBooking),
+    data: getData(),
   }),
 
   getById: async (id) => ({

@@ -52,8 +52,8 @@ export default function BookingEdit() {
     setBooking({
       userId: String(b.userId || ""),
       offerId: String(b.offerId || ""),
-      startDate: b.startDate || "",
-      endDate: b.endDate || "",
+      startDate: b.startDate.substring(0,10),
+      endDate: b.endDate.substring(0,10),
       numberOfRooms: b.numberOfRooms ?? 0,
       adults: b.adults ?? 0,
       kids: b.kids ?? 0,
