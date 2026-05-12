@@ -1,85 +1,205 @@
 /* =========================
-   HERO BASE
+   GLOBAL RESET
 ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+html, body {
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #000;
+  color: #fff;
 }
 
 /* =========================
-   BACKGROUND
+   PAGE WRAPPER
 ========================= */
-
-.home-background {
-  background-image: url("/images/bg-lala.jpg");
-  background-size: cover;
-  background-position: center;
+.home-page {
   min-height: 100vh;
   width: 100%;
 }
 
 /* =========================
-   OVERLAY
+   BACKGROUND (FIXED FLOW)
 ========================= */
+.home-background {
+  min-height: 100vh;
+  width: 100%;
 
-.overlay {
+  background-image: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee");
+  background-size: cover;
+  background-position: center;
+
+  position: relative;
+
+  /* FIX: allow vertical flow */
+  display: flex;
+  flex-direction: column;
+
+  overflow-x: hidden;
+}
+
+.home-background::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,0.55);
   z-index: 1;
 }
 
 /* =========================
-   GLASS CARD
+   OVERLAY (IMPORTANT FIX)
 ========================= */
-
-.glass-card {
+.home-overlay {
   position: relative;
   z-index: 2;
 
-  padding: 40px 50px;
-  border-radius: 20px;
+  min-height: 100vh;
+  width: 100%;
 
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  text-align: center;
-  color: white;
-
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* =========================
-   LOTTIE
+   WRAPPER
 ========================= */
+.home-content-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-.lottie-center {
+/* =========================
+   HERO (slightly above center)
+========================= */
+.hero-center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  transform: translateY(-6vh);
+  padding-top: 80px;
+}
+
+.home-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.home-subtitle {
+  font-size: 18px;
+  opacity: 0.85;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   LOTTIE (50% smaller)
+========================= */
+.home-animation {
+  transform: scale(0.5);
+  transform-origin: center;
+}
+
+/* =========================
+   STATISTICS (FORCE VISIBILITY FIX)
+========================= */
+.statistics-clean-wrapper {
+  position: relative;
+  z-index: 999;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  gap: 60px;
+
+  width: 100%;
+  max-width: 1000px;
+
+  margin-top: 80px;
+  padding-bottom: 80px;
+
+  flex-wrap: wrap;
 }
 
-.lottie-center svg,
-.lottie-center canvas {
-  width: 120px !important;
-  height: 120px !important;
+/* STAT ITEM */
+.stat-item {
+  min-width: 120px;
+  text-align: center;
+}
+
+/* NUMBER */
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* LABEL */
+.stat-label {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-top: 6px;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+.fade-in {
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-
 @media (max-width: 768px) {
-  .glass-card {
-    padding: 25px;
+  .home-title {
+    font-size: 32px;
+  }
+
+  .hero-center-content {
+    transform: translateY(-3vh);
+  }
+
+  .home-animation {
+    transform: scale(0.45);
+  }
+
+  .statistics-clean-wrapper {
+    gap: 25px;
+    margin-top: 60px;
+  }
+}
+
+@media (max-width: 500px) {
+  .home-title {
+    font-size: 28px;
+  }
+
+  .home-subtitle {
+    font-size: 16px;
+  }
+
+  .statistics-clean-wrapper {
+    flex-direction: column;
+    gap: 20px;
   }
 }
