@@ -4,7 +4,7 @@ const STORAGE_KEY = "types";
 
 function formatName(value) {
   if (!value) return "";
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function normalizeType(type) {
@@ -27,7 +27,7 @@ function getAllFromStorage() {
   try {
     const parsed = JSON.parse(data);
     return parsed.map(normalizeType);
-  } catch (error) {
+  } catch {
     const normalized = defaultTypes.map(normalizeType);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
     return normalized;

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
-import BookingService from "../../services/booking/BookingServiceLocalStorage";
-import UsersService from "../../services/users/UserServiceLocalStorage";
+import BookingService from "../../services/booking/BookingService";
+import UsersService from "../../services/users/UserService";
 import OffersService from "../../services/offers/OffersService";
 
 import { RouteNames } from "../../constants";
@@ -30,11 +30,6 @@ export default function BookingEdit() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  useEffect(() => {
-    loadData();
-    loadBooking();
-  }, []);
-
   async function loadData() {
     const u = await UsersService.get();
     const o = await OffersService.get();
@@ -45,7 +40,11 @@ export default function BookingEdit() {
 
   async function loadBooking() {
     const res = await BookingService.getById(id);
-    if (!res.data) return;
+
+    if (!res.data) {
+      navigate(RouteNames.BOOKINGS);
+      return;
+    }
 
     const b = res.data;
 
@@ -57,9 +56,14 @@ export default function BookingEdit() {
       numberOfRooms: b.numberOfRooms ?? 0,
       adults: b.adults ?? 0,
       kids: b.kids ?? 0,
-      active: b.active ?? true,
+      active: b.active ?? false,
     });
   }
+
+  useEffect(() => {
+    loadData();
+    loadBooking();
+  }, []);
 
   // ✅ VALIDATION
   function validate(values = booking) {
@@ -144,156 +148,170 @@ export default function BookingEdit() {
       <Card className="p-4">
         <h2 className="mb-4">Edit Booking</h2>
 
-        <Row className="g-3">
+        <Form>
+          <Row className="g-3">
 
-          {/* USER */}
-          <Col md={6}>
-            <Form.Label>User</Form.Label>
+            {/* USER */}
+            <Col md={6}>
+              <Form.Label htmlFor="userId">User</Form.Label>
 
-            <Form.Select
-              name="userId"
-              value={booking.userId}
-              onChange={handleChange}
-              onBlur={() => handleBlur("userId")}
-              isInvalid={showError("userId")}
+              <Form.Select
+                id="userId"
+                name="userId"
+                value={booking.userId}
+                onChange={handleChange}
+                onBlur={() => handleBlur("userId")}
+                isInvalid={showError("userId")}
+                aria-required="true"
+              >
+                <option value="">Select user</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.firstName} {u.lastName}
+                  </option>
+                ))}
+              </Form.Select>
+
+              <Form.Control.Feedback type="invalid">
+                {errors.userId}
+              </Form.Control.Feedback>
+            </Col>
+
+            {/* OFFER */}
+            <Col md={6}>
+              <Form.Label htmlFor="offerId">Offer</Form.Label>
+
+              <Form.Select
+                id="offerId"
+                name="offerId"
+                value={booking.offerId}
+                onChange={handleChange}
+                onBlur={() => handleBlur("offerId")}
+                isInvalid={showError("offerId")}
+                aria-required="true"
+              >
+                <option value="">Select offer</option>
+                {offers.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.name}
+                  </option>
+                ))}
+              </Form.Select>
+
+              <Form.Control.Feedback type="invalid">
+                {errors.offerId}
+              </Form.Control.Feedback>
+            </Col>
+
+            {/* START DATE */}
+            <Col md={6}>
+              <Form.Label htmlFor="startDate">Start Date</Form.Label>
+
+              <Form.Control
+                id="startDate"
+                type="date"
+                name="startDate"
+                value={booking.startDate}
+                onChange={handleChange}
+                onBlur={() => handleBlur("startDate")}
+                onFocus={(e) => e.target.showPicker?.()}
+                onMouseEnter={(e) => e.target.showPicker?.()}
+                isInvalid={showError("startDate")}
+                aria-required="true"
+              />
+
+              <Form.Control.Feedback type="invalid">
+                {errors.startDate}
+              </Form.Control.Feedback>
+            </Col>
+
+            {/* END DATE */}
+            <Col md={6}>
+              <Form.Label htmlFor="endDate">End Date</Form.Label>
+
+              <Form.Control
+                id="endDate"
+                type="date"
+                name="endDate"
+                value={booking.endDate}
+                onChange={handleChange}
+                onBlur={() => handleBlur("endDate")}
+                onFocus={(e) => e.target.showPicker?.()}
+                onMouseEnter={(e) => e.target.showPicker?.()}
+                isInvalid={showError("endDate")}
+                aria-required="true"
+              />
+
+              <Form.Control.Feedback type="invalid">
+                {errors.endDate}
+              </Form.Control.Feedback>
+            </Col>
+
+            {/* NUMBERS */}
+            <Col md={4}>
+              <Form.Label htmlFor="numberOfRooms">Rooms</Form.Label>
+              <Form.Control
+                id="numberOfRooms"
+                type="number"
+                name="numberOfRooms"
+                value={booking.numberOfRooms}
+                min={0}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={4}>
+              <Form.Label htmlFor="adults">Adults</Form.Label>
+              <Form.Control
+                id="adults"
+                type="number"
+                name="adults"
+                value={booking.adults}
+                min={0}
+                onChange={handleChange}
+              />
+            </Col>
+
+            <Col md={4}>
+              <Form.Label htmlFor="kids">Kids</Form.Label>
+              <Form.Control
+                id="kids"
+                type="number"
+                name="kids"
+                value={booking.kids}
+                min={0}
+                onChange={handleChange}
+              />
+            </Col>
+
+            {/* ACTIVE */}
+            <Col md={12}>
+              <Form.Check
+                type="switch"
+                label="Active"
+                checked={booking.active}
+                onChange={toggleActive}
+              />
+            </Col>
+
+          </Row>
+
+          <div className="d-flex gap-2 mt-4">
+
+            <Button variant="success" onClick={save}>
+              Save Changes
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate(RouteNames.BOOKINGS)}
             >
-              <option value="">Select user</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.firstName} {u.lastName}
-                </option>
-              ))}
-            </Form.Select>
+              Cancel
+            </Button>
 
-            <Form.Control.Feedback type="invalid">
-              {errors.userId}
-            </Form.Control.Feedback>
-          </Col>
-
-          {/* OFFER */}
-          <Col md={6}>
-            <Form.Label>Offer</Form.Label>
-
-            <Form.Select
-              name="offerId"
-              value={booking.offerId}
-              onChange={handleChange}
-              onBlur={() => handleBlur("offerId")}
-              isInvalid={showError("offerId")}
-            >
-              <option value="">Select offer</option>
-              {offers.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.name}
-                </option>
-              ))}
-            </Form.Select>
-
-            <Form.Control.Feedback type="invalid">
-              {errors.offerId}
-            </Form.Control.Feedback>
-          </Col>
-
-          {/* START DATE */}
-          <Col md={6}>
-            <Form.Label>Start Date</Form.Label>
-
-            <Form.Control
-              type="date"
-              name="startDate"
-              value={booking.startDate}
-              onChange={handleChange}
-              onBlur={() => handleBlur("startDate")}
-              onFocus={(e) => e.target.showPicker?.()}
-              onMouseEnter={(e) => e.target.showPicker?.()}
-              isInvalid={showError("startDate")}
-            />
-
-            <Form.Control.Feedback type="invalid">
-              {errors.startDate}
-            </Form.Control.Feedback>
-          </Col>
-
-          {/* END DATE */}
-          <Col md={6}>
-            <Form.Label>End Date</Form.Label>
-
-            <Form.Control
-              type="date"
-              name="endDate"
-              value={booking.endDate}
-              onChange={handleChange}
-              onBlur={() => handleBlur("endDate")}
-              onFocus={(e) => e.target.showPicker?.()}
-              onMouseEnter={(e) => e.target.showPicker?.()}
-              isInvalid={showError("endDate")}
-            />
-
-            <Form.Control.Feedback type="invalid">
-              {errors.endDate}
-            </Form.Control.Feedback>
-          </Col>
-
-          {/* NUMBERS */}
-          <Col md={4}>
-            <Form.Label>Rooms</Form.Label>
-            <Form.Control
-              type="number"
-              name="numberOfRooms"
-              value={booking.numberOfRooms}
-              min={0}
-              onChange={handleChange}
-            />
-          </Col>
-
-          <Col md={4}>
-            <Form.Label>Adults</Form.Label>
-            <Form.Control
-              type="number"
-              name="adults"
-              value={booking.adults}
-              min={0}
-              onChange={handleChange}
-            />
-          </Col>
-
-          <Col md={4}>
-            <Form.Label>Kids</Form.Label>
-            <Form.Control
-              type="number"
-              name="kids"
-              value={booking.kids}
-              min={0}
-              onChange={handleChange}
-            />
-          </Col>
-
-          {/* ACTIVE */}
-          <Col md={12}>
-            <Form.Check
-              type="switch"
-              label="Active"
-              checked={booking.active}
-              onChange={toggleActive}
-            />
-          </Col>
-
-        </Row>
-
-        <div className="d-flex gap-2 mt-4">
-
-          <Button variant="success" onClick={save}>
-            Save Changes
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => navigate(RouteNames.BOOKINGS)}
-          >
-            Cancel
-          </Button>
-
-        </div>
+          </div>
+        </Form>
 
       </Card>
     </div>

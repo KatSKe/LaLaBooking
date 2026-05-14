@@ -63,8 +63,5 @@ export default {
   update: (id, booking) =>
     service.update(id, booking),
 
-  promjeni: (id, booking) =>
-    service.update(id, booking),
-
   remove: (id) => service.remove(id),
 };

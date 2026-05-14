@@ -10,14 +10,14 @@ export default function TypeList() {
   const navigate = useNavigate();
   const [types, setTypes] = useState([]);
 
-  useEffect(() => {
-    loadTypes();
-  }, []);
-
   async function loadTypes() {
     const response = await TypeService.get();
     setTypes(response.data || []);
   }
+
+  useEffect(() => {
+    loadTypes();
+  }, []);
 
   async function deleteType(id) {
     if (!window.confirm("Are you sure?")) return;
@@ -79,6 +79,8 @@ export default function TypeList() {
                   <Button
                     variant="outline-warning"
                     size="sm"
+                    title="Edit"
+                    aria-label={`Edit ${type.name}`}
                     onClick={() =>
                       navigate(
                         RouteNames.TYPES_EDIT.replace(
@@ -94,6 +96,8 @@ export default function TypeList() {
                   <Button
                     variant="outline-danger"
                     size="sm"
+                    title="Delete"
+                    aria-label={`Delete ${type.name}`}
                     onClick={() => deleteType(type.id)}
                   >
                     <Trash2 size={16} />

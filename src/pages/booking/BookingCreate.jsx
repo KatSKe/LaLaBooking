@@ -28,10 +28,6 @@ export default function BookingCreate() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   async function loadData() {
     const usersResponse = await UserService.get();
     const offersResponse = await OffersService.get();
@@ -39,6 +35,10 @@ export default function BookingCreate() {
     setUsers(usersResponse.data || []);
     setOffers(offersResponse.data || []);
   }
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   function validate(values = booking) {
     const error = {};
@@ -119,13 +119,15 @@ export default function BookingCreate() {
 
             {/* USER */}
             <Col md={6}>
-              <Form.Label>User</Form.Label>
+              <Form.Label htmlFor="userId">User</Form.Label>
               <Form.Select
+                id="userId"
                 name="userId"
                 value={booking.userId}
                 onChange={handleChange}
                 onBlur={() => handleBlur("userId")}
                 isInvalid={showError("userId")}
+                aria-required="true"
               >
                 <option value="">Select user</option>
                 {users.map(user => (
@@ -141,13 +143,15 @@ export default function BookingCreate() {
 
             {/* OFFER */}
             <Col md={6}>
-              <Form.Label>Offer</Form.Label>
+              <Form.Label htmlFor="offerId">Offer</Form.Label>
               <Form.Select
+                id="offerId"
                 name="offerId"
                 value={booking.offerId}
                 onChange={handleChange}
                 onBlur={() => handleBlur("offerId")}
                 isInvalid={showError("offerId")}
+                aria-required="true"
               >
                 <option value="">Select offer</option>
                 {offers.map(offer => (
@@ -163,8 +167,9 @@ export default function BookingCreate() {
 
             {/* START DATE */}
             <Col md={6}>
-              <Form.Label>Start Date</Form.Label>
+              <Form.Label htmlFor="startDate">Start Date</Form.Label>
               <Form.Control
+                id="startDate"
                 type="date"
                 name="startDate"
                 value={booking.startDate}
@@ -173,6 +178,7 @@ export default function BookingCreate() {
                 onMouseEnter={(e) => e.target.showPicker?.()}
                 onBlur={() => handleBlur("startDate")}
                 isInvalid={showError("startDate")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.startDate}
@@ -181,8 +187,9 @@ export default function BookingCreate() {
 
             {/* END DATE */}
             <Col md={6}>
-              <Form.Label>End Date</Form.Label>
+              <Form.Label htmlFor="endDate">End Date</Form.Label>
               <Form.Control
+                id="endDate"
                 type="date"
                 name="endDate"
                 value={booking.endDate}
@@ -191,6 +198,7 @@ export default function BookingCreate() {
                 onMouseEnter={(e) => e.target.showPicker?.()}
                 onBlur={() => handleBlur("endDate")}
                 isInvalid={showError("endDate")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.endDate}
@@ -199,8 +207,9 @@ export default function BookingCreate() {
 
             {/* ROOMS */}
             <Col md={4}>
-              <Form.Label>Rooms</Form.Label>
+              <Form.Label htmlFor="numberOfRooms">Rooms</Form.Label>
               <Form.Control
+                id="numberOfRooms"
                 type="number"
                 min="0"
                 name="numberOfRooms"
@@ -211,8 +220,9 @@ export default function BookingCreate() {
 
             {/* ADULTS */}
             <Col md={4}>
-              <Form.Label>Adults</Form.Label>
+              <Form.Label htmlFor="adults">Adults</Form.Label>
               <Form.Control
+                id="adults"
                 type="number"
                 min="0"
                 name="adults"
@@ -223,8 +233,9 @@ export default function BookingCreate() {
 
             {/* KIDS */}
             <Col md={4}>
-              <Form.Label>Kids</Form.Label>
+              <Form.Label htmlFor="kids">Kids</Form.Label>
               <Form.Control
+                id="kids"
                 type="number"
                 min="0"
                 name="kids"
@@ -242,6 +253,7 @@ export default function BookingCreate() {
             </Button>
 
             <Button
+              type="button"
               variant="secondary"
               onClick={() => navigate(RouteNames.BOOKINGS)}
             >

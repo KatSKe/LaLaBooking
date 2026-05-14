@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { RouteNames } from "../../constants";
 import OffersService from "../../services/offers/OffersService";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+import TypeService from "../../services/types/TypeService";
 
 export default function OfferCreate() {
   const navigate = useNavigate();
@@ -21,14 +21,14 @@ export default function OfferCreate() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  useEffect(() => {
-    loadTypes();
-  }, []);
-
   async function loadTypes() {
     const result = await TypeService.get();
     setTypes(result.data || []);
   }
+
+  useEffect(() => {
+    loadTypes();
+  }, []);
 
   function capitalize(value) {
     if (!value) return "";
@@ -113,13 +113,15 @@ export default function OfferCreate() {
 
             {/* NAME */}
             <Col md={6}>
-              <Form.Label>Name</Form.Label>
+              <Form.Label htmlFor="offerName">Name</Form.Label>
               <Form.Control
+                id="offerName"
                 name="name"
                 value={offer.name}
                 onChange={handleChange}
                 onBlur={() => handleBlur("name")}
                 isInvalid={showError("name")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.name}
@@ -128,13 +130,15 @@ export default function OfferCreate() {
 
             {/* TYPE */}
             <Col md={6}>
-              <Form.Label>Type</Form.Label>
+              <Form.Label htmlFor="typeId">Type</Form.Label>
               <Form.Select
+                id="typeId"
                 name="typeId"
                 value={offer.typeId}
                 onChange={handleChange}
                 onBlur={() => handleBlur("typeId")}
                 isInvalid={showError("typeId")}
+                aria-required="true"
               >
                 <option value="">Select type</option>
                 {types.map(t => (
@@ -151,13 +155,15 @@ export default function OfferCreate() {
 
             {/* DESCRIPTION */}
             <Col md={12}>
-              <Form.Label>Description</Form.Label>
+              <Form.Label htmlFor="description">Description</Form.Label>
               <Form.Control
+                id="description"
                 name="description"
                 value={offer.description}
                 onChange={handleChange}
                 onBlur={() => handleBlur("description")}
                 isInvalid={showError("description")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.description}
@@ -166,15 +172,18 @@ export default function OfferCreate() {
 
             {/* PRICE */}
             <Col md={6}>
-              <Form.Label>Price</Form.Label>
+              <Form.Label htmlFor="offerPrice">Price</Form.Label>
               <Form.Control
+                id="offerPrice"
                 type="number"
                 min="0"
+                step="0.01"
                 name="price"
                 value={offer.price}
                 onChange={handleChange}
                 onBlur={() => handleBlur("price")}
                 isInvalid={showError("price")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.price}
@@ -200,6 +209,7 @@ export default function OfferCreate() {
             </Button>
 
             <Button
+              type="button"
               variant="secondary"
               onClick={() => navigate(RouteNames.OFFERS)}
             >

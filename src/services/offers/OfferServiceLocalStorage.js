@@ -8,7 +8,7 @@ function getAllFromStorage() {
   // 🔥 IF NO DATA → INSERT DEFAULTS
   if (!data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultOffers));
-    return defaultOffers;
+    return [...defaultOffers];
   }
 
   return JSON.parse(data);
@@ -52,9 +52,10 @@ async function update(id, offer) {
   if (index !== -1) {
     offers[index] = { ...offers[index], ...offer };
     saveToStorage(offers);
+    return { success: true, data: offers[index] };
   }
 
-  return { success: true, data: offers[index] };
+  return { success: false, message: "Offer not found" };
 }
 
 async function remove(id) {

@@ -3,7 +3,7 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
 import OffersService from "../../services/offers/OffersService";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
 export default function OfferEdit() {
@@ -23,11 +23,6 @@ export default function OfferEdit() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  useEffect(() => {
-    loadOffer();
-    loadTypes();
-  }, []);
-
   // 🔥 SAFE TYPES LOADING (FIX missing types issue)
   async function loadTypes() {
     const res = await TypeService.get();
@@ -37,13 +32,21 @@ export default function OfferEdit() {
   async function loadOffer() {
     const res = await OffersService.getById(id);
 
-    if (res?.data) {
-      setOffer({
-        ...res.data,
-        typeId: res.data.typeId?.toString() || "",
-      });
+    if (!res?.data) {
+      navigate(RouteNames.OFFERS);
+      return;
     }
+
+    setOffer({
+      ...res.data,
+      typeId: res.data.typeId?.toString() || "",
+    });
   }
+
+  useEffect(() => {
+    loadOffer();
+    loadTypes();
+  }, []);
 
   function capitalize(value) {
     if (!value) return "";
@@ -54,6 +57,7 @@ export default function OfferEdit() {
     const err = {};
 
     if (!values.name.trim()) err.name = "Name is required";
+    if (!values.description.trim()) err.description = "Description is required";
     if (!values.typeId) err.typeId = "Type is required";
 
     if (values.price === "" || values.price === null) {
@@ -92,6 +96,7 @@ export default function OfferEdit() {
 
     setTouched({
       name: true,
+      description: true,
       typeId: true,
       price: true,
     });
@@ -125,13 +130,15 @@ export default function OfferEdit() {
 
             {/* NAME */}
             <Col md={6}>
-              <Form.Label>Name</Form.Label>
+              <Form.Label htmlFor="offerName">Name</Form.Label>
               <Form.Control
+                id="offerName"
                 name="name"
-                defaultValue={offer.name}
+                value={offer.name}
                 onChange={handleChange}
                 onBlur={() => handleBlur("name")}
                 isInvalid={showError("name")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.name}
@@ -140,14 +147,16 @@ export default function OfferEdit() {
 
             {/* TYPE */}
             <Col md={6}>
-              <Form.Label>Type</Form.Label>
+              <Form.Label htmlFor="typeId">Type</Form.Label>
 
               <Form.Select
+                id="typeId"
                 name="typeId"
                 value={offer.typeId}
                 onChange={handleChange}
                 onBlur={() => handleBlur("typeId")}
                 isInvalid={showError("typeId")}
+                aria-required="true"
               >
                 <option value="">Select type</option>
 
@@ -166,25 +175,34 @@ export default function OfferEdit() {
 
             {/* DESCRIPTION */}
             <Col md={12}>
-              <Form.Label>Description</Form.Label>
+              <Form.Label htmlFor="description">Description</Form.Label>
               <Form.Control
+                id="description"
                 name="description"
                 value={offer.description}
                 onChange={handleChange}
+                onBlur={() => handleBlur("description")}
+                isInvalid={showError("description")}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.description}
+              </Form.Control.Feedback>
             </Col>
 
             {/* PRICE */}
             <Col md={6}>
-              <Form.Label>Price (€)</Form.Label>
+              <Form.Label htmlFor="price">Price (€)</Form.Label>
               <Form.Control
+                id="price"
                 type="number"
                 min="0"
+                step="0.01"
                 name="price"
                 value={offer.price}
                 onChange={handleChange}
                 onBlur={() => handleBlur("price")}
                 isInvalid={showError("price")}
+                aria-required="true"
               />
               <Form.Control.Feedback type="invalid">
                 {errors.price}
@@ -212,6 +230,7 @@ export default function OfferEdit() {
             </Button>
 
             <Button
+              type="button"
               variant="secondary"
               onClick={() => navigate(RouteNames.OFFERS)}
             >

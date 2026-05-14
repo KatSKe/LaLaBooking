@@ -14,18 +14,18 @@ export default {
   }),
 
   add: async (booking) => {
-    booking.id = Date.now();
+    const newBooking = { ...booking, id: Date.now() };
 
-    data.push(booking);
+    data.push(newBooking);
 
-    return { success: true };
+    return { success: true, data: newBooking };
   },
 
   update: async (id, booking) => {
     const index = data.findIndex((b) => b.id == id);
 
     if (index !== -1) {
-      data[index] = booking;
+      data[index] = { ...data[index], ...booking, id: data[index].id };
     }
 
     return { success: true };

@@ -62,7 +62,7 @@ function getData() {
   
     if (!data) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBookings));
-        return defaultBookings;
+        return [...defaultBookings];
       }
 
   return JSON.parse(data);

@@ -16,12 +16,6 @@ export default function BookingList() {
   const [users, setUsers] = useState([]);
   const [offers, setOffers] = useState([]);
 
-  useEffect(() => {
-    loadOffers();
-    loadUsers();
-    loadBookings();
-  }, []);
-
   async function loadBookings() {
     const result = await BookingService.get();
     setBookings(result.data || []);
@@ -36,6 +30,12 @@ export default function BookingList() {
     const res = await OffersService.get();
     setOffers(res.data || []);
   }
+
+  useEffect(() => {
+    loadOffers();
+    loadUsers();
+    loadBookings();
+  }, []);
 
   async function remove(id) {
     if (!window.confirm("Delete booking?")) return;
@@ -114,8 +114,9 @@ export default function BookingList() {
                   <Button
                     size="sm"
                     variant="outline-warning"
+                    aria-label="Edit booking"
                     onClick={() =>
-                      navigate(`/bookings/${b.id}`)
+                      navigate(RouteNames.BOOKINGS_EDIT.replace(":id", b.id))
                     }
                   >
                     <Pencil size={16} />
@@ -124,6 +125,7 @@ export default function BookingList() {
                   <Button
                     size="sm"
                     variant="outline-danger"
+                    aria-label="Delete booking"
                     onClick={() => remove(b.id)}
                   >
                     <Trash2 size={16} />

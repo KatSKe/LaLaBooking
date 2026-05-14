@@ -4,7 +4,7 @@ let types = [...defaultTypes];
 
 function formatName(value) {
   if (!value) return "";
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function normalizeType(type) {

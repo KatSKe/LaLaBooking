@@ -16,20 +16,23 @@ export default function TypeEdit() {
   const [touched, setTouched] = useState({});
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    loadType();
-  }, []);
-
   async function loadType() {
     const result = await TypeService.getById(id);
 
-    if (result?.data) {
-      setType({
-        name: result.data.name || "",
-        active: result.data.active ?? true,
-      });
+    if (!result?.data) {
+      navigate(RouteNames.TYPES);
+      return;
     }
+
+    setType({
+      name: result.data.name || "",
+      active: result.data.active ?? true,
+    });
   }
+
+  useEffect(() => {
+    loadType();
+  }, []);
 
   function validate(values = type) {
     const error = {};
@@ -44,10 +47,13 @@ export default function TypeEdit() {
   function handleChange(event) {
     const { name, value, type: inputType, checked } = event.target;
 
-    setType({
+    const updated = {
       ...type,
       [name]: inputType === "checkbox" ? checked : value,
-    });
+    };
+
+    setType(updated);
+    setErrors(validate(updated));
   }
 
   function handleBlur(field) {
@@ -84,9 +90,10 @@ export default function TypeEdit() {
       <Card className="p-3">
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Type Name</Form.Label>
+            <Form.Label htmlFor="typeName">Type Name</Form.Label>
 
             <Form.Control
+              id="typeName"
               name="name"
               value={type.name}
               onChange={handleChange}
@@ -119,6 +126,7 @@ export default function TypeEdit() {
             </Button>
 
             <Button
+              type="button"
               variant="outline-secondary"
               onClick={() => navigate(RouteNames.TYPES)}
             >

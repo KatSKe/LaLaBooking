@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
 import Menu from "./components/Menu";
@@ -25,6 +26,7 @@ import BookingList from "./pages/booking/BookingList";
 import BookingCreate from "./pages/booking/BookingCreate";
 import BookingEdit from "./pages/booking/BookingEdit";
 import { RouteNames } from "./constants";
+
 
 function App() {
   return (

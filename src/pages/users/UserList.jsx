@@ -11,14 +11,14 @@ export default function UserList() {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
   async function loadUsers() {
     const response = await UserService.get();
     setUsers(response.data || []);
   }
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   async function deleteUser(id) {
     const confirmed = window.confirm(
@@ -64,7 +64,7 @@ export default function UserList() {
         className="mb-3 w-100"
         onClick={() => navigate(RouteNames.USERS_NEW)}
       >
-        <Plus size={18} style={{ marginRight: 6 }} />
+        <Plus size={18} style={{ marginRight: 6 }} aria-hidden="true" />
         Add New User
       </Button>
 
@@ -99,6 +99,7 @@ export default function UserList() {
                   <Button
                     size="sm"
                     variant="outline-warning"
+                    aria-label={`Edit ${user.firstName} ${user.lastName}`}
                     onClick={() =>
                       navigate(
                         RouteNames.USERS_EDIT.replace(":id", user.id)
@@ -111,6 +112,7 @@ export default function UserList() {
                   <Button
                     size="sm"
                     variant="outline-danger"
+                    aria-label={`Delete ${user.firstName} ${user.lastName}`}
                     onClick={() => deleteUser(user.id)}
                   >
                     <Trash2 size={16} />

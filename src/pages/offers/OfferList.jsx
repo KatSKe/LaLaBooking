@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 
 import OffersService from "../../services/offers/OffersService";
-import TypeService from "../../services/types/TypeServiceLocalStorage";
+import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
 export default function OffersList() {
@@ -12,11 +12,6 @@ export default function OffersList() {
 
   const [offers, setOffers] = useState([]);
   const [types, setTypes] = useState([]);
-
-  useEffect(() => {
-    loadOffers();
-    loadTypes();
-  }, []);
 
   async function loadOffers() {
     const response = await OffersService.get();
@@ -27,6 +22,11 @@ export default function OffersList() {
     const response = await TypeService.get();
     setTypes(response.data || []);
   }
+
+  useEffect(() => {
+    loadOffers();
+    loadTypes();
+  }, []);
 
   async function deleteOffer(id) {
     const confirmDelete = window.confirm(
@@ -95,6 +95,7 @@ export default function OffersList() {
                   <Button
                     size="sm"
                     variant="outline-warning"
+                    aria-label={`Edit ${offer.name}`}
                     onClick={() =>
                       navigate(
                         RouteNames.OFFERS_EDIT.replace(
@@ -110,6 +111,7 @@ export default function OffersList() {
                   <Button
                     size="sm"
                     variant="outline-danger"
+                    aria-label={`Delete ${offer.name}`}
                     onClick={() =>
                       deleteOffer(offer.id)
                     }

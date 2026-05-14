@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { Row, Col, Card } from "react-bootstrap";
 
 import { APP_NAME } from "../constants";
 
-import BookingService from "../services/booking/BookingServiceLocalStorage";
-import OfferService from "../services/offers/OfferServiceLocalStorage";
-import TypeService from "../services/types/TypeServiceLocalStorage";
-import UserService from "../services/users/UserServiceLocalStorage";
+import BookingService from "../services/booking/BookingService";
+import OfferService from "../services/offers/OffersService";
+import TypeService from "../services/types/TypeService";
+import UserService from "../services/users/UserService";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -60,7 +59,7 @@ export default function Home() {
     if (animatedUsers < usersCount) {
       const timer = setTimeout(() => {
         setAnimatedUsers((prev) => Math.min(prev + 1, usersCount));
-      }, 60);
+      }, 200);
 
       return () => clearTimeout(timer);
     }
@@ -70,7 +69,7 @@ export default function Home() {
     if (animatedOffers < offersCount) {
       const timer = setTimeout(() => {
         setAnimatedOffers((prev) => Math.min(prev + 1, offersCount));
-      }, 100);
+      }, 200);
 
       return () => clearTimeout(timer);
     }
@@ -80,7 +79,7 @@ export default function Home() {
     if (animatedTypes < typesCount) {
       const timer = setTimeout(() => {
         setAnimatedTypes((prev) => Math.min(prev + 1, typesCount));
-      }, 100);
+      }, 200);
 
       return () => clearTimeout(timer);
     }
@@ -90,70 +89,59 @@ export default function Home() {
     if (animatedBookings < bookingsCount) {
       const timer = setTimeout(() => {
         setAnimatedBookings((prev) => Math.min(prev + 1, bookingsCount));
-      }, 100);
+      }, 200);
 
       return () => clearTimeout(timer);
     }
   }, [animatedBookings, bookingsCount]);
 
   return (
-    <div className="home-page">
-      <div className="home-background">
-        <div className="home-overlay">
+    <div className="home-page" role="main">
+      <div className="home-page_inner">
 
-          <div className="home-content-wrapper">
+        <div className={`home-card${loaded ? " fade-in" : ""}`}>
+          <div className="home-card_text">
+            <h1 className="home-card_text-title">
+              Welcome to {APP_NAME}
+            </h1>
 
-            {/* HERO */}
-            <div className={`home-card hero-center-content ${loaded ? "fade-in" : ""}`}>
-
-              <div className="home-text">
-                <h1 className="home-title">
-                  Welcome to {APP_NAME}
-                </h1>
-
-                <p className="home-subtitle">
-                  Manage bookings, users and offers in one place.
-                </p>
-              </div>
-
-              <div className="home-animation">
-                <DotLottieReact
-                  src="/animations/location.lottie"
-                  loop
-                  autoplay
-                />
-              </div>
-
-            </div>
-
-            {/* STATISTICS (NO CARDS FRAME) */}
-            <div className="statistics-clean-wrapper">
-
-              <div className="stat-item">
-                <div className="stat-number">{animatedUsers}</div>
-                <div className="stat-label">Users</div>
-              </div>
-
-              <div className="stat-item">
-                <div className="stat-number">{animatedOffers}</div>
-                <div className="stat-label">Active Offers</div>
-              </div>
-
-              <div className="stat-item">
-                <div className="stat-number">{animatedTypes}</div>
-                <div className="stat-label">Active Types</div>
-              </div>
-
-              <div className="stat-item">
-                <div className="stat-number">{animatedBookings}</div>
-                <div className="stat-label">Active Bookings</div>
-              </div>
-
-            </div>
-
+            <p className="home-card_text-subtitle">
+              Manage bookings, users and offers in one place.
+            </p>
           </div>
 
+          <div className="home-card_animation">
+            <DotLottieReact
+              src="/animations/location.lottie"
+              loop
+              autoplay
+            />
+          </div>
         </div>
+
+        {/* STATISTICS (NO CARDS FRAME) */}
+        <div className="home-statistics">
+          <div className="stat-item">
+            <div className="stat-number">{animatedUsers}</div>
+            <div className="stat-label">Users</div>
+          </div>
+
+          <div className="stat-item">
+            <div className="stat-number">{animatedOffers}</div>
+            <div className="stat-label">Active Offers</div>
+          </div>
+
+          <div className="stat-item">
+            <div className="stat-number">{animatedTypes}</div>
+            <div className="stat-label">Active Types</div>
+          </div>
+
+          <div className="stat-item">
+            <div className="stat-number">{animatedBookings}</div>
+            <div className="stat-label">Active Bookings</div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

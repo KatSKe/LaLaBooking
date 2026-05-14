@@ -1,4 +1,6 @@
-import { users } from "./UserDataUser";
+import { users as defaultUsers } from "./UserDataUser";
+
+let data = [...defaultUsers];
 
 function normalizeUser(user) {
   return {
@@ -19,53 +21,53 @@ function normalizeUser(user) {
 }
 
 async function get() {
-  return { success: true, data: users.map(normalizeUser) };
+  return { success: true, data: data.map(normalizeUser) };
 }
 
 async function getById(id) {
   return {
     success: true,
-    data: users.find((u) => u.id === Number(id)) || null,
+    data: data.find((u) => u.id === Number(id)) || null,
   };
 }
 
 async function add(user) {
   const newId =
-    users.length === 0
+    data.length === 0
       ? 1
-      : users[users.length - 1].id + 1;
+      : data[data.length - 1].id + 1;
 
   const newUser = normalizeUser({
     ...user,
     id: newId,
   });
 
-  users.push(newUser);
+  data.push(newUser);
 
   return { success: true, data: newUser };
 }
 
 async function update(id, user) {
-  const index = users.findIndex((u) => u.id === Number(id));
+  const index = data.findIndex((u) => u.id === Number(id));
 
   if (index > -1) {
-    users[index] = normalizeUser({
-      ...users[index],
+    data[index] = normalizeUser({
+      ...data[index],
       ...user,
-      id: users[index].id,
+      id: data[index].id,
     });
 
-    return { success: true, data: users[index] };
+    return { success: true, data: data[index] };
   }
 
   return { success: false };
 }
 
 async function remove(id) {
-  const index = users.findIndex((u) => u.id === Number(id));
+  const index = data.findIndex((u) => u.id === Number(id));
 
   if (index > -1) {
-    users.splice(index, 1);
+    data.splice(index, 1);
     return { success: true };
   }
 

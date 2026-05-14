@@ -12,6 +12,8 @@ export default function TypeCreate() {
     active: true,
   });
 
+  const [nameError, setNameError] = useState("");
+
   function handleChange(event) {
     const { name, value, type: inputType, checked } = event.target;
 
@@ -19,10 +21,15 @@ export default function TypeCreate() {
       ...type,
       [name]: inputType === "checkbox" ? checked : value,
     });
+
+    if (name === "name") setNameError("");
   }
 
   async function save() {
-    if (!type.name.trim()) return;
+    if (!type.name.trim()) {
+      setNameError("Type name is required");
+      return;
+    }
 
     const newType = {
       ...type,
@@ -40,13 +47,19 @@ export default function TypeCreate() {
       <Card className="p-3">
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Type Name</Form.Label>
+            <Form.Label htmlFor="typeName">Type Name</Form.Label>
             <Form.Control
+              id="typeName"
               name="name"
               value={type.name}
               onChange={handleChange}
               placeholder="Enter type name..."
+              aria-required="true"
+              isInvalid={!!nameError}
             />
+            <Form.Control.Feedback type="invalid">
+              {nameError}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Check
@@ -64,6 +77,7 @@ export default function TypeCreate() {
             </Button>
 
             <Button
+              type="button"
               variant="secondary"
               onClick={() => navigate(RouteNames.TYPES)}
             >

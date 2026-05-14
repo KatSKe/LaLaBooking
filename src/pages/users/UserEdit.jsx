@@ -26,10 +26,6 @@ export default function UserEdit() {
   const [touched, setTouched] = useState({});
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    loadUser();
-  }, []);
-
   async function loadUser() {
     const response = await UsersService.getById(id);
 
@@ -51,6 +47,10 @@ export default function UserEdit() {
       },
     });
   }
+
+  useEffect(() => {
+    loadUser();
+  }, []);
 
   function capitalize(value) {
     return value
@@ -206,9 +206,10 @@ export default function UserEdit() {
         <Form>
           <Row className="g-3">
             <Col md={4}>
-              <Form.Label>First Name</Form.Label>
+              <Form.Label htmlFor="firstName">First Name</Form.Label>
 
               <Form.Control
+                id="firstName"
                 name="firstName"
                 value={user.firstName}
                 onChange={handleChange}
@@ -222,9 +223,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={4}>
-              <Form.Label>Last Name</Form.Label>
+              <Form.Label htmlFor="lastName">Last Name</Form.Label>
 
               <Form.Control
+                id="lastName"
                 name="lastName"
                 value={user.lastName}
                 onChange={handleChange}
@@ -238,9 +240,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={4}>
-              <Form.Label>Email</Form.Label>
+              <Form.Label htmlFor="email">Email</Form.Label>
 
               <Form.Control
+                id="email"
                 name="email"
                 value={user.email}
                 onChange={handleChange}
@@ -254,9 +257,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={4}>
-              <Form.Label>Date of Birth</Form.Label>
+              <Form.Label htmlFor="dateOfBirth">Date of Birth</Form.Label>
 
               <Form.Control
+                id="dateOfBirth"
                 type="date"
                 name="dateOfBirth"
                 value={user.dateOfBirth || ""}
@@ -273,9 +277,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={4}>
-              <Form.Label>Contact Number</Form.Label>
+              <Form.Label htmlFor="contactNumber">Contact Number</Form.Label>
 
               <Form.Control
+                id="contactNumber"
                 name="contactNumber"
                 value={user.contactNumber || ""}
                 onChange={handleChange}
@@ -294,9 +299,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={6}>
-              <Form.Label>Street</Form.Label>
+              <Form.Label htmlFor="street">Street</Form.Label>
 
               <Form.Control
+                id="street"
                 name="address.street"
                 value={user.address.street}
                 onChange={handleChange}
@@ -304,9 +310,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={6}>
-              <Form.Label>House Number</Form.Label>
+              <Form.Label htmlFor="houseNumber">House Number</Form.Label>
 
               <Form.Control
+                id="houseNumber"
                 name="address.houseNumber"
                 value={user.address.houseNumber}
                 onChange={handleChange}
@@ -314,9 +321,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={6}>
-              <Form.Label>Postal Code</Form.Label>
+              <Form.Label htmlFor="postalCode">Postal Code</Form.Label>
 
               <Form.Control
+                id="postalCode"
                 name="address.postalCode"
                 value={user.address.postalCode}
                 onChange={handleChange}
@@ -324,9 +332,10 @@ export default function UserEdit() {
             </Col>
 
             <Col md={6}>
-              <Form.Label>City</Form.Label>
+              <Form.Label htmlFor="city">City</Form.Label>
 
               <Form.Control
+                id="city"
                 name="address.city"
                 value={user.address.city}
                 onChange={handleChange}
@@ -346,6 +355,7 @@ export default function UserEdit() {
             </Button>
 
             <Button
+              type="button"
               variant="secondary"
               onClick={() => navigate(RouteNames.USERS)}
             >
