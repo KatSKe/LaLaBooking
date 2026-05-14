@@ -57,71 +57,87 @@ export default function UserList() {
   }
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-3">Users</h2>
+    <div className="users-page">
+      <div className="users-page_overlay"></div>
 
-      <Button
-        className="mb-3 w-100"
-        onClick={() => navigate(RouteNames.USERS_NEW)}
-      >
-        <Plus size={18} style={{ marginRight: 6 }} aria-hidden="true" />
-        Add New User
-      </Button>
+      <div className="users-page_content">
+        <div className="users-glass-card">
 
-      <div className="table-responsive">
-        <Table striped hover>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Date of Birth</th>
-              <th>Contact Number</th>
-              <th>City</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+          <div className="users-header">
+            <h2 className="users-title">Users</h2>
 
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.email}</td>
+            <Button
+              className="users-add-button"
+              onClick={() => navigate(RouteNames.USERS_NEW)}
+            >
+              <Plus
+                size={18}
+                style={{ marginRight: 6 }}
+                aria-hidden="true"
+              />
+              Add New User
+            </Button>
+          </div>
 
-                <td>{formatDate(user.dateOfBirth)}</td>
+          <div className="table-responsive">
+            <Table className="users-table" hover>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Date of Birth</th>
+                  <th>Contact Number</th>
+                  <th>City</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                <td>{formatPhoneNumber(user.contactNumber)}</td>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.firstName}</td>
 
-                <td>{user.address?.city}</td>
+                    <td>{user.lastName}</td>
 
-                <td className="d-flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline-warning"
-                    aria-label={`Edit ${user.firstName} ${user.lastName}`}
-                    onClick={() =>
-                      navigate(
-                        RouteNames.USERS_EDIT.replace(":id", user.id)
-                      )
-                    }
-                  >
-                    <Pencil size={16} />
-                  </Button>
+                    <td>{user.email}</td>
 
-                  <Button
-                    size="sm"
-                    variant="outline-danger"
-                    aria-label={`Delete ${user.firstName} ${user.lastName}`}
-                    onClick={() => deleteUser(user.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                    <td>{formatDate(user.dateOfBirth)}</td>
+
+                    <td>{formatPhoneNumber(user.contactNumber)}</td>
+
+                    <td>{user.address?.city}</td>
+
+                    <td className="users-actions">
+                      <Button
+                        size="sm"
+                        variant="outline-warning"
+                        aria-label={`Edit ${user.firstName} ${user.lastName}`}
+                        onClick={() =>
+                          navigate(
+                            RouteNames.USERS_EDIT.replace(":id", user.id)
+                          )
+                        }
+                      >
+                        <Pencil size={16} />
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline-danger"
+                        aria-label={`Delete ${user.firstName} ${user.lastName}`}
+                        onClick={() => deleteUser(user.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+
+        </div>
       </div>
     </div>
   );
