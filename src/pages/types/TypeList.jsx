@@ -8,6 +8,7 @@ import { RouteNames } from "../../constants";
 
 export default function TypeList() {
   const navigate = useNavigate();
+
   const [types, setTypes] = useState([]);
 
   async function loadTypes() {
@@ -23,6 +24,7 @@ export default function TypeList() {
     if (!window.confirm("Are you sure?")) return;
 
     await TypeService.remove(id);
+
     loadTypes();
   }
 
@@ -32,81 +34,108 @@ export default function TypeList() {
 
   function getStatusStyle(active) {
     return {
-      padding: "4px 10px",
-      borderRadius: "8px",
-      fontSize: "0.85rem",
+      padding: "5px 12px",
+
+      borderRadius: "10px",
+
+      fontSize: "13px",
+
       fontWeight: 600,
+
       display: "inline-block",
-      backgroundColor: active ? "#d1f7d6" : "#ffd6d6",
-      color: active ? "#1e7a33" : "#a11a1a",
+
+      backdropFilter: "blur(6px)",
+
+      WebkitBackdropFilter: "blur(6px)",
+
+      background: active
+        ? "rgba(140, 255, 170, 0.14)"
+        : "rgba(255, 120, 120, 0.10)",
+
+      border: active
+        ? "1px solid rgba(140, 255, 170, 0.18)"
+        : "1px solid rgba(255, 120, 120, 0.14)",
+
+      color: active
+        ? "rgba(205, 255, 215, 0.92)"
+        : "rgba(255, 210, 210, 0.90)",
     };
   }
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">Types</h2>
+    <div className="types-page">
+      <div className="types-page_overlay"></div>
 
-      <Button
-        className="w-100 mb-4"
-        onClick={() => navigate(RouteNames.TYPES_NEW)}
-      >
-        + Add New Type
-      </Button>
+      <div className="types-page_content">
+        <div className="types-glass-card">
+          <div className="types-header">
+            <h2 className="types-title">Types</h2>
 
-      <div className="table-responsive">
-        <Table striped bordered hover responsive>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Active</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+            <Button
+              className="types-add-button"
+              onClick={() => navigate(RouteNames.TYPES_NEW)}
+            >
+              + Add New Type
+            </Button>
+          </div>
 
-          <tbody>
-            {types.map((type) => (
-              <tr key={type.id}>
-                <td>{type.name}</td>
+          <div className="table-responsive">
+            <Table className="types-table" hover responsive>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                {/* ACTIVE STATUS WITH COLORS */}
-                <td>
-                  <span style={getStatusStyle(type.active)}>
-                    {getStatusLabel(type.active)}
-                  </span>
-                </td>
+              <tbody>
+                {types.map((type) => (
+                  <tr key={type.id}>
+                    <td>{type.name}</td>
 
-                <td className="d-flex gap-2">
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    title="Edit"
-                    aria-label={`Edit ${type.name}`}
-                    onClick={() =>
-                      navigate(
-                        RouteNames.TYPES_EDIT.replace(
-                          ":id",
-                          type.id
-                        )
-                      )
-                    }
-                  >
-                    <Pencil size={16} />
-                  </Button>
+                    <td>
+                      <span style={getStatusStyle(type.active)}>
+                        {getStatusLabel(type.active)}
+                      </span>
+                    </td>
 
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    title="Delete"
-                    aria-label={`Delete ${type.name}`}
-                    onClick={() => deleteType(type.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                    <td>
+                      <div className="types-actions">
+                        <Button
+                          variant="outline-warning"
+                          size="sm"
+                          title="Edit"
+                          aria-label={`Edit ${type.name}`}
+                          onClick={() =>
+                            navigate(
+                              RouteNames.TYPES_EDIT.replace(
+                                ":id",
+                                type.id
+                              )
+                            )
+                          }
+                        >
+                          <Pencil size={16} />
+                        </Button>
+
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          title="Delete"
+                          aria-label={`Delete ${type.name}`}
+                          onClick={() => deleteType(type.id)}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
       </div>
     </div>
   );
