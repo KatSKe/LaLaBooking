@@ -1,3 +1,5 @@
+// BookingList.jsx
+
 import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +9,7 @@ import { RouteNames } from "../../constants";
 import UserService from "../../services/users/UserService";
 import OffersService from "../../services/offers/OffersService";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default function BookingList() {
   const navigate = useNavigate();
@@ -59,82 +61,88 @@ export default function BookingList() {
     return active ? "Active" : "Inactive";
   }
 
-  function getActiveStyle(active) {
-    return {
-      padding: "4px 10px",
-      borderRadius: "8px",
-      fontSize: "0.85rem",
-      fontWeight: 600,
-      display: "inline-block",
-      backgroundColor: active ? "#d1f7d6" : "#ffd6d6",
-      color: active ? "#1e7a33" : "#a11a1a",
-    };
-  }
-
   return (
-    <div className="container py-4">
-      <h2 className="mb-3">Bookings</h2>
+    <div className="users-page">
+      <div className="users-page_overlay"></div>
 
-      <Button
-        className="mb-3 w-100"
-        onClick={() => navigate(RouteNames.BOOKINGS_CREATE)}
-      >
-        Add New Booking
-      </Button>
+      <div className="users-page_content">
+        <div className="users-glass-card">
 
-      <div className="table-responsive">
-        <Table striped hover responsive>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Offer</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Active</th>
-              <th className="text-end">Actions</th>
-            </tr>
-          </thead>
+          <div className="users-header">
+            <h2 className="users-title">Bookings</h2>
 
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b.id}>
-                <td>{fullUserName(b.userId ?? b.user)}</td>
-                <td>{fullOfferName(b.offerId ?? b.offer)}</td>
-                <td>{b.startDate}</td>
-                <td>{b.endDate}</td>
+            <Button
+              className="users-add-button"
+              onClick={() => navigate(RouteNames.BOOKINGS_CREATE)}
+            >
+              <Plus size={18} style={{ marginRight: 6 }} />
+              Add New Booking
+            </Button>
+          </div>
 
-                {/* ACTIVE COLUMN */}
-                <td>
-                  <span style={getActiveStyle(b.active)}>
-                    {getActiveLabel(b.active)}
-                  </span>
-                </td>
+          <div className="table-responsive">
+            <Table className="users-table" hover>
 
-                <td className="text-end d-flex justify-content-end gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline-warning"
-                    aria-label="Edit booking"
-                    onClick={() =>
-                      navigate(RouteNames.BOOKINGS_EDIT.replace(":id", b.id))
-                    }
-                  >
-                    <Pencil size={16} />
-                  </Button>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Offer</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                  <Button
-                    size="sm"
-                    variant="outline-danger"
-                    aria-label="Delete booking"
-                    onClick={() => remove(b.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+              <tbody>
+                {bookings.map((b) => (
+                  <tr key={b.id}>
+
+                    <td>{fullUserName(b.userId ?? b.user)}</td>
+
+                    <td>{fullOfferName(b.offerId ?? b.offer)}</td>
+
+                    <td>{b.startDate}</td>
+
+                    <td>{b.endDate}</td>
+
+                    <td>{getActiveLabel(b.active)}</td>
+
+                    <td className="users-actions">
+
+                      <Button
+                        size="sm"
+                        variant="outline-warning"
+                        onClick={() =>
+                          navigate(
+                            RouteNames.BOOKINGS_EDIT.replace(
+                              ":id",
+                              b.id
+                            )
+                          )
+                        }
+                      >
+                        <Pencil size={16} />
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline-danger"
+                        onClick={() => remove(b.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+
+                    </td>
+
+                  </tr>
+                ))}
+              </tbody>
+
+            </Table>
+          </div>
+
+        </div>
       </div>
     </div>
   );

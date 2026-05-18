@@ -1,26 +1,28 @@
+// OfferList.jsx
+
 import { useEffect, useState } from "react";
-import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Table, Button } from "react-bootstrap";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 import OffersService from "../../services/offers/OffersService";
 import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
-export default function OffersList() {
+export default function OfferList() {
   const navigate = useNavigate();
 
   const [offers, setOffers] = useState([]);
   const [types, setTypes] = useState([]);
 
   async function loadOffers() {
-    const response = await OffersService.get();
-    setOffers(response.data || []);
+    const res = await OffersService.get();
+    setOffers(res.data || []);
   }
 
   async function loadTypes() {
-    const response = await TypeService.get();
-    setTypes(response.data || []);
+    const res = await TypeService.get();
+    setTypes(res.data || []);
   }
 
   useEffect(() => {
@@ -40,92 +42,89 @@ export default function OffersList() {
   }
 
   function getTypeName(typeId) {
-    const type = types.find(
-      (item) => item.id === Number(typeId)
-    );
-
-    return type ? type.name : "Not assigned";
+    const type = types.find((t) => t.id === Number(typeId));
+    return type ? type.name : "";
   }
 
   return (
-    <div className="container py-4">
+    <div className="users-page">
+      <div className="users-page_overlay"></div>
 
-      <h2 className="mb-3">Offers</h2>
+      <div className="users-page_content">
+        <div className="users-glass-card">
 
-      <Button
-        className="mb-3 w-100"
-        onClick={() => navigate(RouteNames.OFFERS_CREATE)}
-      >
-        Add New Offer
-      </Button>
+          <div className="users-header">
+            <h2 className="users-title">Offers</h2>
 
-      <div className="table-responsive">
-        <Table striped hover>
+            <Button
+              className="users-add-button"
+              onClick={() => navigate(RouteNames.OFFERS_CREATE)}
+            >
+              <Plus size={18} style={{ marginRight: 6 }} />
+              Add New Offer
+            </Button>
+          </div>
 
-          <thead>
-            <tr>
-              <th>Offer Name</th>
-              <th>Type</th>
-              <th>Price (€)</th>
-              <th>Status</th>
-              <th className="text-end">Actions</th>
-            </tr>
-          </thead>
+          <div className="table-responsive">
+            <Table className="users-table" hover>
 
-          <tbody>
-            {offers.map((offer) => (
-              <tr key={offer.id}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Price (€)</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                <td>{offer.name}</td>
+              <tbody>
+                {offers.map((offer) => (
+                  <tr key={offer.id}>
 
-                <td>{getTypeName(offer.typeId)}</td>
+                    <td>{offer.name}</td>
 
-                <td>
-                  {Number(offer.price).toFixed(2)}
-                </td>
+                    <td>{getTypeName(offer.typeId)}</td>
 
-                <td>
-                  {offer.active
-                    ? "Active"
-                    : "Inactive"}
-                </td>
+                    <td>{Number(offer.price).toFixed(2)}</td>
 
-                <td className="text-end d-flex justify-content-end gap-2">
+                    <td>{offer.active ? "Active" : "Inactive"}</td>
 
-                  <Button
-                    size="sm"
-                    variant="outline-warning"
-                    aria-label={`Edit ${offer.name}`}
-                    onClick={() =>
-                      navigate(
-                        RouteNames.OFFERS_EDIT.replace(
-                          ":id",
-                          offer.id
-                        )
-                      )
-                    }
-                  >
-                    <Pencil size={16} />
-                  </Button>
+                    <td className="users-actions">
 
-                  <Button
-                    size="sm"
-                    variant="outline-danger"
-                    aria-label={`Delete ${offer.name}`}
-                    onClick={() =>
-                      deleteOffer(offer.id)
-                    }
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+                      <Button
+                        size="sm"
+                        variant="outline-warning"
+                        onClick={() =>
+                          navigate(
+                            RouteNames.OFFERS_EDIT.replace(
+                              ":id",
+                              offer.id
+                            )
+                          )
+                        }
+                      >
+                        <Pencil size={16} />
+                      </Button>
 
-                </td>
+                      <Button
+                        size="sm"
+                        variant="outline-danger"
+                        onClick={() => deleteOffer(offer.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
 
-              </tr>
-            ))}
-          </tbody>
+                    </td>
 
-        </Table>
+                  </tr>
+                ))}
+              </tbody>
+
+            </Table>
+          </div>
+
+        </div>
       </div>
     </div>
   );

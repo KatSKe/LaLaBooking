@@ -1,5 +1,7 @@
+// OfferEdit.jsx
+
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { Button, Form, Row, Col } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
 import OffersService from "../../services/offers/OffersService";
@@ -17,13 +19,12 @@ export default function OfferEdit() {
     description: "",
     price: "",
     typeId: "",
-    active: true,
+    active: false,
   });
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  // 🔥 SAFE TYPES LOADING (FIX missing types issue)
   async function loadTypes() {
     const res = await TypeService.get();
     setTypes(res?.data ?? []);
@@ -78,27 +79,34 @@ export default function OfferEdit() {
     };
 
     setOffer(updated);
-    setErrors(validate(updated)); // 🔥 real-time validation
+    setErrors(validate(updated));
   }
 
   function handleBlur(field) {
-    setTouched((prev) => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+
     setErrors(validate());
   }
 
-  const showError = (field) => touched[field] && errors[field];
+  function showError(field) {
+    return touched[field] && errors[field];
+  }
 
-  async function saveChanges(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const err = validate();
+
     setErrors(err);
 
     setTouched({
       name: true,
       description: true,
-      typeId: true,
       price: true,
+      typeId: true,
     });
 
     if (Object.keys(err).length > 0) return;
@@ -120,127 +128,134 @@ export default function OfferEdit() {
   }
 
   return (
-    <div className="container py-4">
-      <Card className="p-4">
+    <div className="users-page">
+      <div className="users-page_overlay"></div>
 
-        <h2 className="mb-4">Edit Offer</h2>
+      <div className="users-page_content">
+        <div className="users-glass-card">
 
-        <Form onSubmit={saveChanges}>
-          <Row className="g-3">
-
-            {/* NAME */}
-            <Col md={6}>
-              <Form.Label htmlFor="offerName">Name</Form.Label>
-              <Form.Control
-                id="offerName"
-                name="name"
-                value={offer.name}
-                onChange={handleChange}
-                onBlur={() => handleBlur("name")}
-                isInvalid={showError("name")}
-                aria-required="true"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.name}
-              </Form.Control.Feedback>
-            </Col>
-
-            {/* TYPE */}
-            <Col md={6}>
-              <Form.Label htmlFor="typeId">Type</Form.Label>
-
-              <Form.Select
-                id="typeId"
-                name="typeId"
-                value={offer.typeId}
-                onChange={handleChange}
-                onBlur={() => handleBlur("typeId")}
-                isInvalid={showError("typeId")}
-                aria-required="true"
-              >
-                <option value="">Select type</option>
-
-                {/* 🔥 FULL TYPES LIST (NO FILTERING) */}
-                {types.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </Form.Select>
-
-              <Form.Control.Feedback type="invalid">
-                {errors.typeId}
-              </Form.Control.Feedback>
-            </Col>
-
-            {/* DESCRIPTION */}
-            <Col md={12}>
-              <Form.Label htmlFor="description">Description</Form.Label>
-              <Form.Control
-                id="description"
-                name="description"
-                value={offer.description}
-                onChange={handleChange}
-                onBlur={() => handleBlur("description")}
-                isInvalid={showError("description")}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.description}
-              </Form.Control.Feedback>
-            </Col>
-
-            {/* PRICE */}
-            <Col md={6}>
-              <Form.Label htmlFor="price">Price (€)</Form.Label>
-              <Form.Control
-                id="price"
-                type="number"
-                min="0"
-                step="0.01"
-                name="price"
-                value={offer.price}
-                onChange={handleChange}
-                onBlur={() => handleBlur("price")}
-                isInvalid={showError("price")}
-                aria-required="true"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.price}
-              </Form.Control.Feedback>
-            </Col>
-
-            {/* ACTIVE */}
-            <Col md={6} className="d-flex align-items-end">
-              <Form.Check
-                type="switch"
-                label={offer.active ? "Active" : "Inactive"}
-                name="active"
-                checked={offer.active}
-                onChange={handleChange}
-              />
-            </Col>
-
-          </Row>
-
-          {/* BUTTONS */}
-          <div className="mt-4 d-flex gap-2">
-
-            <Button variant="success" type="submit">
-              Save Changes
-            </Button>
-
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => navigate(RouteNames.OFFERS)}
-            >
-              Cancel
-            </Button>
-
+          <div className="users-header">
+            <h2 className="users-title">Edit Offer</h2>
           </div>
 
-        </Form>
-      </Card>
+          <Form onSubmit={handleSubmit}>
+            <Row className="g-3">
+
+              <Col md={6}>
+                <Form.Label className="types-form-label">
+                  Name
+                </Form.Label>
+
+                <Form.Control
+                  name="name"
+                  value={offer.name}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("name")}
+                  isInvalid={showError("name")}
+                  className="types-form-input"
+                />
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.name}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={6}>
+                <Form.Label className="types-form-label">
+                  Type
+                </Form.Label>
+
+                <Form.Select
+                  name="typeId"
+                  value={offer.typeId}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("typeId")}
+                  isInvalid={showError("typeId")}
+                  className="types-form-input"
+                >
+                  <option value="">Select type</option>
+                  {types.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Form.Select>
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.typeId}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={12}>
+                <Form.Label className="types-form-label">
+                  Description
+                </Form.Label>
+
+                <Form.Control
+                  name="description"
+                  value={offer.description}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("description")}
+                  isInvalid={showError("description")}
+                  className="types-form-input"
+                />
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.description}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={6}>
+                <Form.Label className="types-form-label">
+                  Price (€)
+                </Form.Label>
+
+                <Form.Control
+                  type="number"
+                  name="price"
+                  value={offer.price}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("price")}
+                  isInvalid={showError("price")}
+                  className="types-form-input"
+                />
+
+                <Form.Control.Feedback type="invalid">
+                  {errors.price}
+                </Form.Control.Feedback>
+              </Col>
+
+              <Col md={6} className="d-flex align-items-end">
+                <Form.Check
+                  type="switch"
+                  label={offer.active ? "Active" : "Inactive"}
+                  name="active"
+                  checked={offer.active}
+                  onChange={handleChange}
+                />
+              </Col>
+
+            </Row>
+
+            <div className="types-actions mt-4">
+
+              <Button className="users-add-button" type="submit">
+                Save Changes
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => navigate(RouteNames.OFFERS)}
+              >
+                Cancel
+              </Button>
+
+            </div>
+          </Form>
+
+        </div>
+      </div>
     </div>
   );
 }
