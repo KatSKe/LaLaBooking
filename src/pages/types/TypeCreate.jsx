@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+
 import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
@@ -22,7 +23,9 @@ export default function TypeCreate() {
       [name]: inputType === "checkbox" ? checked : value,
     });
 
-    if (name === "name") setNameError("");
+    if (name === "name") {
+      setNameError("");
+    }
   }
 
   async function save() {
@@ -37,55 +40,74 @@ export default function TypeCreate() {
     };
 
     await TypeService.add(newType);
+
     navigate(RouteNames.TYPES);
   }
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Add New Type</h2>
+    <div className="types-page">
+      <div className="types-page_overlay"></div>
 
-      <Card className="p-3">
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="typeName">Type Name</Form.Label>
-            <Form.Control
-              id="typeName"
-              name="name"
-              value={type.name}
-              onChange={handleChange}
-              placeholder="Enter type name..."
-              aria-required="true"
-              isInvalid={!!nameError}
-            />
-            <Form.Control.Feedback type="invalid">
-              {nameError}
-            </Form.Control.Feedback>
-          </Form.Group>
+      <div className="types-page_content">
+        <div className="types-glass-card">
 
-          <Form.Check
-            type="switch"
-            label={type.active ? "Active" : "Inactive"}
-            name="active"
-            checked={type.active}
-            onChange={handleChange}
-            className="mb-3"
-          />
-
-          <div className="d-flex flex-wrap gap-2">
-            <Button variant="success" onClick={save}>
-              Save Type
-            </Button>
-
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => navigate(RouteNames.TYPES)}
-            >
-              Cancel
-            </Button>
+          <div className="types-header">
+            <h2 className="types-title">Add New Type</h2>
           </div>
-        </Form>
-      </Card>
+
+          <Form>
+
+            <Form.Group className="mb-4">
+              <Form.Label className="types-form-label" htmlFor="typeName">
+                Type Name
+              </Form.Label>
+
+              <Form.Control
+                id="typeName"
+                name="name"
+                value={type.name}
+                onChange={handleChange}
+                placeholder="Enter type name..."
+                aria-required="true"
+                isInvalid={!!nameError}
+                className="types-form-input"
+              />
+
+              <Form.Control.Feedback type="invalid">
+                {nameError}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Check
+              type="switch"
+              label={type.active ? "Active" : "Inactive"}
+              name="active"
+              checked={type.active}
+              onChange={handleChange}
+              className="mb-4 text-light"
+            />
+
+            <div className="types-actions">
+              <Button
+                className="types-add-button"
+                onClick={save}
+              >
+                Save Type
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => navigate(RouteNames.TYPES)}
+              >
+                Cancel
+              </Button>
+            </div>
+
+          </Form>
+
+        </div>
+      </div>
     </div>
   );
 }

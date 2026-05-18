@@ -633,3 +633,44 @@ body {
     font-size: 22px;
   }
 }
+
+
+/* TYPES FORM */
+
+.types-form-label {
+  color: rgba(255, 255, 255, 0.88);
+
+  font-weight: 600;
+
+  margin-bottom: 10px;
+}
+
+.types-form-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+
+  color: rgba(255, 255, 255, 0.88) !important;
+
+  backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 12px !important;
+
+  padding: 12px 14px !important;
+}
+
+.types-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.types-form-input:focus {
+  background: rgba(255, 255, 255, 0.10) !important;
+
+  border-color: rgba(255, 255, 255, 0.20) !important;
+
+  box-shadow: none !important;
+
+  color: rgba(255, 255, 255, 0.92) !important;
+}

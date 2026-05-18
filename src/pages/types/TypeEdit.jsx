@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+
 import TypeService from "../../services/types/TypeService";
 import { RouteNames } from "../../constants";
 
 export default function TypeEdit() {
   const navigate = useNavigate();
+
   const { id } = useParams();
 
   const [type, setType] = useState({
@@ -14,6 +16,7 @@ export default function TypeEdit() {
   });
 
   const [touched, setTouched] = useState({});
+
   const [errors, setErrors] = useState({});
 
   async function loadType() {
@@ -53,11 +56,16 @@ export default function TypeEdit() {
     };
 
     setType(updated);
+
     setErrors(validate(updated));
   }
 
   function handleBlur(field) {
-    setTouched((previous) => ({ ...previous, [field]: true }));
+    setTouched((previous) => ({
+      ...previous,
+      [field]: true,
+    }));
+
     setErrors(validate());
   }
 
@@ -69,9 +77,12 @@ export default function TypeEdit() {
     const error = validate();
 
     setErrors(error);
+
     setTouched({ name: true });
 
-    if (Object.keys(error).length > 0) return;
+    if (Object.keys(error).length > 0) {
+      return;
+    }
 
     const updatedType = {
       ...type,
@@ -84,57 +95,80 @@ export default function TypeEdit() {
   }
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Edit Type</h2>
+    <div className="types-page">
+      <div className="types-page_overlay"></div>
 
-      <Card className="p-3">
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="typeName">Type Name</Form.Label>
+      <div className="types-page_content">
+        <div className="types-glass-card">
 
-            <Form.Control
-              id="typeName"
-              name="name"
-              value={type.name}
+          <div className="types-header">
+            <h2 className="types-title">Edit Type</h2>
+          </div>
+
+          <Form>
+
+            <Form.Group className="mb-4">
+              <Form.Label
+                htmlFor="typeName"
+                className="types-form-label"
+              >
+                Type Name
+              </Form.Label>
+
+              <Form.Control
+                id="typeName"
+                name="name"
+                value={type.name}
+                onChange={handleChange}
+                onBlur={() => handleBlur("name")}
+                placeholder="Enter type name..."
+                className="types-form-input"
+                style={{
+                  borderColor: showError("name")
+                    ? "#dc3545"
+                    : "",
+                }}
+              />
+
+              {showError("name") && (
+                <small style={{ color: "#ffb3b3" }}>
+                  {errors.name}
+                </small>
+              )}
+            </Form.Group>
+
+            <Form.Check
+              type="switch"
+              label={type.active ? "Active" : "Inactive"}
+              name="active"
+              checked={type.active}
               onChange={handleChange}
-              onBlur={() => handleBlur("name")}
-              placeholder="Enter type name..."
-              style={{
-                borderColor: showError("name") ? "#dc3545" : "",
-              }}
+              className="mb-4 text-light"
             />
 
-            {showError("name") && (
-              <small style={{ color: "#dc3545" }}>
-                {errors.name}
-              </small>
-            )}
-          </Form.Group>
+            <div className="types-actions">
 
-          <Form.Check
-            type="switch"
-            label={type.active ? "Active" : "Inactive"}
-            name="active"
-            checked={type.active}
-            onChange={handleChange}
-            className="mb-3"
-          />
+              <Button
+                className="types-add-button"
+                onClick={save}
+              >
+                Save Changes
+              </Button>
 
-          <div className="d-flex flex-wrap gap-2">
-            <Button variant="success" onClick={save}>
-              Save Changes
-            </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => navigate(RouteNames.TYPES)}
+              >
+                Cancel
+              </Button>
 
-            <Button
-              type="button"
-              variant="outline-secondary"
-              onClick={() => navigate(RouteNames.TYPES)}
-            >
-              Cancel
-            </Button>
-          </div>
-        </Form>
-      </Card>
+            </div>
+
+          </Form>
+
+        </div>
+      </div>
     </div>
   );
 }
