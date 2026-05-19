@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-
-console.log("OFFER LIST LOADED");
-
 import { useNavigate } from "react-router-dom";
 import { Table, Button } from "react-bootstrap";
 import { Pencil, Trash2, Plus } from "lucide-react";
@@ -19,19 +16,11 @@ export default function OfferList() {
   async function loadOffers() {
     const res = await OffersService.get();
 
-    console.log("SERVER OFFERS:");
-    console.log(res);
-    console.log(res.data);
-
     setOffers(res.data || []);
   }
 
   async function loadTypes() {
     const res = await TypeService.get();
-
-    console.log("SERVER TYPES:");
-    console.log(res);
-    console.log(res.data);
 
     setTypes(res.data || []);
   }
