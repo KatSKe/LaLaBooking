@@ -16,6 +16,10 @@ export default function OfferList() {
   async function loadOffers() {
     const res = await OffersService.get();
 
+    console.log("SERVER OFFERS:");
+    console.log(res);
+    console.log(res.data);
+
     setOffers(res.data || []);
   }
 
