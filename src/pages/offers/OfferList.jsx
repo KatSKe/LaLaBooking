@@ -45,8 +45,7 @@ export default function OfferList() {
   function getTypeName(typeId) {
     const type = types.find(
       (t) =>
-        Number(t.id ?? t.sifra) ===
-        Number(typeId)
+        Number(t.id ?? t.sifra) === Number(typeId)
     );
 
     return type
@@ -121,24 +120,33 @@ export default function OfferList() {
               </thead>
 
               <tbody>
-                {offers.map((offer) => {
+                {offers.map((offer, index) => {
 
                   const offerId =
-                    offer.id ?? offer.sifra;
+                    offer.id ??
+                    offer.sifra ??
+                    index;
 
                   const offerName =
-                    offer.name ?? offer.naziv;
+                    offer.name ??
+                    offer.naziv ??
+                    "";
 
                   const offerPrice =
-                    offer.price ?? offer.cijena;
+                    offer.price ??
+                    offer.cijena ??
+                    0;
 
                   const offerActive =
-                    offer.active ?? offer.aktivan;
+                    offer.active ??
+                    offer.aktivan ??
+                    false;
 
                   const offerTypeId =
                     offer.typeId ??
                     offer.tipId ??
-                    offer.vrstaId;
+                    offer.vrstaId ??
+                    null;
 
                   return (
                     <tr key={offerId}>
