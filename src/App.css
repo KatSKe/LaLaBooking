@@ -675,3 +675,23 @@ body {
   color: rgba(255, 255, 255, 0.92) !important;
 }
 
+
+/* =========================
+   SELECT OPTIONS FIX
+========================= */
+
+.types-form-input option {
+  background-color: #2b2b2b;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* OPTIONAL - hover effect */
+.types-form-input option:hover {
+  background-color: #3a3a3a;
+}
+
+/* FIX FOR SELECT TEXT */
+.types-form-input select,
+.types-form-input {
+  color: rgba(255, 255, 255, 0.92) !important;
+}

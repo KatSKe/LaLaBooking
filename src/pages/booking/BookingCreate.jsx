@@ -1,5 +1,3 @@
-// BookingCreate.jsx
-
 import { useEffect, useState } from "react";
 import { Button, Form, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -138,6 +136,7 @@ export default function BookingCreate() {
                   className="types-form-input"
                 >
                   <option value="">Select user</option>
+
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
                       {user.firstName} {user.lastName}
@@ -164,6 +163,7 @@ export default function BookingCreate() {
                   className="types-form-input"
                 >
                   <option value="">Select offer</option>
+
                   {offers.map((offer) => (
                     <option key={offer.id} value={offer.id}>
                       {offer.name}
@@ -188,6 +188,8 @@ export default function BookingCreate() {
                   onChange={handleChange}
                   onBlur={() => handleBlur("startDate")}
                   className="types-form-input"
+                  onMouseEnter={(e) => e.target.showPicker?.()}
+                  onFocus={(e) => e.target.showPicker?.()}
                 />
               </Col>
 
@@ -203,6 +205,65 @@ export default function BookingCreate() {
                   onChange={handleChange}
                   onBlur={() => handleBlur("endDate")}
                   className="types-form-input"
+                  onMouseEnter={(e) => e.target.showPicker?.()}
+                  onFocus={(e) => e.target.showPicker?.()}
+                />
+              </Col>
+
+              <Col md={4}>
+                <Form.Label className="types-form-label">
+                  Rooms
+                </Form.Label>
+
+                <Form.Control
+                  type="number"
+                  name="numberOfRooms"
+                  value={booking.numberOfRooms}
+                  onChange={handleChange}
+                  className="types-form-input"
+                />
+              </Col>
+
+              <Col md={4}>
+                <Form.Label className="types-form-label">
+                  Adults
+                </Form.Label>
+
+                <Form.Control
+                  type="number"
+                  name="adults"
+                  value={booking.adults}
+                  onChange={handleChange}
+                  className="types-form-input"
+                />
+              </Col>
+
+              <Col md={4}>
+                <Form.Label className="types-form-label">
+                  Kids
+                </Form.Label>
+
+                <Form.Control
+                  type="number"
+                  name="kids"
+                  value={booking.kids}
+                  onChange={handleChange}
+                  className="types-form-input"
+                />
+              </Col>
+
+              <Col md={12}>
+                <Form.Check
+                  type="switch"
+                  label={booking.active ? "Active" : "Inactive"}
+                  name="active"
+                  checked={booking.active}
+                  onChange={(e) =>
+                    setBooking({
+                      ...booking,
+                      active: e.target.checked,
+                    })
+                  }
                 />
               </Col>
 

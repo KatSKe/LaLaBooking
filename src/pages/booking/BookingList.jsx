@@ -1,5 +1,3 @@
-// BookingList.jsx
-
 import { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -48,12 +46,15 @@ export default function BookingList() {
 
   function fullUserName(userId) {
     const user = users.find((u) => String(u.id) === String(userId));
+
     if (!user) return "";
+
     return `${user.firstName} ${user.lastName}`;
   }
 
   function fullOfferName(offerId) {
     const offer = offers.find((o) => String(o.id) === String(offerId));
+
     return offer?.name || "";
   }
 
@@ -89,6 +90,9 @@ export default function BookingList() {
                   <th>Offer</th>
                   <th>Start Date</th>
                   <th>End Date</th>
+                  <th>Rooms</th>
+                  <th>Adults</th>
+                  <th>Kids</th>
                   <th>Active</th>
                   <th>Actions</th>
                 </tr>
@@ -105,6 +109,12 @@ export default function BookingList() {
                     <td>{b.startDate}</td>
 
                     <td>{b.endDate}</td>
+
+                    <td>{b.numberOfRooms}</td>
+
+                    <td>{b.adults}</td>
+
+                    <td>{b.kids}</td>
 
                     <td>{getActiveLabel(b.active)}</td>
 

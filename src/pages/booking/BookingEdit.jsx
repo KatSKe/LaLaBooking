@@ -167,6 +167,7 @@ export default function BookingEdit() {
                   className="types-form-input"
                 >
                   <option value="">Select user</option>
+
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.firstName} {u.lastName}
@@ -191,6 +192,7 @@ export default function BookingEdit() {
                   className="types-form-input"
                 >
                   <option value="">Select offer</option>
+
                   {offers.map((o) => (
                     <option key={o.id} value={o.id}>
                       {o.name}
@@ -213,6 +215,8 @@ export default function BookingEdit() {
                   onChange={handleChange}
                   onBlur={() => handleBlur("startDate")}
                   className="types-form-input"
+                  onMouseEnter={(e) => e.target.showPicker?.()}
+                  onFocus={(e) => e.target.showPicker?.()}
                 />
               </Col>
 
@@ -226,11 +230,14 @@ export default function BookingEdit() {
                   onChange={handleChange}
                   onBlur={() => handleBlur("endDate")}
                   className="types-form-input"
+                  onMouseEnter={(e) => e.target.showPicker?.()}
+                  onFocus={(e) => e.target.showPicker?.()}
                 />
               </Col>
 
               <Col md={4}>
                 <Form.Label className="types-form-label">Rooms</Form.Label>
+
                 <Form.Control
                   type="number"
                   name="numberOfRooms"
@@ -242,6 +249,7 @@ export default function BookingEdit() {
 
               <Col md={4}>
                 <Form.Label className="types-form-label">Adults</Form.Label>
+
                 <Form.Control
                   type="number"
                   name="adults"
@@ -253,6 +261,7 @@ export default function BookingEdit() {
 
               <Col md={4}>
                 <Form.Label className="types-form-label">Kids</Form.Label>
+
                 <Form.Control
                   type="number"
                   name="kids"
