@@ -1,5 +1,3 @@
-// OfferList.jsx
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button } from "react-bootstrap";
@@ -17,11 +15,13 @@ export default function OfferList() {
 
   async function loadOffers() {
     const res = await OffersService.get();
+
     setOffers(res.data || []);
   }
 
   async function loadTypes() {
     const res = await TypeService.get();
+
     setTypes(res.data || []);
   }
 
@@ -38,12 +38,54 @@ export default function OfferList() {
     if (!confirmDelete) return;
 
     await OffersService.remove(id);
+
     loadOffers();
   }
 
   function getTypeName(typeId) {
-    const type = types.find((t) => t.id === Number(typeId));
-    return type ? type.name : "";
+    const type = types.find(
+      (t) =>
+        Number(t.id ?? t.sifra) ===
+        Number(typeId)
+    );
+
+    return type
+      ? type.name ?? type.naziv
+      : "";
+  }
+
+  function getStatusLabel(active) {
+    return active ? "Active" : "Inactive";
+  }
+
+  function getStatusStyle(active) {
+    return {
+      padding: "5px 12px",
+
+      borderRadius: "10px",
+
+      fontSize: "13px",
+
+      fontWeight: 600,
+
+      display: "inline-block",
+
+      backdropFilter: "blur(6px)",
+
+      WebkitBackdropFilter: "blur(6px)",
+
+      background: active
+        ? "rgba(140, 255, 170, 0.14)"
+        : "rgba(255, 120, 120, 0.10)",
+
+      border: active
+        ? "1px solid rgba(140, 255, 170, 0.18)"
+        : "1px solid rgba(255, 120, 120, 0.14)",
+
+      color: active
+        ? "rgba(205, 255, 215, 0.92)"
+        : "rgba(255, 210, 210, 0.90)",
+    };
   }
 
   return (
@@ -79,46 +121,72 @@ export default function OfferList() {
               </thead>
 
               <tbody>
-                {offers.map((offer) => (
-                  <tr key={offer.id}>
+                {offers.map((offer) => {
 
-                    <td>{offer.name}</td>
+                  const offerId =
+                    offer.id ?? offer.sifra;
 
-                    <td>{getTypeName(offer.typeId)}</td>
+                  const offerName =
+                    offer.name ?? offer.naziv;
 
-                    <td>{Number(offer.price).toFixed(2)}</td>
+                  const offerPrice =
+                    offer.price ?? offer.cijena;
 
-                    <td>{offer.active ? "Active" : "Inactive"}</td>
+                  const offerActive =
+                    offer.active ?? offer.aktivan;
 
-                    <td className="users-actions">
+                  const offerTypeId =
+                    offer.typeId ??
+                    offer.tipId ??
+                    offer.vrstaId;
 
-                      <Button
-                        size="sm"
-                        variant="outline-warning"
-                        onClick={() =>
-                          navigate(
-                            RouteNames.OFFERS_EDIT.replace(
-                              ":id",
-                              offer.id
+                  return (
+                    <tr key={offerId}>
+
+                      <td>{offerName}</td>
+
+                      <td>{getTypeName(offerTypeId)}</td>
+
+                      <td>
+                        {Number(offerPrice).toFixed(2)}
+                      </td>
+
+                      <td>
+                        <span style={getStatusStyle(offerActive)}>
+                          {getStatusLabel(offerActive)}
+                        </span>
+                      </td>
+
+                      <td className="users-actions">
+
+                        <Button
+                          size="sm"
+                          variant="outline-warning"
+                          onClick={() =>
+                            navigate(
+                              RouteNames.OFFERS_EDIT.replace(
+                                ":id",
+                                offerId
+                              )
                             )
-                          )
-                        }
-                      >
-                        <Pencil size={16} />
-                      </Button>
+                          }
+                        >
+                          <Pencil size={16} />
+                        </Button>
 
-                      <Button
-                        size="sm"
-                        variant="outline-danger"
-                        onClick={() => deleteOffer(offer.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => deleteOffer(offerId)}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
 
-                    </td>
+                      </td>
 
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
 
             </Table>
